@@ -1,13 +1,40 @@
 # Specue
 
-A spec is a graph. Specue reads it, validates it, links it to the code that
-realizes it, and lets you propose changes as branches you can diff and accept.
+[![status: pre-release](https://img.shields.io/badge/status-pre--release-orange)](#specue)
+[![model: speculative](https://img.shields.io/badge/model-speculative%20%2F%20breaking-red)](#what-specue-is-not)
+[![Go 1.26+](https://img.shields.io/badge/Go-1.26%2B-00ADD8?logo=go&logoColor=white)](go.mod)
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD--3--Clause-blue)](LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/specue/specue.svg)](https://pkg.go.dev/github.com/specue/specue)
 
-The spec lives in CUE files in your repo. The tool prints one node in full
-(`describe`), runs SQL over a projection of the whole graph (`query`), tells
-each code module what its contracts still owe (`bindings`), publishes the
-spec as a markdown tree or a structured JSON graph for downstream pipelines
-(`render`), and gates the whole thing on every commit (`validate`).
+**Observable promises, tied to the code that keeps them, with coverage you can
+compute instead of assert.** Specue models a system as a graph of contracts —
+what each part promises, who it promises to, where its boundary lies — and binds
+every promise to the source line that realizes it. Then it tells you, by
+derivation rather than by hand, what is kept and what is still owed.
+
+It sits closer to C4 and architecture-as-code than to spec-driven workflow
+tools: the unit is a boundary and a promise, not a feature ticket. The spec
+lives in CUE files in your repo. The tool prints one node in full (`describe`),
+runs SQL over a projection of the whole graph (`query`), tells each code module
+what its contracts still owe (`bindings`), publishes the spec as a markdown tree
+or a structured JSON graph (`render`), lets you propose changes as branches you
+can diff and accept (`plan`), and gates the whole thing on every commit
+(`validate`).
+
+Specue answers one question precisely — *does the code do what the contract
+says?* — and is honest about the question it does not answer — *is this the
+right contract?* See [What Specue is not](#what-specue-is-not) before you reach
+for it.
+
+> ⚠️ **Pre-release, and the model is still moving.** Specue is not at a stable
+> release. The model itself — node types, the schema, the vocabulary, the
+> manifesto — is **speculative and actively changing**. There have already been
+> many backwards-incompatible changes, and there will be more: node types may be
+> renamed (e.g. `UseCase` is likely to become `Contract`), fields may move, and
+> the embedded schema may break pins between versions. Use it to explore the
+> idea, dogfood it, and shape it — but do not yet build anything you are not
+> prepared to migrate by hand. Nothing here is a compatibility promise until a
+> tagged release says otherwise.
 
 This README walks from the smallest possible spec to the full picture. Each
 step adds one feature — read until the example you need.
@@ -23,7 +50,8 @@ step adds one feature — read until the example you need.
 - **Step 6: Query the graph** — one SQL replaces ten `describe` calls.
 - **Step 7: Publish the docs** — markdown for GitHub/Confluence/MkDocs, JSON
   for custom pipelines.
-- **Concepts**, **Status**, **Layout**, **Working with it as an agent**, **License**.
+- **Concepts**, **Status**, **Layout**, **Working with it as an agent**,
+  **What Specue is not**, **License**.
 
 The philosophy — why the spec is split into WHAT, HOW and WHY layers — lives
 in [MANIFESTO.md](MANIFESTO.md). Read it once you've tried the examples and
@@ -31,7 +59,7 @@ want the model.
 
 ## Install
 
-**Prerequisites**: Go 1.23+ ([install](https://go.dev/doc/install)) and git on
+**Prerequisites**: Go 1.26+ ([install](https://go.dev/doc/install)) and git on
 `PATH`. That is it — the CUE schema is embedded in the binary, so you do not
 install CUE separately. (A `cue` CLI is useful if you want LSP completion in
 your editor, but not required to run the tool — see
@@ -58,7 +86,7 @@ real graph before writing your own:
 
 ```sh
 git clone https://github.com/specue/specue && cd specue
-specue validate                                   # 54 nodes, green
+specue validate                                   # 68 nodes, green
 specue describe specue.io/service@v0:validate-graph
 specue query "SELECT id, status FROM nodes WHERE status='asserted'"
 specue bindings                                   # what each contract owes
@@ -459,7 +487,9 @@ module it touches.
 
 ## Status
 
-What is implemented and proven in the tool today:
+Pre-release (see the [pre-release note](#specue) above): the verbs below work,
+but the **model** they operate on is still speculative and breaking between
+revisions. What is implemented and proven in the tool today:
 
 | Area                                                                                    | State                            |
 | --------------------------------------------------------------------------------------- | -------------------------------- |
@@ -507,6 +537,57 @@ with the same `fix` field humans see in `try:`. Identity is always
 reference in annotations. A run that needs a richer answer than the fixed
 verbs offer is one `query` away: the projection schema is itself returned by
 `query tables`, so the agent can discover the columns it needs.
+
+## What Specue is not
+
+Specue is a hard-systems tool with a narrow, honest job. Knowing what it
+deliberately leaves out is the fastest way to know whether it fits.
+
+- **Not a place to negotiate.** Specue records the *conclusions* of a decision
+  (a contract, a boundary, an ADR), never the argument that produced it. The
+  table where stakeholders disagree about what the system should do is a human
+  process; Specue runs after it, holding the agreed contract steady. `proven`
+  means "the code matches the contract," not "everyone agreed this was the right
+  contract."
+
+- **Not formal verification.** A bind is a lexical link from a promise to the
+  line that keeps it, checked by a code scan — not a proof. Specue tells you a
+  contract *has* realizing code and a test that exercises it; it does not prove
+  the code is correct. It is lightweight by design: CUE checks structure, the
+  compiler checks only what CUE cannot (statuses, cycles, coverage), and the
+  scanner never parses. If you need Coq/TLA+-grade guarantees, Specue is the
+  wrong layer.
+
+- **Not a model of implementation.** A contract describes what is *observable
+  from outside* — "a committed write survives the loss of any one node," not
+  "16 shards, 3 replicas, key = tenant_id." The shard count, the replication
+  factor, the readiness probe config are HOW: they live in code and attach to a
+  promise through an annotation, never as nodes. Specue is intentionally narrow
+  in *what it may name*: observable promises in, implementation detail out.
+
+- **Not a language for everything.** That narrowness scales with *size* — one
+  service or a thousand, on a fixed small vocabulary — but it bounds *kind*.
+  Specue models services that promise something across network and storage
+  boundaries, and the code that keeps those promises. A UI layout, an ML model's
+  internals, an algorithm's complexity, a business approval flow — you can
+  *mention* such a thing in an invariant's text, but Specue has no node to model
+  its structure. The seven node types are deliberate: a language for one genus of
+  system, not for every domain.
+
+- **Not an objective map of "the system."** A `context` is one observer's
+  boundary — which modules are the system and which are the environment. That is
+  a judgment, not a fact. Two observers may draw two contexts and get two honest
+  verdicts; the tool does not pretend there is a single true one. A dependency
+  on something outside your context is reported as an honest gap — *unknown from
+  here* — not an error.
+
+- **Not yet federated.** Multiple teams, multiple worldviews, reading a spec
+  without holding the code — the model is built toward this, and its Needs name
+  it, but the mechanism (`attest-bindings`) is contract-agreed and not yet
+  shipped. Today's honest mode is one holder, one landscape, one boundary. The
+  [Status](#status) table marks the line between what is proven and what is
+  planned; the [manifesto](MANIFESTO.md) states where the computable verdict
+  stops and human agreement begins.
 
 ## License
 
