@@ -1,0 +1,109 @@
+# Material-for-MkDocs template for a Specue render.
+#
+# Use it next to a `specue render <docs>` output:
+#
+#     specue render docs \
+#       --layout tree --strip-prefix <your-prefix>/ \
+#       --frontmatter mkdocs \
+#       --with-index-pages --with-tags-page --with-status-admonitions \
+#       --nav-snippet nav.yml
+#     cp examples/mkdocs/mkdocs.yml ./mkdocs.yml
+#     cp -r examples/mkdocs/assets docs/assets
+#     mkdocs serve
+#
+# The `nav:` is loaded from `docs/nav.yml` via INHERIT, so re-rendering the
+# tree refreshes navigation without touching this file.
+
+site_name: Spec
+site_description: Spec graph documentation rendered from CUE modules
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    # Navigation
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.sections
+    - navigation.prune         # render only visible nav (the tree gets big)
+    - navigation.top
+    - navigation.indexes       # section index.md = section landing page
+    # Search
+    - search.suggest
+    - search.highlight
+    - search.share
+    # TOC
+    - toc.follow
+    # Content
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+markdown_extensions:
+  - admonition           # status admonitions emitted by --with-status-admonitions
+  - attr_list            # `{ #tag:... }` headings on tags.md
+  - md_in_html
+  - tables
+  - footnotes
+  - def_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - toc:
+      permalink: true
+
+plugins:
+  - search:
+      lang:
+        - en
+        - ru
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;'
+  - tags:
+      tags_file: tags.md
+  # Files are generated → mtime is always "just now". Enable only if you want
+  # build-date timestamps.
+  # - git-revision-date-localized:
+  #     type: timeago
+  #     fallback_to_build_date: true
+
+# Status / type pill colors and a darker slate backdrop.
+extra_css:
+  - assets/status-badges.css
+  - assets/dark-bg.css
+
+# nav: comes from docs/nav.yml emitted by --nav-snippet
+INHERIT: docs/nav.yml

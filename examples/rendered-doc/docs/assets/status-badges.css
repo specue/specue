@@ -1,0 +1,18 @@
+/* Colour the Material tag pills the renderer emits on every node page.
+   `--with-tags-page` writes every status/type as a tag in frontmatter; the
+   Material tags plugin renders them as links to /tags/#tag:<name>. We dye
+   them by href substring so a single rule covers light and dark schemes. */
+.md-tag[href*="proven"]      { background: #1b5e20; color: #fff !important; }
+.md-tag[href*="implemented"] { background: #2e7d32; color: #fff !important; }
+.md-tag[href*="asserted"]    { background: #ed6c02; color: #fff !important; }
+.md-tag[href*="broken"]      { background: #c62828; color: #fff !important; }
+.md-tag[href*="covered"]:not([href*="uncovered"]) { background: #1565c0; color: #fff !important; }
+.md-tag[href*="partial"]     { background: #6a1b9a; color: #fff !important; }
+.md-tag[href*="uncovered"]   { background: #424242; color: #fff !important; }
+.md-tag[href*="usecase"]   { background: #5e35b1; color: #fff !important; }
+.md-tag[href*="need"]      { background: #00838f; color: #fff !important; }
+.md-tag[href*="adr"]       { background: #455a64; color: #fff !important; }
+.md-tag[href*="plan"]      { background: #6d4c41; color: #fff !important; }
+.md-tag[href*="port"]      { background: #00695c; color: #fff !important; }
+.md-tag[href*="container"] { background: #4527a0; color: #fff !important; }
+.md-tag[href*="domain"]    { background: #c2185b; color: #fff !important; }

@@ -1,0 +1,76 @@
+nav:
+  - index.md
+  - domain:
+    - domain/index.md
+    - as-agent-author: domain/as-agent-author.md
+    - as-agent-create: domain/as-agent-create.md
+    - as-agent-navigate: domain/as-agent-navigate.md
+    - as-agent-relate: domain/as-agent-relate.md
+    - as-agent-review: domain/as-agent-review.md
+    - as-agent-setup: domain/as-agent-setup.md
+    - as-agent-start: domain/as-agent-start.md
+    - as-author-dx: domain/as-author-dx.md
+    - as-decision-keeper: domain/as-decision-keeper.md
+    - as-federated-owner: domain/as-federated-owner.md
+    - as-federated-reader: domain/as-federated-reader.md
+    - as-planner: domain/as-planner.md
+    - specue: domain/specue.md
+  - governance:
+    - governance/index.md
+    - ADR-01: governance/ADR-01.md
+    - ADR-02: governance/ADR-02.md
+    - ADR-03: governance/ADR-03.md
+    - ADR-04: governance/ADR-04.md
+    - ADR-05: governance/ADR-05.md
+    - ADR-06: governance/ADR-06.md
+    - ADR-07: governance/ADR-07.md
+    - ADR-08: governance/ADR-08.md
+    - ADR-09: governance/ADR-09.md
+    - ADR-10: governance/ADR-10.md
+    - ADR-11: governance/ADR-11.md
+    - ADR-12: governance/ADR-12.md
+    - plan-accept-from-anywhere: governance/plan-accept-from-anywhere.md
+    - plan-code-root-field: governance/plan-code-root-field.md
+    - plan-index-strip-prefix: governance/plan-index-strip-prefix.md
+    - plan-link-text-slug: governance/plan-link-text-slug.md
+    - plan-nav-collapse: governance/plan-nav-collapse.md
+    - plan-quick-wins: governance/plan-quick-wins.md
+    - plan-readme-progressive: governance/plan-readme-progressive.md
+    - plan-readme-query-step: governance/plan-readme-query-step.md
+    - plan-refs-as-definitions: governance/plan-refs-as-definitions.md
+    - plan-render-doc: governance/plan-render-doc.md
+    - plan-render-index-pages: governance/plan-render-index-pages.md
+    - plan-render-node-as-folder-index: governance/plan-render-node-as-folder-index.md
+    - plan-render-presets: governance/plan-render-presets.md
+    - plan-render-status-admonitions: governance/plan-render-status-admonitions.md
+    - plan-render-tags-page: governance/plan-render-tags-page.md
+    - plan-userstory-to-need: governance/plan-userstory-to-need.md
+    - plan-v1tov2-tool: governance/plan-v1tov2-tool.md
+  - service:
+    - service/index.md
+    - accept-plan: service/accept-plan.md
+    - add-module-to-context: service/add-module-to-context.md
+    - attest-bindings: service/attest-bindings.md
+    - build-graph: service/build-graph.md
+    - create-context: service/create-context.md
+    - describe-node: service/describe-node.md
+    - detect-conflict: service/detect-conflict.md
+    - diff-refs: service/diff-refs.md
+    - drop-plan: service/drop-plan.md
+    - init-module: service/init-module.md
+    - list-resources: service/list-resources.md
+    - pending-overlay: service/pending-overlay.md
+    - query-graph: service/query-graph.md
+    - read-context: service/read-context.md
+    - register-plan: service/register-plan.md
+    - remove-context: service/remove-context.md
+    - remove-module-from-context: service/remove-module-from-context.md
+    - render-doc: service/render-doc.md
+    - report-bindings: service/report-bindings.md
+    - return-to-base: service/return-to-base.md
+    - scan-code: service/scan-code.md
+    - specue: service/specue.md
+    - use-context: service/use-context.md
+    - use-plan: service/use-plan.md
+    - validate-graph: service/validate-graph.md
+    - warm-schema: service/warm-schema.md
