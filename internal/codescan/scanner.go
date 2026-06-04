@@ -2,6 +2,7 @@ package codescan
 
 import (
 	"io/fs"
+	"path"
 	"strings"
 
 	"github.com/specue/specue/internal/compiler"
@@ -67,15 +68,15 @@ func scanTarget(t ScanTarget) ([]compiler.CodeFact, error) {
 func scanListed(t ScanTarget) ([]compiler.CodeFact, error) {
 	var facts []compiler.CodeFact
 	for _, rel := range t.Files {
-		path := model.FilePath(rel)
-		if !IsScannable(path) {
+		fp := model.FilePath(rel)
+		if !IsScannable(fp) {
 			continue
 		}
-		raw, err := fs.ReadFile(t.FS, joinFS(t.Root, rel))
+		raw, err := fs.ReadFile(t.FS, path.Join(t.Root, rel))
 		if err != nil {
 			return nil, err
 		}
-		facts = append(facts, scanFile(path, raw, t.Module, t.Candidates)...)
+		facts = append(facts, scanFile(fp, raw, t.Module, t.Candidates)...)
 	}
 	return facts, nil
 }
@@ -121,14 +122,6 @@ func quotedInsideComment(line string, start int) bool {
 	// where that comment opens; anything further right is prose inside it.
 	openAt := len(line) - len(trimmed)
 	return start != openAt
-}
-
-// joinFS joins an fs.FS-style path ("." root means the rel as-is).
-func joinFS(root, rel string) string {
-	if root == "" || root == "." {
-		return rel
-	}
-	return root + "/" + rel
 }
 
 // scanFile extracts every annotation in one file into a CodeFact. Test context is

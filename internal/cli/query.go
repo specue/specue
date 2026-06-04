@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 	"io"
-	"sort"
+	"slices"
 	"strings"
 	"text/tabwriter"
 
@@ -14,8 +14,8 @@ import (
 // (each a column→value map). Column order is captured so the human table is stable
 // (a map alone would not preserve it).
 type QueryReport struct {
-	Columns []string      `json:"columns"`
-	Rows    []query.Row   `json:"rows"`
+	Columns []string    `json:"columns"`
+	Rows    []query.Row `json:"rows"`
 }
 
 // runQuery builds the SQLite projection of the graph and runs the SQL against it.
@@ -58,7 +58,7 @@ func columnsOf(rows []query.Row) []string {
 			}
 		}
 	}
-	sort.Strings(cols)
+	slices.Sort(cols)
 	return cols
 }
 

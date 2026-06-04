@@ -6,6 +6,7 @@ import (
 	"hash"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -193,7 +194,7 @@ func codeEnumerator(cfg Config) fileEnumerator {
 			if len(t.Files) > 0 {
 				for _, rel := range t.Files {
 					if codescan.IsScannable(model.FilePath(rel)) {
-						out = append(out, scopedFile{fsys: t.FS, path: joinFSPath(t.Root, rel)})
+						out = append(out, scopedFile{fsys: t.FS, path: path.Join(t.Root, rel)})
 					}
 				}
 				continue
@@ -206,14 +207,6 @@ func codeEnumerator(cfg Config) fileEnumerator {
 		}
 		return out, nil
 	}
-}
-
-// joinFSPath joins an fs.FS path, treating "." / "" root as the rel as-is.
-func joinFSPath(root, rel string) string {
-	if root == "" || root == "." {
-		return rel
-	}
-	return root + "/" + rel
 }
 
 // newContentKeyers builds content-hash keyers for both inputs (correct over any

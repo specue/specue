@@ -41,18 +41,34 @@ keeps internal (operation) contracts legal. *Fits 1.3 / 3.1.* Breaking; write
 ADR-13 first (alternatives considered: Capability — rejected, no place for
 pre/post; it answers "what the system *can*", not "what it *guarantees*").
 
-### M4. Schema consistency — remove `legacy_id` and dead/confusing fields
-Not a tidy-up-later chore: stray fields make the model **ambiguous to read** —
-an author hits `legacy_id` and wonders if it is theirs to set. While the model
-is still breaking, removing confusion is cheaper now than after adoption.
-*Fits the manifesto's drive for an honest, minimal vocabulary.* **Caveat:**
-`legacy_id` is load-bearing for the **v1→v2 migration** (used in
-`migrate/v1.go`, `emit_node.go`, plus `node.go`, `jsonir/schema.go`,
-`diagnostic.go`). So this is a decision, not a deletion: *is v1 migration still
-needed?* If yes, keep `legacy_id` scoped to the migrate path only and off the
-authored schema; if no, drop it end to end. Audit the other optional fields in
-the same pass for the same "could an author be confused?" test. Best done with
-M3's schema pass (same breaking window).
+### M4. Schema consistency — remove rudimentary / confusing fields
+Stray fields make the model **ambiguous to read** — an author hits a field and
+wonders if it is theirs to set. While the model is still breaking, removing
+confusion is cheaper now than after adoption. *Fits the manifesto's drive for an
+honest, minimal vocabulary.* Concrete targets:
+
+- **`legacy_id`** — a transitional alias from the (now-deleted) v1→v2 migration.
+  The `internal/migrate` package and `cmd/v1tov2` are gone, but `legacy_id`
+  still threads through `model.Node`, `source/node.go`, `jsonir/schema.go`,
+  `query`, and the `migrate-legacy` diagnostic in `compiler`. With the migrator
+  removed, the question is sharper: does any live spec still resolve refs
+  through a `legacy_id` alias? If no, drop it end to end (schema + model +
+  diagnostic). If a few legacy aliases remain in real specs, keep only the
+  resolver path and drop it from the authored surface.
+
+- **`visibility`** — a `public|private` field on nodes (carried in `model.Node`,
+  the query projection, `jsonir`, ~25 refs across 13 files) that is **not in the
+  authored schema** and is **not set anywhere in the self-spec**. Privacy is
+  already a CUE concern — unexported (`_`-prefixed) definitions and CUE's own
+  visibility rules (ADR-01) are the real source of truth, and M6
+  (`_someReusableContract`) leans on exactly that. So `visibility` is a second,
+  redundant privacy mechanism shadowing CUE's. Decision: derive it from CUE
+  visibility if it must be exposed at all (computed, per 5.2), or drop the field
+  outright. Either way it should stop being a standalone node attribute.
+
+Audit the remaining optional fields in the same pass for the same "could an
+author be confused?" test. Best done with M3's schema pass (same breaking
+window).
 
 ### M5. Emergent system promises — node + derived check (DESIGN OPEN)
 A promise of the *whole* that no single Contract carries ("the system stays

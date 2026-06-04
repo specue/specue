@@ -9,7 +9,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 
 	"cuelang.org/go/cue"
@@ -147,7 +147,7 @@ func concatSchema() ([]byte, error) {
 		}
 		names = append(names, e.Name())
 	}
-	sort.Strings(names) // deterministic order
+	slices.Sort(names) // deterministic order
 
 	var out []byte
 	for _, name := range names {

@@ -30,13 +30,6 @@ type frontmatter struct {
 	RenderedFrom string   `yaml:"rendered_from,omitempty"`
 }
 
-// renderFrontmatter writes the YAML preamble fenced by `---` lines and returns
-// the textual block; node renderers prepend it before the body. This is the
-// historical full shape — Default()'s output is byte-identical to before.
-func renderFrontmatter(fm frontmatter) (string, error) {
-	return writeFrontmatter(fm, Config{Frontmatter: FrontmatterFull})
-}
-
 // writeFrontmatter dispatches on the configured shape. Each shape is a small
 // builder that picks fields from the populated `frontmatter` struct (which the
 // node renderer fills as if for the full shape — shape selection is pure
@@ -190,16 +183,6 @@ func linkTo(from, to model.NodeID, layout render.Layout) string {
 func atomLink(from model.NodeID, ref model.AtomRef, layout render.Layout) string {
 	base := linkTo(from, ref.Need, layout)
 	return base + "#" + string(ref.Atom)
-}
-
-// elementLink is the in-file anchor on a named element — node file plus anchor
-// on the element id.
-func elementLink(from model.NodeID, target model.NodeID, elem model.ElementID, layout render.Layout) string {
-	base := linkTo(from, target, layout)
-	if elem != "" {
-		return base + "#" + string(elem)
-	}
-	return base
 }
 
 // strList renders []string with empty omitted, so an empty slice is dropped

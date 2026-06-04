@@ -45,10 +45,6 @@ type BindingRow struct {
 	Locations []Binding       `json:"locations,omitempty"`
 }
 
-// provable reports whether a kind can reach proven (only req — a contract proven by
-// a test); infra kinds are facts that are bound once their anchor exists.
-func (k BindKind) provable() bool { return k == BindKindReq }
-
 // BindingsView is the whole listing for one code module.
 type BindingsView struct {
 	Module model.ModulePath `json:"module"`

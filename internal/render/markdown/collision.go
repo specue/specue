@@ -3,7 +3,7 @@ package markdown
 import (
 	"path"
 	"regexp"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/specue/specue/internal/render"
@@ -97,7 +97,7 @@ func DetectCollisions(tree render.Tree) *Collisions {
 	for rel := range tree {
 		paths = append(paths, string(rel))
 	}
-	sort.Strings(paths)
+	slices.Sort(paths)
 
 	c := &Collisions{suppressed: map[string]bool{}}
 	for _, p := range paths {

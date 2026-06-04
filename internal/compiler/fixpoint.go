@@ -2,10 +2,10 @@ package compiler
 
 import (
 	"fmt"
-	"sort"
+	"slices"
 
-	"github.com/specue/specue/internal/scc"
 	"github.com/specue/specue/internal/model"
+	"github.com/specue/specue/internal/scc"
 )
 
 // The fixpoint pass computes the two graph-global properties that need traversal,
@@ -46,12 +46,7 @@ func isCycle(adj map[model.NodeID][]model.NodeID, comp []model.NodeID) bool {
 	if len(comp) > 1 {
 		return true
 	}
-	for _, t := range adj[comp[0]] {
-		if t == comp[0] {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(adj[comp[0]], comp[0])
 }
 
 // cycleDiagnostic classifies an SCC: a gate if any intra-SCC edge reaches a sync
@@ -72,7 +67,7 @@ func cycleDiagnostic(g *ResolvedGraph, comp []model.NodeID) Diagnostic {
 			}
 		}
 	}
-	sort.Strings(names)
+	slices.Sort(names)
 	if sync {
 		return newDiag(SyncCycle, comp[0], fmt.Sprintf("dependency cycle through a sync contract: %v — risks deadlock", names))
 	}

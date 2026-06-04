@@ -2,7 +2,7 @@ package markdown
 
 import (
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/specue/specue/internal/compiler"
@@ -67,10 +67,10 @@ func EmitIndexPages(r *render.Renderer, tree render.Tree, ctx render.Context, sk
 type dirInfo struct {
 	path        string // forward-slash, "" = root
 	subdirs     map[string]*dirInfo
-	leafFiles   []string                     // file paths under this dir (every .md file, transitively, for counting)
-	directLeafs []string                     // .md files directly in this dir (not in subdirs)
-	directSubs  []string                     // subdir names (one level down)
-	nodes       []*compiler.ResolvedNode     // every node whose file lives under this dir
+	leafFiles   []string                 // file paths under this dir (every .md file, transitively, for counting)
+	directLeafs []string                 // .md files directly in this dir (not in subdirs)
+	directSubs  []string                 // subdir names (one level down)
+	nodes       []*compiler.ResolvedNode // every node whose file lives under this dir
 	nodeByPath  map[string]*compiler.ResolvedNode
 }
 
@@ -152,7 +152,7 @@ func insertFile(root *dirInfo, fullPath string, n *compiler.ResolvedNode) {
 func emitDir(d *dirInfo, cfg Config, ctx render.Context, out map[render.RelPath]render.FileContent, skip IndexSkipper) {
 	// Recurse first so children exist before we link to them.
 	subNames := append([]string(nil), d.directSubs...)
-	sort.Strings(subNames)
+	slices.Sort(subNames)
 	for _, name := range subNames {
 		emitDir(d.subdirs[name], cfg, ctx, out, skip)
 	}
@@ -234,7 +234,7 @@ func renderIndexPage(d *dirInfo, cfg Config, _ render.Context) string {
 		}
 		fmt.Fprintf(&b, "## %s\n\n", heading)
 		subs := append([]string(nil), d.directSubs...)
-		sort.Strings(subs)
+		slices.Sort(subs)
 		for _, name := range subs {
 			sub := d.subdirs[name]
 			fmt.Fprintf(&b, "- [%s](%s) — %s\n", name, name+"/index.md", subSummary(sub))
@@ -246,7 +246,7 @@ func renderIndexPage(d *dirInfo, cfg Config, _ render.Context) string {
 	if len(d.directLeafs) > 0 {
 		b.WriteString("## Contracts\n\n")
 		leafs := append([]string(nil), d.directLeafs...)
-		sort.Strings(leafs)
+		slices.Sort(leafs)
 		for _, fp := range leafs {
 			base := fp
 			if i := strings.LastIndex(fp, "/"); i >= 0 {

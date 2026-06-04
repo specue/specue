@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"cuelang.org/go/mod/module"
 
@@ -126,12 +127,7 @@ func runInit(dir, modulePath, kind, name string, useLayout bool) (InitReport, *P
 }
 
 func validKind(k string) bool {
-	for _, v := range validKinds {
-		if v == k {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(validKinds, k)
 }
 
 func (r InitReport) renderHuman(w io.Writer) error {

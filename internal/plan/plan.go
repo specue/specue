@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/specue/specue/internal/model"
@@ -16,12 +16,12 @@ import (
 // carry its content. The module set and locations come from the workspace; git
 // work goes through the injected Git.
 type Manager struct {
-	work    source.Workspace
-	dirs    map[model.ModulePath]string // module path → absolute dir
-	git     Git
-	govPath model.ModulePath // the governance module's path
-	govDir  string           // its absolute dir
-	planBase string          // branch plans fork from (work.PlanBase, may be empty)
+	work     source.Workspace
+	dirs     map[model.ModulePath]string // module path → absolute dir
+	git      Git
+	govPath  model.ModulePath // the governance module's path
+	govDir   string           // its absolute dir
+	planBase string           // branch plans fork from (work.PlanBase, may be empty)
 }
 
 // NewManager builds a plan Manager for a resolved workspace. govPath/govDir name
@@ -98,6 +98,7 @@ func (m *Manager) requireClean(roots ...string) error {
 // into the governance module on that branch. id is the plan's short name. It
 // refuses on a dirty governance tree, and commits ONLY the record file (never
 // `add -A`), so no unrelated working-tree change is swept onto the plan branch.
+//
 //specue:req:register-plan#plan-is-a-branch-set
 func (m *Manager) Register(id, title string) error {
 	govRoot, err := m.git.RepoRoot(m.govDir)
@@ -139,6 +140,7 @@ func (m *Manager) Register(id, title string) error {
 // is the plan and you edit/commit normally. A repo without the branch yet is
 // branched lazily here (forked from the plan base). It refuses up front if any
 // affected repo is dirty — a checkout there would overwrite uncommitted work.
+//
 //specue:req:use-plan#checks-out-every-branch
 func (m *Manager) Use(id string) error {
 	roots := m.repos()
@@ -159,6 +161,7 @@ func (m *Manager) Use(id string) error {
 // Base returns every repo to base (the plan base, or the repo's current branch).
 // It is the inverse of Use. It refuses on a dirty tree (the checkout would clobber
 // uncommitted plan-branch edits — commit them first).
+//
 //specue:req:return-to-base#every-module-returns
 func (m *Manager) Base() error {
 	roots := m.repos()
@@ -180,6 +183,7 @@ func (m *Manager) Base() error {
 // Drop abandons a plan: it deletes the plan branch in every repo that has it
 // (force allows dropping unmerged work) and removes the Plan record from
 // governance. A repo currently on the plan branch is returned to base first.
+//
 //specue:req:drop-plan#branches-and-record-removed
 func (m *Manager) Drop(id string, force bool) error {
 	for _, root := range m.repos() {
@@ -293,6 +297,7 @@ func (m *Manager) planRepos(id string) ([]string, error) {
 // flipAccepted rewrites the plan's governance record, switching its status from
 // proposed to accepted on the base branch (the record is already merged in by
 // Accept). It edits the file in place in the governance working tree.
+//
 //specue:req:accept-plan#plan-record-closes
 func (m *Manager) flipAccepted(id string) error {
 	path := m.recordFile(id)
@@ -328,7 +333,7 @@ func (m *Manager) repos() []string {
 		seen[root] = true
 		out = append(out, root)
 	}
-	sort.Strings(out)
+	slices.Sort(out)
 	return out
 }
 

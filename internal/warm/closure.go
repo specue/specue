@@ -22,13 +22,13 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/mod/modregistry"
-	"cuelang.org/go/mod/modzip"
 	"cuelang.org/go/mod/module"
+	"cuelang.org/go/mod/modzip"
 
 	"github.com/specue/specue/internal/modules"
 	"github.com/specue/specue/internal/source"
@@ -58,6 +58,7 @@ type ModuleSpec struct {
 //
 // roots are the directories cue should resolve against to materialize extracts
 // (typically the root dir of each non-dep module in the closure).
+//
 //specue:req:warm-schema#cross-module-references-resolve
 func (w *Warmer) EnsureClosureWarm(closure modules.Closure, roots []string, resolve ClosureResolveFunc) (bool, error) {
 	specs, err := buildSpecs(closure)
@@ -157,7 +158,7 @@ func moduleContentKey(dir string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	sort.Strings(paths) // determinism: order-independent hash
+	slices.Sort(paths) // determinism: order-independent hash
 	h := sha256.New()
 	for _, p := range paths {
 		raw, err := os.ReadFile(filepath.Join(dir, p))
@@ -362,4 +363,3 @@ func injectSelfSource(path string) error {
 	raw = append(raw, []byte("source: kind: \"self\"\n")...)
 	return os.WriteFile(path, raw, 0o644)
 }
-

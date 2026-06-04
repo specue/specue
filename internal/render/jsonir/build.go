@@ -2,6 +2,7 @@ package jsonir
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 
 	"github.com/specue/specue/internal/compiler"
@@ -207,9 +208,9 @@ func depsToJSON(ds []model.Dep) []depJSON {
 	out := make([]depJSON, len(ds))
 	for i, d := range ds {
 		out[i] = depJSON{
-			To:      d.To.String(),
-			Role:    string(d.Role),
-			Branch:  d.Branch,
+			To:     d.To.String(),
+			Role:   string(d.Role),
+			Branch: d.Branch,
 		}
 		if d.Carries != (model.NodeRef{}) {
 			out[i].Carries = d.Carries.String()
@@ -263,7 +264,7 @@ func idStrings(ids []model.NodeID) []string {
 	for i, id := range ids {
 		out[i] = id.String()
 	}
-	sort.Strings(out)
+	slices.Sort(out)
 	return out
 }
 

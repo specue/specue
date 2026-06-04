@@ -59,9 +59,6 @@ func (l treeLayout) dir(m model.ModulePath) string {
 	return s
 }
 
-// moduleDir is the legacy free function (kept for any internal caller).
-func moduleDir(m model.ModulePath) string { return flatLayout{}.dir(m) }
-
 // stripModulePrefix removes prefix from s when it matches and returns the
 // remainder without a leading slash, so a strip of "specue.io" against
 // "specue.io/governance@v0" yields "governance@v0" — not "/governance@v0"

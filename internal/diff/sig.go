@@ -2,6 +2,7 @@ package diff
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 
@@ -39,7 +40,7 @@ func atomsSig(atoms []model.Atom) string {
 	for _, a := range atoms {
 		parts = append(parts, string(a.Kind)+":"+string(a.ID)+"="+a.Text)
 	}
-	sort.Strings(parts)
+	slices.Sort(parts)
 	return strings.Join(parts, ",")
 }
 
@@ -91,13 +92,13 @@ func elementSig(e model.Element) string {
 	for _, s := range e.Satisfies {
 		sats = append(sats, s.String())
 	}
-	sort.Strings(sats)
+	slices.Sort(sats)
 	fmt.Fprintf(&b, ";sat=%s", strings.Join(sats, ","))
 	dec := make([]string, 0, len(e.DecidedBy))
 	for _, d := range e.DecidedBy {
 		dec = append(dec, d.String())
 	}
-	sort.Strings(dec)
+	slices.Sort(dec)
 	fmt.Fprintf(&b, ";dec=%s", strings.Join(dec, ","))
 	return b.String()
 }
