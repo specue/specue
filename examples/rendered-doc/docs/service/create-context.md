@@ -2,7 +2,7 @@
 title: Create a new context
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -19,7 +19,7 @@ Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
 ### <a id="name-is-unique"></a>name-is-unique
 
-Creating a context with a name that already exists is refused.
+**Rejects** when a context with that name already exists.
 
 Satisfies: [as-agent-setup#fr-01](../domain/as-agent-setup.md#fr-01)
 
@@ -31,12 +31,11 @@ A new context holds no modules until the caller adds them.
 
 *Implemented* (no test yet).
 
+### <a id="survives-across-invocations"></a>survives-across-invocations
 
-## Postconditions
+The context survives across invocations.
 
-### —
-
-The context survives across invocations on the same machine.
+*Proven.*
 
 
 ## Realizes

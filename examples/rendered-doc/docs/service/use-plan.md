@@ -2,7 +2,7 @@
 title: Switch the working tree into a Plan
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -27,15 +27,14 @@ Decided by: [ADR-07](../governance/ADR-07.md)
 
 ### <a id="refuses-on-dirty-tree"></a>refuses-on-dirty-tree
 
-Switching is refused when any affected module's working tree carries uncommitted changes, so nothing is silently overwritten.
+**Rejects** when any affected module's working tree carries uncommitted changes.
 
 *Proven.*
 
-
-## Postconditions
-
-### —
+### <a id="authoring-lands-on-plan"></a>authoring-lands-on-plan
 
 Subsequent authoring lands on the Plan's branches until the caller returns to base.
+
+*Implemented* (no test yet).
 
 

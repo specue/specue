@@ -15,13 +15,13 @@ Domain: [specue](specue.md)
 
 **Consumer:** a reader who has the spec but not the code that realizes it
 
-to see the same UseCases, their statuses and their code-binding outcomes a holder of the code would see, so that I can review and reason about the system across access boundaries
+to see the same Contracts, their statuses and their code-binding outcomes a holder of the code would see, so that I can review and reason about the system across access boundaries
 
 ## Requirements
 
 ### <a id="fr-01"></a>fr-01
 
-A UseCase's status is determined the same way whether or not the code is reachable.
+A Contract's status is determined the same way whether or not the code is reachable.
 
 *Claimed by [attest-bindings#status-identical-to-scan](../service/attest-bindings.md#status-identical-to-scan)* — not proven
 
@@ -29,7 +29,7 @@ A UseCase's status is determined the same way whether or not the code is reachab
 
 Source content of the code is never required to render the spec.
 
-*Claimed by [attest-bindings#no-source-in-attestation](../service/attest-bindings.md#no-source-in-attestation)* — not proven
+*Claimed by [attest-bindings#attestation-carries-outcomes-only](../service/attest-bindings.md#attestation-carries-outcomes-only)* — not proven
 
 ### <a id="fr-03"></a>fr-03
 

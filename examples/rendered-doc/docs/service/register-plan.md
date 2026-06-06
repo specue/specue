@@ -2,7 +2,7 @@
 title: Open a new Plan as a Plan record plus branches
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -29,7 +29,7 @@ Decided by: [ADR-07](../governance/ADR-07.md)
 
 ### <a id="governance-required"></a>governance-required
 
-Without a governance module in the current context, registering a Plan is refused with the next step to take.
+**Rejects** when there is no governance module in the current context.
 
 Satisfies: [as-planner#fr-06](../domain/as-planner.md#fr-06)
 
@@ -39,22 +39,21 @@ Decided by: [ADR-07](../governance/ADR-07.md)
 
 ### <a id="no-overwrite"></a>no-overwrite
 
-Registering a Plan whose name is already taken is refused; the existing Plan is left untouched.
+**Rejects** when a Plan with that name is already taken.
 
 *Implemented* (no test yet).
 
 ### <a id="from-base-only"></a>from-base-only
 
-Registering a Plan from any branch other than the landscape's base branch is refused with the next step to take, so a Plan always forks from a known base and never from another Plan.
+**Rejects** when registering from any branch other than the landscape's base branch (so a Plan always forks from a known base, never another Plan).
 
 *Proven.*
 
+### <a id="record-names-branches"></a>record-names-branches
 
-## Postconditions
+*(returns)* The Plan record names the branches it points at and the modules they live in.
 
-### —
-
-The Plan record names the branches it points at and the modules they live in.
+*Implemented* (no test yet).
 
 
 ## Realizes

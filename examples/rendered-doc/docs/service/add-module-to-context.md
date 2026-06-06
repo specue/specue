@@ -2,13 +2,13 @@
 title: Add a module to a context by its directory
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - implemented
 ---
 
 # Add a module to a context by its directory
 
-!!! info "Implemented — 0/3 proven"
+!!! info "Implemented — 0/2 proven"
     Some invariants still lack a test.
 
 Service: [specue](specue.md)  •  binding: required  •  interaction: sync
@@ -27,24 +27,23 @@ Satisfies: [as-agent-setup#fr-02](../domain/as-agent-setup.md#fr-02), [as-federa
 
 ### <a id="must-be-a-module"></a>must-be-a-module
 
-Adding a directory that does not hold a module manifest is refused with the next step to take.
+**Rejects** when the directory does not hold a module manifest.
 
 *Implemented* (no test yet).
 
 ### <a id="git-repository-required"></a>git-repository-required
 
-Adding a module that does not live in a git repository is refused with the next step to take.
+**Rejects** when the module does not live in a git repository.
 
 Decided by: [ADR-03](../governance/ADR-03.md)
 
 *Implemented* (no test yet).
 
-
-## Postconditions
-
-### —
+### <a id="reachable-until-removed"></a>reachable-until-removed
 
 The module is reachable from the context until it is removed.
+
+*Implemented* (no test yet).
 
 
 ## Realizes

@@ -2,7 +2,7 @@
 title: Seed the editor's cue cache with the schema and the landscape's modules
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -19,7 +19,7 @@ Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
 ### <a id="registry-is-ephemeral"></a>registry-is-ephemeral
 
-The registry that hosts the publish is started in this process and torn down once the cache has been populated; no daemon survives the call.
+The registry that hosts the publish is started in this process and torn down once the cache has been populated.
 
 Decided by: [ADR-04](../governance/ADR-04.md)
 
@@ -35,7 +35,9 @@ Decided by: [ADR-06](../governance/ADR-06.md)
 
 ### <a id="no-op-when-current"></a>no-op-when-current
 
-If the cache already holds the current schema and modules, the call is a no-op.
+the call is a no-op.
+
+*When* the cache already holds the current schema and modules
 
 *Proven.*
 
@@ -55,12 +57,11 @@ Satisfies: [as-author-dx#fr-02](../domain/as-author-dx.md#fr-02)
 
 *Implemented* (no test yet).
 
+### <a id="cache-self-sufficient-on-disk"></a>cache-self-sufficient-on-disk
 
-## Postconditions
+The cache state on disk is sufficient for the editor to resolve with nothing running in the background.
 
-### —
-
-The cache state on disk is sufficient for the editor to resolve without anything running in the background.
+*Implemented* (no test yet).
 
 
 ## Realizes

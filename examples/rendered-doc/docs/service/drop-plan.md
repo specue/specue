@@ -2,7 +2,7 @@
 title: Abandon a Plan without accepting it
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -25,17 +25,10 @@ Decided by: [ADR-07](../governance/ADR-07.md)
 
 *Proven.*
 
-### <a id="base-stays-untouched"></a>base-stays-untouched
-
-The base branch of every module is left exactly as it was; nothing from the Plan is folded in.
-
-*Implemented* (no test yet).
-
-
-## Postconditions
-
-### —
+### <a id="dropped-until-reregistered"></a>dropped-until-reregistered
 
 Once dropped the Plan cannot be used again under the same name until it is registered again.
+
+*Implemented* (no test yet).
 
 

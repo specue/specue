@@ -6,7 +6,7 @@ title: governance
 
 # governance
 
-ADR: 12 · Plan: 17
+ADR: 14 · Plan: 17
 
 ## Contracts
 
@@ -22,10 +22,13 @@ ADR: 12 · Plan: 17
 - [ADR-10](ADR-10.md) — The intent node is a Need (with a Domain), not a UserStory (with a Product)
 - [ADR-11](ADR-11.md) — Code module scans from code_root; repo modules live under spec.d/
 - [ADR-12](ADR-12.md) — Render serves two formats — markdown (with knobs) and JSON IR — not a family of presets
+- [ADR-13](ADR-13.md) — The contract node is named Contract, not UseCase (nor Capability)
+- [ADR-14](ADR-14.md) — A Contract is a set of invariants; pre/post/variation collapse into one typed kind
 - [plan-accept-from-anywhere](plan-accept-from-anywhere.md) — accept-from-anywhere
 - [plan-code-root-field](plan-code-root-field.md) — code-root-field
 - [plan-index-strip-prefix](plan-index-strip-prefix.md) — index-strip-prefix
 - [plan-link-text-slug](plan-link-text-slug.md) — link-text-slug
+- [plan-m-elem](plan-m-elem.md) — Collapse contract elements to one invariant kind
 - [plan-nav-collapse](plan-nav-collapse.md) — nav-collapse
 - [plan-quick-wins](plan-quick-wins.md) — quick-wins
 - [plan-readme-progressive](plan-readme-progressive.md) — readme-progressive
@@ -38,5 +41,4 @@ ADR: 12 · Plan: 17
 - [plan-render-status-admonitions](plan-render-status-admonitions.md) — render-status-admonitions
 - [plan-render-tags-page](plan-render-tags-page.md) — render-tags-page
 - [plan-userstory-to-need](plan-userstory-to-need.md) — userstory-to-need
-- [plan-v1tov2-tool](plan-v1tov2-tool.md) — v1tov2-tool
 

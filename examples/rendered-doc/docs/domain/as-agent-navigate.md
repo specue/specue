@@ -21,7 +21,7 @@ to find my way around it on demand, so that I can answer questions about the sys
 
 ### <a id="fr-01"></a>fr-01
 
-A UseCase, Need, Port, ADR or code binding can each be listed.
+A Contract, Need, Port, ADR or code binding can each be listed.
 
 *Covered by [list-resources#kinds-listed-without-prior-knowledge](../service/list-resources.md#kinds-listed-without-prior-knowledge)* (+1 more)
 

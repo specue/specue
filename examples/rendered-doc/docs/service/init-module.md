@@ -2,7 +2,7 @@
 title: Start a new module of a known kind
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -27,7 +27,7 @@ Satisfies: [as-agent-start#fr-01](../domain/as-agent-start.md#fr-01)
 
 ### <a id="no-overwrite"></a>no-overwrite
 
-Scaffolding over an existing module is refused; the existing one is left untouched.
+**Rejects** when a module already exists at the target directory.
 
 Satisfies: [as-agent-start#fr-02](../domain/as-agent-start.md#fr-02)
 
@@ -35,18 +35,17 @@ Satisfies: [as-agent-start#fr-02](../domain/as-agent-start.md#fr-02)
 
 ### <a id="git-repository-required"></a>git-repository-required
 
-Scaffolding outside a git repository is refused with the next step to take.
+**Rejects** when the target is outside a git repository.
 
 Decided by: [ADR-03](../governance/ADR-03.md)
 
 *Proven.*
 
+### <a id="scaffolds-manifest-only"></a>scaffolds-manifest-only
 
-## Postconditions
+*(returns)* The new module is left as a directory with the manifest the kind requires and nothing else.
 
-### —
-
-The new module is left as a directory with the manifest the kind requires and nothing else.
+*Implemented* (no test yet).
 
 
 ## Realizes

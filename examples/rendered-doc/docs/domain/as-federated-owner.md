@@ -15,13 +15,13 @@ Domain: [specue](specue.md)
 
 **Consumer:** a team owning a slice of the spec landscape
 
-to author my UseCases and Ports in my own repository, so that other teams can depend on what I publish without my changes blocking theirs
+to author my Contracts and Ports in my own repository, so that other teams can depend on what I publish without my changes blocking theirs
 
 ## Requirements
 
 ### <a id="fr-01"></a>fr-01
 
-A UseCase or Port lives in a repository its owner controls.
+A Contract or Port lives in a repository its owner controls.
 
 *Covered by [build-graph#cue-stitches-the-modules](../service/build-graph.md#cue-stitches-the-modules)*
 

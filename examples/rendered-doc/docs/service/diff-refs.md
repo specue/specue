@@ -2,7 +2,7 @@
 title: Report the typed delta between the spec at two versioned points
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -19,7 +19,7 @@ Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
 ### <a id="typed-over-the-spec-graph"></a>typed-over-the-spec-graph
 
-The delta is over UseCases, UserStories, Ports and their elements, not over file lines.
+The delta is over Contracts, Needs, Ports and their elements.
 
 Satisfies: [as-agent-review#fr-01](../domain/as-agent-review.md#fr-01)
 
@@ -27,7 +27,7 @@ Satisfies: [as-agent-review#fr-01](../domain/as-agent-review.md#fr-01)
 
 ### <a id="every-change-named"></a>every-change-named
 
-Each change is labelled added, removed, modified or rewired.
+*(returns)* Each change is labelled added, removed, modified or rewired.
 
 Satisfies: [as-agent-review#fr-02](../domain/as-agent-review.md#fr-02)
 
@@ -35,16 +35,15 @@ Satisfies: [as-agent-review#fr-02](../domain/as-agent-review.md#fr-02)
 
 ### <a id="two-snapshots"></a>two-snapshots
 
-The diff is computed between two snapshots produced from the refs the caller named, without altering the working tree.
+The diff is computed between two snapshots produced from the refs the caller named.
 
 *Implemented* (no test yet).
 
+### <a id="returns-delta-with-refs"></a>returns-delta-with-refs
 
-## Postconditions
+*(returns)* The delta is returned together with the two refs it was computed against.
 
-### —
-
-The delta is returned together with the two refs it was computed against.
+*Implemented* (no test yet).
 
 
 ## Realizes

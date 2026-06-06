@@ -2,7 +2,7 @@
 title: Show a Plan against the current spec without switching the working tree
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -19,7 +19,7 @@ Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
 ### <a id="viewed-without-checkout"></a>viewed-without-checkout
 
-The Plan is projected onto the current spec by reading its branches through git, without touching the working tree.
+The Plan is projected onto the current spec by reading its branches through git.
 
 Satisfies: [as-planner#fr-02](../domain/as-planner.md#fr-02)
 
@@ -29,7 +29,7 @@ Decided by: [ADR-07](../governance/ADR-07.md)
 
 ### <a id="base-side-read-through-git"></a>base-side-read-through-git
 
-The base side of the overlay is read through git from the base branch, not from the working tree; the overlay is the same regardless of which branch is currently checked out.
+The base side of the overlay is read through git from the base branch; the overlay is the same regardless of which branch is currently checked out.
 
 Decided by: [ADR-07](../governance/ADR-07.md)
 
@@ -41,12 +41,11 @@ The overlay result is a spec graph with the same shape as the live one, so any r
 
 *Implemented* (no test yet).
 
+### <a id="returns-overlay-with-refs"></a>returns-overlay-with-refs
 
-## Postconditions
+*(returns)* The overlay is returned with the refs and the modules it composed.
 
-### —
-
-The overlay is returned with the refs and the modules it composed.
+*Implemented* (no test yet).
 
 
 ## Realizes

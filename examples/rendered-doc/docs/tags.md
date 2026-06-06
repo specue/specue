@@ -8,7 +8,7 @@ title: Tags
 
 Every node carries tags for its type and status. Click a heading or use the table of contents.
 
-## usecase { #tag:usecase }
+## contract { #tag:contract }
 
 - [`service:accept-plan`](service/accept-plan.md) — Apply a Plan to the current spec and close it · *proven*
 - [`service:add-module-to-context`](service/add-module-to-context.md) — Add a module to a context by its directory · *implemented*
@@ -39,7 +39,7 @@ Every node carries tags for its type and status. Click a heading or use the tabl
 ## need { #tag:need }
 
 - [`domain:as-agent-author`](domain/as-agent-author.md) — Know whether what I authored is correct · *covered*
-- [`domain:as-agent-create`](domain/as-agent-create.md) — Add a UseCase, Need, ADR or Port to a module · *partial*
+- [`domain:as-agent-create`](domain/as-agent-create.md) — Add a Contract, Need, ADR or Port to a module · *partial*
 - [`domain:as-agent-navigate`](domain/as-agent-navigate.md) — Find my way around an unfamiliar spec · *covered*
 - [`domain:as-agent-relate`](domain/as-agent-relate.md) — Wire one thing to another · *partial*
 - [`domain:as-agent-review`](domain/as-agent-review.md) — See what I changed between two points · *covered*
@@ -69,6 +69,8 @@ Every node carries tags for its type and status. Click a heading or use the tabl
 - [`governance:ADR-10`](governance/ADR-10.md) — The intent node is a Need (with a Domain), not a UserStory (with a Product) · *accepted*
 - [`governance:ADR-11`](governance/ADR-11.md) — Code module scans from code_root; repo modules live under spec.d/ · *accepted*
 - [`governance:ADR-12`](governance/ADR-12.md) — Render serves two formats — markdown (with knobs) and JSON IR — not a family of presets · *accepted*
+- [`governance:ADR-13`](governance/ADR-13.md) — The contract node is named Contract, not UseCase (nor Capability) · *accepted*
+- [`governance:ADR-14`](governance/ADR-14.md) — A Contract is a set of invariants; pre/post/variation collapse into one typed kind · *proposed*
 
 ## plan { #tag:plan }
 
@@ -76,6 +78,7 @@ Every node carries tags for its type and status. Click a heading or use the tabl
 - [`governance:plan-code-root-field`](governance/plan-code-root-field.md) — code-root-field · *accepted*
 - [`governance:plan-index-strip-prefix`](governance/plan-index-strip-prefix.md) — index-strip-prefix · *accepted*
 - [`governance:plan-link-text-slug`](governance/plan-link-text-slug.md) — link-text-slug · *accepted*
+- [`governance:plan-m-elem`](governance/plan-m-elem.md) — Collapse contract elements to one invariant kind · *proposed*
 - [`governance:plan-nav-collapse`](governance/plan-nav-collapse.md) — nav-collapse · *accepted*
 - [`governance:plan-quick-wins`](governance/plan-quick-wins.md) — quick-wins · *accepted*
 - [`governance:plan-readme-progressive`](governance/plan-readme-progressive.md) — readme-progressive · *accepted*
@@ -88,7 +91,6 @@ Every node carries tags for its type and status. Click a heading or use the tabl
 - [`governance:plan-render-status-admonitions`](governance/plan-render-status-admonitions.md) — render-status-admonitions · *accepted*
 - [`governance:plan-render-tags-page`](governance/plan-render-tags-page.md) — render-tags-page · *accepted*
 - [`governance:plan-userstory-to-need`](governance/plan-userstory-to-need.md) — userstory-to-need · *accepted*
-- [`governance:plan-v1tov2-tool`](governance/plan-v1tov2-tool.md) — v1tov2-tool · *accepted*
 
 ## container { #tag:container }
 
@@ -137,7 +139,7 @@ Every node carries tags for its type and status. Click a heading or use the tabl
 
 ## partial { #tag:partial }
 
-- [`domain:as-agent-create`](domain/as-agent-create.md) — Add a UseCase, Need, ADR or Port to a module · *partial*
+- [`domain:as-agent-create`](domain/as-agent-create.md) — Add a Contract, Need, ADR or Port to a module · *partial*
 - [`domain:as-agent-relate`](domain/as-agent-relate.md) — Wire one thing to another · *partial*
 - [`domain:as-agent-setup`](domain/as-agent-setup.md) — Choose which spec context I am working against · *partial*
 - [`domain:as-agent-start`](domain/as-agent-start.md) — Bring a new module into existence · *partial*
@@ -160,6 +162,7 @@ Every node carries tags for its type and status. Click a heading or use the tabl
 - [`governance:ADR-10`](governance/ADR-10.md) — The intent node is a Need (with a Domain), not a UserStory (with a Product) · *accepted*
 - [`governance:ADR-11`](governance/ADR-11.md) — Code module scans from code_root; repo modules live under spec.d/ · *accepted*
 - [`governance:ADR-12`](governance/ADR-12.md) — Render serves two formats — markdown (with knobs) and JSON IR — not a family of presets · *accepted*
+- [`governance:ADR-13`](governance/ADR-13.md) — The contract node is named Contract, not UseCase (nor Capability) · *accepted*
 - [`governance:plan-accept-from-anywhere`](governance/plan-accept-from-anywhere.md) — accept-from-anywhere · *accepted*
 - [`governance:plan-code-root-field`](governance/plan-code-root-field.md) — code-root-field · *accepted*
 - [`governance:plan-index-strip-prefix`](governance/plan-index-strip-prefix.md) — index-strip-prefix · *accepted*
@@ -175,9 +178,10 @@ Every node carries tags for its type and status. Click a heading or use the tabl
 - [`governance:plan-render-status-admonitions`](governance/plan-render-status-admonitions.md) — render-status-admonitions · *accepted*
 - [`governance:plan-render-tags-page`](governance/plan-render-tags-page.md) — render-tags-page · *accepted*
 - [`governance:plan-userstory-to-need`](governance/plan-userstory-to-need.md) — userstory-to-need · *accepted*
-- [`governance:plan-v1tov2-tool`](governance/plan-v1tov2-tool.md) — v1tov2-tool · *accepted*
 
 ## proposed { #tag:proposed }
 
+- [`governance:ADR-14`](governance/ADR-14.md) — A Contract is a set of invariants; pre/post/variation collapse into one typed kind · *proposed*
+- [`governance:plan-m-elem`](governance/plan-m-elem.md) — Collapse contract elements to one invariant kind · *proposed*
 - [`governance:plan-render-node-as-folder-index`](governance/plan-render-node-as-folder-index.md) — render-node-as-folder-index · *proposed*
 
