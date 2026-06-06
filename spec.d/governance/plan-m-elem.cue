@@ -7,6 +7,6 @@ planMElem: s.#Plan & {
 	slug:       "plan-m-elem"
 	title:      "Collapse contract elements to one invariant kind"
 	confidence: "CONFIRMED"
-	status:     "proposed"
+	status:     "accepted"
 	branch:     "plan/m-elem"
 }
