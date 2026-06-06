@@ -1,0 +1,73 @@
+# mise — pinned toolchain + dev tasks for Specue.
+# https://mise.jdx.dev   Run `mise install` to get the tools, `mise tasks` to list.
+
+[tools]
+go  = "1.26.0"   # build/test; matches go.mod
+cue = "0.16.1"   # the cue CLI the warm path shells out to (internal/warm); CUE
+                 # language version pinned in the modules is v0.16.0 — compatible
+uv  = "latest"   # runs mkdocs + mkdocs-material for the examples docs (Python)
+# git is intentionally not pinned — the system git is used (SPECUE_GIT).
+
+[env]
+# The repo sits next to a go.work further up that does not include it; every Go
+# command must opt out of the workspace. See CLAUDE.md.
+GOWORK = "off"
+
+[tasks.build]
+description = "Build the specue binary"
+run = "go build -o ./specue ./cmd/specue/"
+
+[tasks.test]
+description = "Run the full test suite (hermetic — no cue-cache warm)"
+env = { SPECUE_NO_AUTOWARM = "1" }
+run = "go test ./..."
+
+[tasks.validate]
+description = "Validate the self-spec (the graph the tool produces of itself)"
+depends = ["build"]
+env = { SPECUE_NO_AUTOWARM = "1" }
+run = """
+set -euo pipefail
+export SPECUE_GIT="$(command -v git)"
+export SPECUE_HOME="$(mktemp -d)"
+./specue context create self
+./specue context use self
+for m in governance service domain code; do
+  ./specue context module add ./spec.d/$m
+done
+./specue validate
+"""
+
+[tasks.render]
+description = "Render the self-spec into examples/rendered-doc/docs (mkdocs flavour)"
+depends = ["build"]
+env = { SPECUE_NO_AUTOWARM = "1" }
+run = """
+set -euo pipefail
+export SPECUE_GIT="$(command -v git)"
+export SPECUE_HOME="$(mktemp -d)"
+./specue context create r >/dev/null
+./specue context use r >/dev/null
+for m in governance service domain code; do
+  ./specue context module add ./spec.d/$m >/dev/null
+done
+# Render into a temp dir FIRST — the code module scans `git ls-files` from the
+# repo root (code_root: ../..), so deleting tracked files under examples/ before
+# the graph is built would make the scan stat a removed-but-tracked file. Build
+# clean, then swap.
+TMP="$(mktemp -d)/docs"
+./specue render "$TMP" \
+  --layout tree --strip-prefix specue.io/ --frontmatter mkdocs \
+  --with-index-pages --with-tags-page --with-status-admonitions \
+  --nav-snippet nav.yml
+DOCS=examples/rendered-doc/docs
+rm -rf "$DOCS"/domain "$DOCS"/service "$DOCS"/governance "$DOCS"/index.md "$DOCS"/tags.md "$DOCS"/nav.yml
+cp -R "$TMP"/. "$DOCS"/
+echo "rendered into $DOCS"
+"""
+
+[tasks.docs]
+description = "Serve the rendered docs locally (http://127.0.0.1:8000)"
+depends = ["render"]
+dir = "examples/rendered-doc"
+run = "uvx --with mkdocs-material mkdocs serve"

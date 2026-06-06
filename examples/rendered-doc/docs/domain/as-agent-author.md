@@ -27,7 +27,7 @@ The spec as a whole is reported as correct or broken in a single check.
 
 ### <a id="fr-02"></a>fr-02
 
-For a code module, every UseCase it may realize and its current binding state are listed.
+For a code module, every Contract it may realize and its current binding state are listed.
 
 *Covered by [report-bindings#allowed-from-require-closure](../service/report-bindings.md#allowed-from-require-closure)* (+1 more)
 
@@ -35,5 +35,5 @@ For a code module, every UseCase it may realize and its current binding state ar
 
 Every failure carries the next step the caller takes to resolve it.
 
-*Covered by [validate-graph](../service/validate-graph.md)*
+*Covered by [validate-graph#failure-carries-next-step](../service/validate-graph.md#failure-carries-next-step)*
 

@@ -59,16 +59,17 @@ func useCaseAdmonition(n *compiler.ResolvedNode) string {
 	return ""
 }
 
-// countUCInvariantsProven counts how many of the UC's invariants are proven
-// (req + cover both present, honouring whole-contract bindings). Variations
-// and pre/post are not counted — the body line speaks only of invariants.
+// countUCInvariantsProven counts how many of the UC's unconditional invariants
+// are proven (req + cover both present, honouring whole-contract bindings).
+// Guarded invariants (conditional branches) are not counted — the body line
+// speaks only of the always-holds guarantees.
 func countUCInvariantsProven(n *compiler.ResolvedNode) (total, proven int) {
 	uc := n.Node().Body.Contract
 	if uc == nil {
 		return 0, 0
 	}
 	for _, el := range uc.Elements {
-		if el.Kind != model.KindInvariant {
+		if el.When != "" {
 			continue
 		}
 		total++
@@ -154,13 +155,13 @@ func admonition(kind, title, body string) string {
 }
 
 // elementInlineStatus is the one-line marker that follows a Contract element's
-// body when the flag is on. Unnamed pre/post are skipped (not individually
+// body when the flag is on. Unnamed elements are skipped (not individually
 // bindable). The labels never reference code locations — only the shape of
 // the bindings.
 //
 //specue:req:render-doc#status-admonitions-on-request
 func elementInlineStatus(n *compiler.ResolvedNode, e model.Element) string {
-	if e.ID == "" && (e.Kind == model.KindPre || e.Kind == model.KindPost) {
+	if e.ID == "" {
 		return ""
 	}
 	hasReq, hasCov := elementBindings(n, e)

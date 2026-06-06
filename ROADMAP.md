@@ -45,7 +45,12 @@ argument is weaker than it first looks — pre/post are being removed by M-elem
 (invariants are the substance); ADR-13's body should rest on "Contract = a set of
 provable invariants", not on a full pre/post/invariant triad.*
 
-### M4. Schema consistency — remove rudimentary / confusing fields
+### M4. Schema consistency — remove rudimentary / confusing fields — PARTIAL (legacy_id DONE)
+*`legacy_id` removed end-to-end on `plan/m-elem` (schema + model + source +
+jsonir + the `migrate-legacy` diagnostic). `visibility` is KEPT: it is
+load-bearing (the bindings gate filters Contracts to Public, stamped from the
+`internal/` path); dropping it is a separate, larger change — not folded in.*
+
 Stray fields make the model **ambiguous to read** — an author hits a field and
 wonders if it is theirs to set. While the model is still breaking, removing
 confusion is cheaper now than after adoption. *Fits the manifesto's drive for an
@@ -70,11 +75,92 @@ honest, minimal vocabulary.* Concrete targets:
   visibility if it must be exposed at all (computed, per 5.2), or drop the field
   outright. Either way it should stop being a standalone node attribute.
 
+- **`binding: required | optional | abstract`** on `#Contract` — every self-spec
+  contract uses the default `required`; **none** authors `optional` or `abstract`.
+  Worse, the tool only branches on `abstract` (one site: `fixpoint.go` — an
+  abstract contract never blocks and is never a gap) and **never branches on
+  `optional`** at all: an `optional` contract is treated identically to a
+  `required` one. So `optional` is a dead value (violates the node.go rule that a
+  closed enum exists only when the tool reasons about it), and `abstract` is wired
+  but exercised by no self-spec instance and no test. Decision: either give
+  `optional` real meaning (relax the "no code = gap" pressure — nothing implements
+  this today) or drop it, leaving `required | abstract`; and add an `abstract`
+  self-spec instance + test if the value is kept. Found dogfooding M-elem.
+
+- **Typed refs accept any node (`service`/`domain`/`schema`)** — `#Contract.service`,
+  `#Need.domain` and `#Port.schema` are all typed `#Node` (the any-node union), so
+  CUE accepts `service: someADR` or `domain: aContract`, and the compiler only
+  checks the target *resolves*, not its type (`dangling.go` adds `uc.Service`
+  without a kind check). This is an ungated edge where the model elsewhere gates
+  (`satisfies`→atom, binding→Contract). **Fix: tighten the CUE types** —
+  `service!: #Container`, `domain!: #Domain`, `schema?` to the IDL node — so CUE
+  itself rejects the mistake. *Verified de-risked: tightening `service!: #Container`
+  keeps the self-spec validating (70 nodes, 0 advisories) and cross-module
+  Container refs resolve — it is a one-line type change per field, no compiler
+  work needed.* Found dogfooding M-elem.
+
+- **`#dep.to` accepts any node, regardless of role** — a plain dep (no `role`)
+  should target a `#Contract`; an infra dep (`role` set) should target a
+  `#Port | #Container`. Today `to!: #Node | #invariant` accepts either for both,
+  and the compiler silently ignores a mis-typed infra target (`topology.go` skips
+  a non-Port). **This IS expressible in CUE** (the type depends on a sibling
+  field, exactly the `#Port if kind ==` idiom) — `role` is optional with no
+  default, but `if role == _|_ {...}` / `if role != _|_ {...}` gates it:
+  ```
+  #dep: {
+      role?: #role
+      if role == _|_ { to!: #Contract | #invariant }
+      if role != _|_ { to!: #Port | #Container }
+      carries?: #Node | #invariant
+  }
+  ```
+  *Verified de-risked: this shape keeps the self-spec validating (70 nodes, 0
+  advisories).* Found dogfooding M-elem.
+
+- **`carries` is wired but unused — and points at the edge being inverted.** It
+  is read only by `dangling.go` (resolve-check) and echoed to JSON; `topology.go`
+  (its supposed L3→L2 consumer) never reads it — L2 is built from `to`+`role`
+  alone. Zero instances in the self-spec. But the deeper issue is *why* it feels
+  bolted-on → see **M-edge-invert** below. (The G2 widening of `carries` is
+  harmless but moot if the field dissolves.)
+
+### M-edge-invert. An infra dep targets a Contract; the transport is `over` (DESIGN)
+The current infra edge is upside-down. Today `depends_on` puts the **mechanism**
+in `to` (a Port) with `role`, and bolts the **real target** (the Contract being
+relied on) onto a side field `carries`. That is why `carries` reads awkwardly: it
+is the actual dependency, demoted to an afterthought, while `to` holds an
+implementation detail.
+
+Invert it. `to` always names **what** is depended on — a Contract (the logical
+dependency, primary). *How* that dependency is realized — the physical transport —
+moves to an optional `over`:
+```
+depends_on: [{
+    to: b.someContract                    // WHAT — a logical Contract dependency
+    over?: { port: somePort, role: produce }  // HOW — the physical realization (optional)
+}]
+```
+- a plain `depends_on` (no `over`) = a pure Contract→Contract dependency.
+- with `over` = the same dependency, realized through a Port with a role.
+- **`carries` dissolves** — it *was* the real `to`; inverting makes it the `to`.
+- L2 topology derives from `over.port` (as it derives from `to` today), but the
+  semantic edge now points at a model node, never an infra node — consistent with
+  the §service/domain/schema gate (every typed ref targets a model type).
+
+Bigger than the M4 hygiene items: touches schema (`#dep`), loader, `topology.go`
+(read `over.port` not `to`), diff sig, jsonir. Supersedes M-edge's "carries as a
+list" framing (there is no carries to listify). *Found dogfooding M-elem — the
+question "why carries?" has no good answer because the edge is inverted.*
+
 Audit the remaining optional fields in the same pass for the same "could an
 author be confused?" test. Best done with M3's schema pass (same breaking
 window).
 
-### M-elem. Collapse contract elements to one shape: invariant{when?, kind?}
+### M-elem. Collapse contract elements to one shape: invariant{when?, kind?} — DONE (ADR-14)
+*Landed on `plan/m-elem` together with M4 and G2; ADR-14 records it. The
+self-spec re-typing is documented per-contract in
+[M-ELEM-MIGRATION.md](M-ELEM-MIGRATION.md).*
+
 The central model decision of this design pass. Today a Contract carries four
 element slots — `invariants`, `variations`, `preconditions`, `postconditions`.
 They collapse to **one**: the invariant, with an optional `when` guard and an
@@ -209,13 +295,13 @@ manifesto §8 into real structure. None is urgent, all fit.
   observers and carries its rationale. *The single highest-leverage federation
   item — it turns "where the system ends" from a private lens into a shared,
   diffable artifact.*
-- **M-edge. Two-sided cross-module edges + `carries` as a list.** A `satisfies`
-  edge is a one-sided claim (manifesto 8.3); give the target visibility and a
-  way to assent/dissent. Make `carries` a list (an invariant can rest on several
-  hands — app-code *and* infra) and propagate status along it, so a broken
-  upstream contract reddens its dependents and responsibility stops being hidden
-  in one invariant. *Fits the "responsibility is not atomic" finding; needs
-  M-ctx's boundary work first.*
+- **M-edge. Two-sided cross-module edges.** A `satisfies` edge is a one-sided
+  claim (manifesto 8.3); give the target visibility and a way to assent/dissent,
+  and propagate status along dependency edges so a broken upstream contract
+  reddens its dependents and responsibility stops being hidden in one invariant.
+  *Fits the "responsibility is not atomic" finding; needs M-ctx's boundary work
+  first.* (The earlier "carries as a list" framing is dropped — see
+  **M-edge-invert**, which removes `carries` rather than listifying it.)
 
 ## Later (model — parked)
 
@@ -259,6 +345,12 @@ edit. The WHAT here is **too vague to check** — the mirror of rule 2.2. Touche
 rate-limit, quota, pool size, retention, timeout. *Open design: a typed
 quantity/bound/unit shape on an invariant, without dragging in runtime values
 (those stay in monitoring, 7.4).*
+
+### G2. Element-grained `depends_on` / `carries` (cheapest — one-line fix) — DONE
+*Landed on `plan/m-elem`. `#dep.to`/`#dep.carries` now accept `#Node | #invariant`;
+`mapRef` recovers the owning node when a dep targets an element, so existing
+node-target deps resolve unchanged. Full element-grained resolution (carrying the
+target element id through the model) is a follow-up; the type now permits it.*
 
 ### G2. Element-grained `depends_on` / `carries` (cheapest — one-line fix)
 `satisfies` can point at an atom (`frs."fr-01"`); `depends_on.to` and `carries`

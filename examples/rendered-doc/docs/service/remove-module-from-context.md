@@ -2,7 +2,7 @@
 title: Remove a module from a context
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - implemented
 ---
 
@@ -25,18 +25,11 @@ Satisfies: [as-agent-setup#fr-02](../domain/as-agent-setup.md#fr-02)
 
 *Implemented* (no test yet).
 
-### <a id="module-untouched"></a>module-untouched
-
-The directory the module lives in is left as it was.
-
-*Implemented* (no test yet).
-
-
-## Postconditions
-
-### —
+### <a id="unreachable-until-readded"></a>unreachable-until-readded
 
 The module is no longer reachable from the context until it is added again.
+
+*Implemented* (no test yet).
 
 
 ## Realizes

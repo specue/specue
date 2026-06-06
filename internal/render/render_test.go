@@ -36,11 +36,11 @@ func fixtureGraph(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]s
 		Body: &model.Body{Contract: &model.ContractBody{
 			Service: svcRef, Binding: model.BindingRequired, Trigger: "caller asks",
 			Elements: []model.Element{
-				{Kind: model.KindInvariant, ID: "atomic", Text: "Each call is atomic.",
+				{ID: "atomic", Text: "Each call is atomic.",
 					Satisfies: []model.AtomRef{{Need: storyRef, Atom: "fr-01"}},
 					DecidedBy: []model.NodeRef{adrRef}},
-				{Kind: model.KindInvariant, ID: "single-verdict", Text: "A repeat is a no-op."},
-				{Kind: model.KindPost, Text: "The thing is done."},
+				{ID: "single-verdict", Text: "A repeat is a no-op."},
+				{Text: "The thing is done."},
 			},
 		}},
 	}}

@@ -239,8 +239,6 @@ func ftsBody(node model.Node) string {
 			if e.When != "" {
 				sb.WriteByte(' ')
 				sb.WriteString(e.When)
-				sb.WriteByte(' ')
-				sb.WriteString(e.Then)
 			}
 		}
 	}

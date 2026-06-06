@@ -1,12 +1,12 @@
 ---
-title: Add a UseCase, Need, ADR or Port to a module
+title: Add a Contract, Need, ADR or Port to a module
 icon: material/clipboard-text-outline
 tags:
     - need
     - partial
 ---
 
-# Add a UseCase, Need, ADR or Port to a module
+# Add a Contract, Need, ADR or Port to a module
 
 !!! warning "Partial — 2/3 covered"
     Some requirements have no proven contract.
@@ -15,7 +15,7 @@ Domain: [specue](specue.md)
 
 **Consumer:** an agent authoring inside a module
 
-to add a UseCase, Need, ADR or Port and arrange it where it belongs, so that the module carries the contracts and needs it owns, in a structure I can navigate
+to add a Contract, Need, ADR or Port and arrange it where it belongs, so that the module carries the contracts and needs it owns, in a structure I can navigate
 
 ## Requirements
 

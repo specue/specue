@@ -2,18 +2,18 @@
 title: Read code annotations as binding facts
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - implemented
 ---
 
 # Read code annotations as binding facts
 
-!!! info "Implemented — 0/4 proven"
+!!! info "Implemented — 0/5 proven"
     Some invariants still lack a test.
 
 Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
-**Trigger.** any verb that needs to know which code realizes which UseCases asks for the scan
+**Trigger.** any verb that needs to know which code realizes which Contracts asks for the scan
 
 ## Invariants
 
@@ -27,7 +27,7 @@ Decided by: [ADR-05](../governance/ADR-05.md)
 
 ### <a id="annotation-is-the-only-binding-channel"></a>annotation-is-the-only-binding-channel
 
-Code is bound to a UseCase only by an annotation in its source; nothing else (a file name, a path convention) counts as a binding.
+Code is bound to a Contract only by an annotation in its source; nothing else (a file name, a path convention) counts as a binding.
 
 Satisfies: [as-agent-relate#fr-04](../domain/as-agent-relate.md#fr-04)
 
@@ -49,12 +49,11 @@ Decided by: [ADR-11](../governance/ADR-11.md)
 
 *Implemented* (no test yet).
 
+### <a id="binding-fact-carries-location"></a>binding-fact-carries-location
 
-## Postconditions
+*(returns)* Each binding fact carries the file and line that produced it.
 
-### —
-
-Each binding fact carries the file and line that produced it.
+*Implemented* (no test yet).
 
 
 ## Realizes

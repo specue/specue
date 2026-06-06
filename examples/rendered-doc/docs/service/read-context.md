@@ -2,7 +2,7 @@
 title: Read the active context
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - implemented
 ---
 
@@ -17,28 +17,29 @@ Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
 ## Invariants
 
-### <a id="does-not-mutate"></a>does-not-mutate
+### <a id="read-returns-current-state"></a>read-returns-current-state
 
-Reading the context does not alter it.
+*(returns)* Reading the context returns its current state — the same name and module set on every read.
 
 Satisfies: [as-agent-setup#fr-03](../domain/as-agent-setup.md#fr-03)
+
+Decided by: [ADR-14](../governance/ADR-14.md)
 
 *Implemented* (no test yet).
 
 ### <a id="names-membership"></a>names-membership
 
-The result names the context and every module it carries.
+*(returns)* The result names the context and every module it carries.
 
 Satisfies: [as-agent-setup#fr-03](../domain/as-agent-setup.md#fr-03)
 
 *Implemented* (no test yet).
 
+### <a id="no-active-context-told"></a>no-active-context-told
 
-## Postconditions
+**Rejects** when no context is active.
 
-### —
-
-If no context is active the caller is told so with the next step to take.
+*Implemented* (no test yet).
 
 
 ## Realizes

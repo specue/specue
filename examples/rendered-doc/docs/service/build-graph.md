@@ -2,7 +2,7 @@
 title: Produce a resolved spec graph from the current context
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -29,24 +29,25 @@ Decided by: [ADR-01](../governance/ADR-01.md)
 
 ### <a id="incremental"></a>incremental
 
-The graph is rebuilt only when the spec or the code that feeds it has changed since the last build.
+the graph is rebuilt
+
+*When* the spec or the code that feeds it has changed since the last build
 
 *Implemented* (no test yet).
 
 ### <a id="multi-folder-modules"></a>multi-folder-modules
 
-A module's nodes are loaded from every sub-folder of the module, not only its root.
+A module's nodes are loaded from every sub-folder of the module.
 
 Satisfies: [as-agent-create#fr-03](../domain/as-agent-create.md#fr-03)
 
 *Proven.*
 
+### <a id="returns-graph-and-diagnostics"></a>returns-graph-and-diagnostics
 
-## Postconditions
+*(returns)* The resolved graph is returned together with diagnostics produced while resolving it.
 
-### —
-
-The resolved graph is returned together with diagnostics produced while resolving it.
+*Implemented* (no test yet).
 
 
 ## Realizes

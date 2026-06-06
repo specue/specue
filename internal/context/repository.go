@@ -47,7 +47,10 @@ func (r *FileRepository) Load() (Store, error) {
 	return s, nil
 }
 
-// Save writes the registry, creating the parent directory if needed.
+// Save writes the registry, creating the parent directory if needed. Persisting
+// to disk is what lets a context outlive the process that created it.
+//
+//specue:req:create-context#survives-across-invocations
 func (r *FileRepository) Save(s Store) error {
 	if err := os.MkdirAll(filepath.Dir(r.Path), 0o755); err != nil {
 		return err

@@ -39,7 +39,7 @@ Two Plans whose changes cannot both apply (one removes what the other modifies, 
 
 ### <a id="fr-04"></a>fr-04
 
-Two Plans that touch the same UseCase or Port but could both apply are surfaced for human or agent review rather than blocked.
+Two Plans that touch the same Contract or Port but could both apply are surfaced for human or agent review rather than blocked.
 
 *Covered by [detect-conflict#co-touch-surfaces-for-review](../service/detect-conflict.md#co-touch-surfaces-for-review)*
 
@@ -47,7 +47,7 @@ Two Plans that touch the same UseCase or Port but could both apply are surfaced 
 
 Accepting a Plan applies its changes to the current spec and closes the Plan.
 
-*Covered by [accept-plan#merge-only-if-valid](../service/accept-plan.md#merge-only-if-valid)* (+2 more)
+*Covered by [accept-plan#merge-only-if-valid](../service/accept-plan.md#merge-only-if-valid)* (+3 more)
 
 ### <a id="fr-06"></a>fr-06
 

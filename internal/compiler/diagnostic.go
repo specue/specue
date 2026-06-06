@@ -51,7 +51,6 @@ const (
 	// one version while the drift check reasons about another.
 	VersionMismatch DiagnosticCode = "version-mismatch"
 
-	MigrateLegacy DiagnosticCode = "migrate-legacy"  // ref resolved through a legacy_id alias
 	AsyncCycle    DiagnosticCode = "async-cycle"     // a dependency cycle, all async — tolerable
 	RevDrift      DiagnosticCode = "rev-drift"       // a code pin lags the element's rev
 	FRCoverageGap DiagnosticCode = "fr-coverage-gap" // a story atom no implemented element discharges

@@ -21,7 +21,7 @@ to record why a contract is shaped as it is, and to name what is being changed, 
 
 ### <a id="fr-01"></a>fr-01
 
-A UseCase element that cites an ADR shows the cited ADR among its declared edges.
+A Contract element that cites an ADR shows the cited ADR among its declared edges.
 
 *Covered by [describe-node#shown-in-full](../service/describe-node.md#shown-in-full)*
 

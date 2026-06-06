@@ -2,7 +2,7 @@
 title: Report conflicts between two open Plans
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -19,7 +19,9 @@ Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
 ### <a id="structural-conflict-blocks"></a>structural-conflict-blocks
 
-If overlaying both Plans together produces a graph that cannot resolve (a removed node is referenced, the same edge is rewired two ways), the pair is reported as blocking.
+the pair is reported as blocking.
+
+*When* overlaying both Plans together produces a graph that cannot resolve (a removed node is referenced, the same edge is rewired two ways)
 
 Satisfies: [as-planner#fr-03](../domain/as-planner.md#fr-03)
 
@@ -29,18 +31,19 @@ Decided by: [ADR-07](../governance/ADR-07.md)
 
 ### <a id="co-touch-surfaces-for-review"></a>co-touch-surfaces-for-review
 
-Two Plans that touch the same UseCase or Port but both apply cleanly are reported as advisory for human or agent review, not blocked.
+they are reported as advisory for human or agent review, not blocked.
+
+*When* two Plans touch the same Contract or Port but both apply cleanly
 
 Satisfies: [as-planner#fr-04](../domain/as-planner.md#fr-04)
 
 *Implemented* (no test yet).
 
+### <a id="conflict-names-plans-and-node"></a>conflict-names-plans-and-node
 
-## Postconditions
+*(returns)* Each conflict names the two Plans, the shared Contract or Port, and whether it is blocking or advisory.
 
-### —
-
-Each conflict names the two Plans, the shared UseCase or Port, and whether it is blocking or advisory.
+*Implemented* (no test yet).
 
 
 ## Realizes

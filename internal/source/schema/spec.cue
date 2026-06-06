@@ -24,11 +24,13 @@ package spec
 // A dep points at another node by a cue-native reference (`to: w.validateGraph`).
 // `to` is the bare reference so its provenance is recoverable; role makes it an
 // infra touch; carries is the L3 contract this physical link realizes (also a
-// node reference).
+// node reference). Both `to` and `carries` may target an element (an #invariant)
+// as well as a whole node — the way satisfies targets a Need atom (G2), so a
+// Contract can depend on one guarantee of another without over-coupling.
 #dep: {
-	to!:      #Node
+	to!:      #Node | #invariant
 	role?:    #role
-	carries?: #Node
+	carries?: #Node | #invariant
 }
 
 // A satisfies edge is a bare CUE-native reference into a story's frs/nfrs
@@ -44,25 +46,35 @@ package spec
 	decided_by?: [...#Node]
 }
 
-#condition: {
-	id?:  #elemID
-	text!: string
-	#elemEdges
-}
-
+// An invariant is the single contract-element kind. It is an observable,
+// atomic guarantee. Optionally it carries a `when` guard (a conditional
+// guarantee — the old variation) and a `kind`:
+//   - plain (default): an always-holds guarantee; `text` states it.
+//   - returns: a property of what the caller gets back; `text` states it.
+//   - rejects: a refusal under a condition. The condition is the `when` (always
+//     required) and the meaning is "when <when>, the call is refused" — so `text`
+//     is OPTIONAL here, written only when the refusal carries content beyond the
+//     bare "refused" (e.g. what the rejection tells the caller).
+// mutates/calls are derived from infra edges (not a kind); a negative guarantee
+// ("does not alter") is derived from the absence of a write edge and is never
+// authored (MANIFESTO 1.6).
 #invariant: {
-	id!:   #elemID
-	text!: string
-	rev?:  int & >=1
+	id!:  #elemID
+	rev?: int & >=1
 	#elemEdges
-}
-
-#variation: {
-	id!:   #elemID
-	when!: string
-	then!: string
-	rev?:  int & >=1
-	#elemEdges
+	// kind names the nature of the guarantee; it defaults to "plain" so the field
+	// is always concrete — there is no empty kind. A concrete default also lets
+	// the conditionals below reference it (CUE forbids referencing a purely-
+	// optional field in a comprehension).
+	kind: *"plain" | "returns" | "rejects"
+	if kind == "rejects" {
+		when!: string
+		text?: string // optional — the when carries the meaning
+	}
+	if kind != "rejects" {
+		text!: string
+		when?: string
+	}
 }
 
 // --- node bodies -------------------------------------------------------------
@@ -71,7 +83,6 @@ package spec
 	slug:        #slug
 	title!:      string
 	confidence: #confidence
-	legacy_id?:  string
 	body?:       string
 }
 
@@ -83,10 +94,7 @@ package spec
 	interaction:  *"sync" | "async"
 	trigger?:     string
 	deprecated?:  string
-	preconditions?: [...#condition]
-	postconditions?: [...#condition]
 	invariants?: [...#invariant]
-	variations?: [...#variation]
 }
 
 // A domain is the top of the intent tree: the audience the system serves.

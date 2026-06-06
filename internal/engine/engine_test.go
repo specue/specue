@@ -40,7 +40,7 @@ apply: s.#Contract & {
 	title:      "Apply"
 	confidence: "CONFIRMED"
 	service:    example
-	postconditions: [{text: "done"}]
+	invariants: [{id: "post", text: "done"}]
 }
 `
 

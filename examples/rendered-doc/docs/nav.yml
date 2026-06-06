@@ -29,10 +29,13 @@ nav:
     - ADR-10: governance/ADR-10.md
     - ADR-11: governance/ADR-11.md
     - ADR-12: governance/ADR-12.md
+    - ADR-13: governance/ADR-13.md
+    - ADR-14: governance/ADR-14.md
     - plan-accept-from-anywhere: governance/plan-accept-from-anywhere.md
     - plan-code-root-field: governance/plan-code-root-field.md
     - plan-index-strip-prefix: governance/plan-index-strip-prefix.md
     - plan-link-text-slug: governance/plan-link-text-slug.md
+    - plan-m-elem: governance/plan-m-elem.md
     - plan-nav-collapse: governance/plan-nav-collapse.md
     - plan-quick-wins: governance/plan-quick-wins.md
     - plan-readme-progressive: governance/plan-readme-progressive.md
@@ -45,7 +48,6 @@ nav:
     - plan-render-status-admonitions: governance/plan-render-status-admonitions.md
     - plan-render-tags-page: governance/plan-render-tags-page.md
     - plan-userstory-to-need: governance/plan-userstory-to-need.md
-    - plan-v1tov2-tool: governance/plan-v1tov2-tool.md
   - service:
     - service/index.md
     - accept-plan: service/accept-plan.md

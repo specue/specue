@@ -33,38 +33,41 @@ func hasReq(n *ResolvedNode) bool { return len(n.ReqElems) > 0 }
 func hasCover(n *ResolvedNode) bool { return len(n.CoverElems) > 0 }
 
 // elemImplemented reports whether a named element is backed by code: a scoped
-// //req:slug#id covers id; a whole-contract //req covers every core element but
-// NOT a variation — an optional guarded branch needs its own scoped binding.
+// //req:slug#id covers id; a whole-contract //req covers every unguarded element
+// but NOT a guarded one — an optional conditional branch needs its own scoped
+// binding.
 func elemImplemented(n *ResolvedNode, id model.ElementID) bool {
 	if len(n.ReqElems[id]) > 0 {
 		return true
 	}
-	if isVariation(n, id) {
+	if isGuarded(n, id) {
 		return false
 	}
 	return len(n.ReqElems[""]) > 0
 }
 
 // elemProven is the same for proving (test) bindings: a whole-UC covers does not
-// auto-prove a variation branch.
+// auto-prove a guarded branch.
 func elemProven(n *ResolvedNode, id model.ElementID) bool {
 	if len(n.CoverElems[id]) > 0 {
 		return true
 	}
-	if isVariation(n, id) {
+	if isGuarded(n, id) {
 		return false
 	}
 	return len(n.CoverElems[""]) > 0
 }
 
-// isVariation reports whether id names a variation element on the node.
-func isVariation(n *ResolvedNode, id model.ElementID) bool {
+// isGuarded reports whether id names a guarded invariant (one with a When) on the
+// node. A guarded invariant is a conditional branch, so a whole-contract binding
+// does not auto-cover it.
+func isGuarded(n *ResolvedNode, id model.ElementID) bool {
 	uc := n.Node().Body.Contract
 	if uc == nil {
 		return false
 	}
 	for _, el := range uc.Elements {
-		if el.Kind == model.KindVariation && el.ID == id {
+		if el.When != "" && el.ID == id {
 			return true
 		}
 	}

@@ -21,7 +21,7 @@ to see what the spec became compared to where I started, so that I can review my
 
 ### <a id="fr-01"></a>fr-01
 
-The difference between the spec at two versioned points is reported as a typed delta over UseCases, Needs, Ports and their elements.
+The difference between the spec at two versioned points is reported as a typed delta over Contracts, Needs, Ports and their elements.
 
 *Covered by [diff-refs#typed-over-the-spec-graph](../service/diff-refs.md#typed-over-the-spec-graph)*
 

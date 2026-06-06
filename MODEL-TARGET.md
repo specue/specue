@@ -175,11 +175,13 @@ Named so the model does not creep [manifesto 7.4 / 4.2, fan-out]:
 ## The shape in one paragraph
 
 A **Contract** (renamed from UseCase) is a set of **invariants**, each
-unconditional or guarded by a `when`; its caller-obligations and supplier-
-guarantees live in **typed pre/post slots** (used, not dumped into invariant
-prose); the **nature** of each guarantee (mutates / calls / returns / rejects)
-is **derived** from edges and slots at query time, not hand-tagged — with one new
-structure for **rejection** (which also closes returnable-errors). Contracts wire
+unconditional or guarded by a `when`, each optionally typed `returns` or
+`rejects` (a refusal-to-serve); a caller obligation survives as the `rejects`
+branch that fires when it is violated, not as a separate slot. The two **edge-
+or-absence natures** — `mutates`/`calls` (from infra edges) and the negative
+non-mutation (from the *absence* of a write edge) — are **derived** at query
+time, never authored (MANIFESTO 1.6); only `returns`/`rejects` are an authored
+`kind`. Contracts wire
 to each other by **element-grained, two-sided edges**, to intent by `satisfies`,
 to reasoning by `decided_by`. **Ports** gained a few real surface kinds;
 **Containers** can carry invariants. The **boundary** itself becomes a versioned

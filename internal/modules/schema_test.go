@@ -42,7 +42,7 @@ validateGraph: s.#Contract & {
 	title:      "Apply"
 	confidence: "CONFIRMED"
 	service:    example
-	postconditions: [{text: "done"}]
+	invariants: [{id: "post", text: "done"}]
 }
 `),
 	}
@@ -80,7 +80,7 @@ deps: "specue.io/schema@v0": v: "v0.0.1"
 package example
 import s "specue.io/schema@v0:spec"
 svc: s.#Container & {type: "Container", slug: "w", title: "W", confidence: "CONFIRMED", kind: "service"}
-bad: s.#Contract & {type: "Contract", slug: "x", title: "t", confidence: "BOGUS", service: svc, postconditions: [{text: "y"}]}
+bad: s.#Contract & {type: "Contract", slug: "x", title: "t", confidence: "BOGUS", service: svc, invariants: [{id: "post", text: "y"}]}
 `),
 	}
 	ctx := cuecontext.New()

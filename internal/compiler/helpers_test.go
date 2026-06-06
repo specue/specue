@@ -14,7 +14,7 @@ func uc(modpath model.ModulePath, slug model.Slug, vis model.Visibility, deps ..
 			Type:       model.TypeContract,
 			Visibility: vis,
 			Body: &model.Body{Contract: &model.ContractBody{
-				Elements: []model.Element{{Kind: model.KindPost, Text: "x", Deps: deps}},
+				Elements: []model.Element{{Text: "x", Deps: deps}},
 			}},
 		},
 	}

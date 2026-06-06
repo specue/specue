@@ -2,13 +2,13 @@
 title: Remove a context
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - implemented
 ---
 
 # Remove a context
 
-!!! info "Implemented — 0/2 proven"
+!!! info "Implemented — 0/1 proven"
     Some invariants still lack a test.
 
 Service: [specue](specue.md)  •  binding: required  •  interaction: sync
@@ -19,21 +19,14 @@ Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
 ### <a id="context-must-exist"></a>context-must-exist
 
-Removing a context that does not exist is refused with the next step to take.
+**Rejects** when the named context does not exist.
 
 *Implemented* (no test yet).
 
-### <a id="modules-survive"></a>modules-survive
-
-The directories that held the context's modules are left untouched.
-
-*Implemented* (no test yet).
-
-
-## Postconditions
-
-### —
+### <a id="removed-until-recreated"></a>removed-until-recreated
 
 Once removed the context cannot be switched into until it is created again.
+
+*Implemented* (no test yet).
 
 

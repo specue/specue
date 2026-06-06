@@ -2,7 +2,7 @@
 title: Leave a Plan and return to the base branch
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -27,15 +27,14 @@ Decided by: [ADR-07](../governance/ADR-07.md)
 
 ### <a id="refuses-on-dirty-tree"></a>refuses-on-dirty-tree
 
-Returning is refused when any affected module's working tree carries uncommitted changes.
+**Rejects** when any affected module's working tree carries uncommitted changes.
 
 *Implemented* (no test yet).
 
-
-## Postconditions
-
-### —
+### <a id="authoring-lands-on-base"></a>authoring-lands-on-base
 
 Subsequent authoring lands on the base branch until another Plan is used.
+
+*Implemented* (no test yet).
 
 

@@ -60,12 +60,12 @@ CREATE TABLE realizes (
 	need_id TEXT NOT NULL
 );
 
--- A named element (invariant/variation) of a Contract — addressable by a scoped
--- binding (slug#element).
+-- A named invariant of a Contract — addressable by a scoped binding
+-- (slug#element). kind carries the invariant's nature.
 CREATE TABLE elements (
 	node_id TEXT NOT NULL,
 	element TEXT NOT NULL,
-	kind    TEXT NOT NULL,              -- pre | post | invariant | variation
+	kind    TEXT NOT NULL,              -- '' (plain) | returns | rejects
 	text    TEXT
 );
 
@@ -139,7 +139,7 @@ const tablesDoc = `Tables (a navigation projection of the spec graph; query them
   infra_edges(from_id, to_id, role, element) -- Contract -> Port/Container infra touches
   satisfies(uc_id, need_id, atom)            -- a UC discharges a Need atom
   realizes(uc_id, need_id)                   -- derived: UC realizes a Need
-  elements(node_id, element, kind, text)     -- named invariants/variations
+  elements(node_id, element, kind, text)     -- named invariants (kind: ''|returns|rejects)
   atoms(need_id, atom, kind, text)           -- Need FR/NFR
   bindings(node_id, element, bind_kind, loc, source_module)  -- loc = file:line
   orphans(module, slug, reason, loc)         -- annotations that bound nothing (no node / unbindable)

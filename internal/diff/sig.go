@@ -83,11 +83,11 @@ func namedElements(n model.Node) map[model.ElementID]model.Element {
 }
 
 // elementSig is an element's content signature: everything a code binding or a
-// Need seam depends on. Matches the fidelity v1 tracked (id+rev+text+satisfies
-// +decided_by) plus the variation guard.
+// Need seam depends on (id+rev+text+satisfies+decided_by) plus the nature and
+// the when guard.
 func elementSig(e model.Element) string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "kind=%s;rev=%d;text=%s;when=%s;then=%s", e.Kind, e.Rev, e.Text, e.When, e.Then)
+	fmt.Fprintf(&b, "nature=%s;rev=%d;text=%s;when=%s", e.Kind, e.Rev, e.Text, e.When)
 	sats := make([]string, 0, len(e.Satisfies))
 	for _, s := range e.Satisfies {
 		sats = append(sats, s.String())

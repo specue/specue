@@ -67,6 +67,7 @@ func TestRemoveClearsActive(t *testing.T) {
 	assert.False(t, s.Remove("example"), "removing a gone context reports false")
 }
 
+//specue:test:create-context#survives-across-invocations
 func TestFileRepositoryRoundTrip(t *testing.T) {
 	path := filepath.Join(t.TempDir(), ".specue", "contexts.json")
 	repo := context.NewFileRepository(path)

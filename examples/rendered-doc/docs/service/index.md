@@ -6,7 +6,7 @@ title: service
 
 # service
 
-UseCase: 25 · Container: 1
+Contract: 25 · Container: 1
 
 **Status:** 19 proven · 5 implemented · 1 asserted
 

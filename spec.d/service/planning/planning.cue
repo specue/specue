@@ -18,17 +18,19 @@ diffRefs: s.#Contract & {
 	trigger:     "the caller asks for the difference between two refs of a module"
 	invariants: [{
 		id:   "typed-over-the-spec-graph"
-		text: "The delta is over Contracts, UserStories, Ports and their elements, not over file lines."
+		text: "The delta is over Contracts, Needs, Ports and their elements."
 		satisfies: [agent.review.frs."fr-01"]
 	}, {
 		id:   "every-change-named"
+		kind: "returns"
 		text: "Each change is labelled added, removed, modified or rewired."
 		satisfies: [agent.review.frs."fr-02"]
 	}, {
 		id:   "two-snapshots"
-		text: "The diff is computed between two snapshots produced from the refs the caller named, without altering the working tree."
-	}]
-	postconditions: [{
+		text: "The diff is computed between two snapshots produced from the refs the caller named."
+	}, {
+		id:   "returns-delta-with-refs"
+		kind: "returns"
 		text: "The delta is returned together with the two refs it was computed against."
 	}]
 }
@@ -48,17 +50,21 @@ registerPlan: s.#Contract & {
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
 		id:   "governance-required"
-		text: "Without a governance module in the current context, registering a Plan is refused with the next step to take."
+		kind: "rejects"
+		when: "there is no governance module in the current context"
 		satisfies: [agent.planner.frs."fr-06"]
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
 		id:   "no-overwrite"
-		text: "Registering a Plan whose name is already taken is refused; the existing Plan is left untouched."
+		kind: "rejects"
+		when: "a Plan with that name is already taken"
 	}, {
 		id:   "from-base-only"
-		text: "Registering a Plan from any branch other than the landscape's base branch is refused with the next step to take, so a Plan always forks from a known base and never from another Plan."
-	}]
-	postconditions: [{
+		kind: "rejects"
+		when: "registering from any branch other than the landscape's base branch (so a Plan always forks from a known base, never another Plan)"
+	}, {
+		id:   "record-names-branches"
+		kind: "returns"
 		text: "The Plan record names the branches it points at and the modules they live in."
 	}]
 }
@@ -74,9 +80,10 @@ usePlan: s.#Contract & {
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
 		id:   "refuses-on-dirty-tree"
-		text: "Switching is refused when any affected module's working tree carries uncommitted changes, so nothing is silently overwritten."
-	}]
-	postconditions: [{
+		kind: "rejects"
+		when: "any affected module's working tree carries uncommitted changes"
+	}, {
+		id:   "authoring-lands-on-plan"
 		text: "Subsequent authoring lands on the Plan's branches until the caller returns to base."
 	}]
 }
@@ -92,9 +99,10 @@ returnToBase: s.#Contract & {
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
 		id:   "refuses-on-dirty-tree"
-		text: "Returning is refused when any affected module's working tree carries uncommitted changes."
-	}]
-	postconditions: [{
+		kind: "rejects"
+		when: "any affected module's working tree carries uncommitted changes"
+	}, {
+		id:   "authoring-lands-on-base"
 		text: "Subsequent authoring lands on the base branch until another Plan is used."
 	}]
 }
@@ -109,10 +117,7 @@ dropPlan: s.#Contract & {
 		text: "The Plan record is closed and every branch it pointed at is removed."
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
-		id:   "base-stays-untouched"
-		text: "The base branch of every module is left exactly as it was; nothing from the Plan is folded in."
-	}]
-	postconditions: [{
+		id:   "dropped-until-reregistered"
 		text: "Once dropped the Plan cannot be used again under the same name until it is registered again."
 	}]
 }
@@ -124,18 +129,19 @@ pendingOverlay: s.#Contract & {
 	trigger:     "the caller asks to view a Plan against the current spec"
 	invariants: [{
 		id:   "viewed-without-checkout"
-		text: "The Plan is projected onto the current spec by reading its branches through git, without touching the working tree."
+		text: "The Plan is projected onto the current spec by reading its branches through git."
 		satisfies: [agent.planner.frs."fr-02"]
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
 		id:   "base-side-read-through-git"
-		text: "The base side of the overlay is read through git from the base branch, not from the working tree; the overlay is the same regardless of which branch is currently checked out."
+		text: "The base side of the overlay is read through git from the base branch; the overlay is the same regardless of which branch is currently checked out."
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
 		id:   "overlay-is-a-spec"
 		text: "The overlay result is a spec graph with the same shape as the live one, so any read verb works against it."
-	}]
-	postconditions: [{
+	}, {
+		id:   "returns-overlay-with-refs"
+		kind: "returns"
 		text: "The overlay is returned with the refs and the modules it composed."
 	}]
 }
@@ -147,15 +153,18 @@ detectConflict: s.#Contract & {
 	trigger:     "the caller asks whether two Plans conflict"
 	invariants: [{
 		id:   "structural-conflict-blocks"
-		text: "If overlaying both Plans together produces a graph that cannot resolve (a removed node is referenced, the same edge is rewired two ways), the pair is reported as blocking."
+		when: "overlaying both Plans together produces a graph that cannot resolve (a removed node is referenced, the same edge is rewired two ways)"
+		text: "the pair is reported as blocking."
 		satisfies: [agent.planner.frs."fr-03"]
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
 		id:   "co-touch-surfaces-for-review"
-		text: "Two Plans that touch the same Contract or Port but both apply cleanly are reported as advisory for human or agent review, not blocked."
+		when: "two Plans touch the same Contract or Port but both apply cleanly"
+		text: "they are reported as advisory for human or agent review, not blocked."
 		satisfies: [agent.planner.frs."fr-04"]
-	}]
-	postconditions: [{
+	}, {
+		id:   "conflict-names-plans-and-node"
+		kind: "returns"
 		text: "Each conflict names the two Plans, the shared Contract or Port, and whether it is blocking or advisory."
 	}]
 }
@@ -167,9 +176,16 @@ acceptPlan: s.#Contract & {
 	trigger:     "the caller asks to accept a Plan"
 	invariants: [{
 		id:   "merge-only-if-valid"
-		text: "The Plan is accepted only when overlaying it on the current spec produces a graph that validates; otherwise the merge is refused and nothing is changed."
+		text: "The Plan is accepted only when overlaying it on the current spec produces a graph that validates."
 		satisfies: [agent.planner.frs."fr-05"]
 		decided_by: [gov.adr07PlansAsBranches]
+	}, {
+		id:   "refuses-invalid-merge"
+		kind: "rejects"
+		when: "overlaying the Plan fails validation, or a merge conflict arises"
+		text: "acceptance is refused and the caller is told which gate or conflict blocked it."
+		satisfies: [agent.planner.frs."fr-05"]
+		decided_by: [gov.adr07PlansAsBranches, gov.adr14OneInvariantKind]
 	}, {
 		id:   "branches-merged-everywhere"
 		text: "Acceptance merges the Plan's branches into the base branch in every module it touches."
@@ -185,8 +201,5 @@ acceptPlan: s.#Contract & {
 	}, {
 		id:   "tags-the-landing"
 		text: "Acceptance marks the merge commit of every affected repo with a tag named after the Plan, so a reader of git history can enumerate landed Plans without parsing the commit graph."
-	}]
-	postconditions: [{
-		text: "On refusal the working tree is left exactly as it was before the attempt."
 	}]
 }

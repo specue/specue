@@ -2,7 +2,7 @@
 title: Answer a graph query with read-only SQL
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -29,7 +29,7 @@ Decided by: [ADR-02](../governance/ADR-02.md)
 
 ### <a id="cannot-mutate"></a>cannot-mutate
 
-The query cannot mutate the graph.
+**Rejects** when the query attempts to write (insert, update, delete).
 
 Decided by: [ADR-02](../governance/ADR-02.md)
 
@@ -59,12 +59,11 @@ Satisfies: [as-agent-navigate#fr-04](../domain/as-agent-navigate.md#fr-04)
 
 *Proven.*
 
+### <a id="rows-are-machine-readable"></a>rows-are-machine-readable
 
-## Postconditions
+*(returns)* Matching rows are returned as machine-readable data.
 
-### —
-
-Matching rows are returned as machine-readable data.
+*Implemented* (no test yet).
 
 
 ## Realizes

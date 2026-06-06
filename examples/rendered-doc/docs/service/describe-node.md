@@ -2,7 +2,7 @@
 title: Read one node in full by its module-qualified identity
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -27,7 +27,7 @@ Satisfies: [as-agent-navigate#fr-02](../domain/as-agent-navigate.md#fr-02)
 
 ### <a id="shown-in-full"></a>shown-in-full
 
-The node's whole contract is returned: its conditions, its invariants, its variations and its declared edges.
+*(returns)* The node's whole contract is returned: its invariants and its declared edges.
 
 Satisfies: [as-agent-navigate#fr-02](../domain/as-agent-navigate.md#fr-02), [as-decision-keeper#fr-01](../domain/as-decision-keeper.md#fr-01)
 
@@ -35,18 +35,19 @@ Satisfies: [as-agent-navigate#fr-02](../domain/as-agent-navigate.md#fr-02), [as-
 
 ### <a id="element-scoped"></a>element-scoped
 
-When the identity carries a named-element suffix, the result is narrowed to that single element — the inquirer reads one invariant or one story FR without scrolling the whole node.
+the result is narrowed to that single element — the inquirer reads one invariant or one story FR without scrolling the whole node.
+
+*When* the identity carries a named-element suffix
 
 Satisfies: [as-agent-navigate#fr-02](../domain/as-agent-navigate.md#fr-02)
 
 *Proven.*
 
+### <a id="returns-node-with-status"></a>returns-node-with-status
 
-## Postconditions
+*(returns)* The node is returned together with its current status.
 
-### —
-
-The node is returned together with its current status.
+*Implemented* (no test yet).
 
 
 ## Realizes

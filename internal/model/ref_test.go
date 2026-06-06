@@ -23,6 +23,6 @@ func TestDepIsInfra(t *testing.T) {
 }
 
 func TestElementNamed(t *testing.T) {
-	assert.False(t, Element{Kind: KindPre}.Named(), "unnamed element is not Named")
-	assert.True(t, Element{Kind: KindInvariant, ID: "win-limit"}.Named(), "element with ID is Named")
+	assert.False(t, Element{}.Named(), "unnamed element is not Named")
+	assert.True(t, Element{ID: "win-limit"}.Named(), "element with ID is Named")
 }

@@ -2,6 +2,9 @@
 /specue
 *.test
 
+# mkdocs build output (the rendered-doc source lives in examples/rendered-doc/docs)
+examples/rendered-doc/site/
+
 # Local workspace (IDE convenience; not part of the module)
 go.work
 go.work.sum

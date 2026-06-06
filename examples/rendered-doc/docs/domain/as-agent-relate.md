@@ -21,25 +21,25 @@ to wire one thing to another as part of the contract, so that the relationship i
 
 ### <a id="fr-01"></a>fr-01
 
-A UseCase invariant can declare which Need FR it satisfies.
+A Contract invariant can declare which Need FR it satisfies.
 
 **Uncovered.**
 
 ### <a id="fr-02"></a>fr-02
 
-A UseCase element can declare which ADR justifies it.
+A Contract element can declare which ADR justifies it.
 
 **Uncovered.**
 
 ### <a id="fr-03"></a>fr-03
 
-A UseCase element can declare which other UseCase or Port it depends on.
+A Contract element can declare which other Contract or Port it depends on.
 
 **Uncovered.**
 
 ### <a id="fr-04"></a>fr-04
 
-A code file can declare which UseCase a line of code realizes.
+A code file can declare which Contract a line of code realizes.
 
 *Claimed by [scan-code#annotation-is-the-only-binding-channel](../service/scan-code.md#annotation-is-the-only-binding-channel)* — not proven
 

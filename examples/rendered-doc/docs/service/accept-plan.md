@@ -2,7 +2,7 @@
 title: Apply a Plan to the current spec and close it
 icon: material/play-circle-outline
 tags:
-    - usecase
+    - contract
     - proven
 ---
 
@@ -19,13 +19,25 @@ Service: [specue](specue.md)  •  binding: required  •  interaction: sync
 
 ### <a id="merge-only-if-valid"></a>merge-only-if-valid
 
-The Plan is accepted only when overlaying it on the current spec produces a graph that validates; otherwise the merge is refused and nothing is changed.
+The Plan is accepted only when overlaying it on the current spec produces a graph that validates.
 
 Satisfies: [as-planner#fr-05](../domain/as-planner.md#fr-05)
 
 Decided by: [ADR-07](../governance/ADR-07.md)
 
 *Proven.*
+
+### <a id="refuses-invalid-merge"></a>refuses-invalid-merge
+
+**Rejects** when overlaying the Plan fails validation, or a merge conflict arises.
+
+acceptance is refused and the caller is told which gate or conflict blocked it.
+
+Satisfies: [as-planner#fr-05](../domain/as-planner.md#fr-05)
+
+Decided by: [ADR-07](../governance/ADR-07.md), [ADR-14](../governance/ADR-14.md)
+
+*Implemented* (no test yet).
 
 ### <a id="branches-merged-everywhere"></a>branches-merged-everywhere
 
@@ -56,13 +68,6 @@ Acceptance succeeds regardless of which branch the caller is currently on: a rep
 Acceptance marks the merge commit of every affected repo with a tag named after the Plan, so a reader of git history can enumerate landed Plans without parsing the commit graph.
 
 *Proven.*
-
-
-## Postconditions
-
-### —
-
-On refusal the working tree is left exactly as it was before the attempt.
 
 
 ## Realizes

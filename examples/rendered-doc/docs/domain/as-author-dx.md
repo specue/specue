@@ -21,13 +21,13 @@ the editor to understand what I am writing as I write it, so that I produce vali
 
 ### <a id="fr-01"></a>fr-01
 
-The fields a UseCase, Need, ADR or Port expects are offered while authoring it.
+The fields a Contract, Need, ADR or Port expects are offered while authoring it.
 
 *Covered by [warm-schema#editor-resolves-natively](../service/warm-schema.md#editor-resolves-natively)*
 
 ### <a id="fr-02"></a>fr-02
 
-A reference to a UseCase, Need, ADR or Port in another module is navigable to its definition.
+A reference to a Contract, Need, ADR or Port in another module is navigable to its definition.
 
 *Covered by [warm-schema#cross-module-references-resolve](../service/warm-schema.md#cross-module-references-resolve)*
 

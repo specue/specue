@@ -22,6 +22,53 @@ func statusOf(g *ResolvedGraph, slug model.Slug) ResolvedNodeStatus {
 	return n.Status
 }
 
+// reqElem/coverElem build element-scoped code facts (//req:slug#element).
+func reqElem(slug model.Slug, elem model.ElementID) CodeFact {
+	return CodeFact{Module: "svc", Verb: VerbReq, Target: AnnotationTarget{Slug: slug, Element: elem}, File: "x.go", Line: 1}
+}
+func coverElem(slug model.Slug, elem model.ElementID) CodeFact {
+	return CodeFact{Module: "svc", Verb: VerbTest, Target: AnnotationTarget{Slug: slug, Element: elem}, File: "x_test.go", Line: 1, IsTest: true}
+}
+
+// TestGuardedElementNeedsScopedBinding pins the isGuarded rule (ADR-14): a
+// guarded invariant (one with a When — e.g. a rejects) is a conditional branch,
+// so a whole-contract //req does NOT auto-cover it; it needs its own scoped
+// binding. The atom such an element satisfies stays uncovered until the scoped
+// bind exists. (The rule keys on When != "" — formerly a separate variation kind.)
+func TestGuardedElementNeedsScopedBinding(t *testing.T) {
+	need := model.PlacedNode{Module: "svc", Node: model.Node{
+		Slug: "need", Type: model.TypeNeed,
+		Body: &model.Body{Need: &model.NeedBody{Atoms: []model.Atom{
+			{Kind: model.KindFR, ID: "fr-01", Text: "a"},
+		}}},
+	}}
+	needID := model.NodeID{Module: "svc", Slug: "need"}
+	// uc's only satisfier of fr-01 is a guarded rejects invariant.
+	uc := model.PlacedNode{Module: "svc", Node: model.Node{
+		Slug: "uc", Type: model.TypeContract,
+		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
+			{ID: "guard", Kind: model.KindRejects, When: "bad input", Text: "refused",
+				Satisfies: []model.AtomRef{{Need: needID, Atom: "fr-01"}}},
+		}}},
+	}}
+	mods := []source.LoadedModule{
+		{Manifest: source.Manifest{Path: "svc"}, Nodes: []model.PlacedNode{need, uc}},
+	}
+
+	// Whole-contract req+cover only: the guarded element is NOT auto-covered.
+	g, _ := New().Compile(Input{Modules: mods, Facts: []CodeFact{req("uc"), cover("uc")}})
+	nd, _ := g.Node(needID)
+	assert.Equal(t, StatusUncovered, nd.Status,
+		"a whole-contract bind does not cover a guarded invariant's atom")
+
+	// Scoped bind on the guarded element: now the atom is proven.
+	g2, _ := New().Compile(Input{Modules: mods,
+		Facts: []CodeFact{reqElem("uc", "guard"), coverElem("uc", "guard")}})
+	nd2, _ := g2.Node(needID)
+	assert.Equal(t, StatusCovered, nd2.Status,
+		"a scoped bind on the guarded element covers its atom")
+}
+
 func TestContractStatusTiers(t *testing.T) {
 	asserted := uc("svc", "asserted", model.Public)
 	implemented := uc("svc", "implemented", model.Public)
@@ -111,7 +158,7 @@ func TestBlockedSatisfierDoesNotDeliver(t *testing.T) {
 	uc1 := model.PlacedNode{Module: "svc", Node: model.Node{
 		Slug: "uc1", Type: model.TypeContract,
 		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
-			{Kind: model.KindPost, Text: "done",
+			{Text: "done",
 				Satisfies: []model.AtomRef{{Need: model.NodeID{Module: "svc", Slug: "tale"}, Atom: "fr-01"}},
 				Deps:      []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "gap"}}}},
 		}}},
@@ -135,7 +182,7 @@ func ucSat(slug model.Slug, story model.Slug, atom model.AtomID) model.PlacedNod
 	return model.PlacedNode{Module: "svc", Node: model.Node{
 		Slug: slug, Type: model.TypeContract,
 		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
-			{Kind: model.KindPost, Text: "x", Satisfies: []model.AtomRef{{Need: model.NodeID{Module: "svc", Slug: story}, Atom: atom}}},
+			{Text: "x", Satisfies: []model.AtomRef{{Need: model.NodeID{Module: "svc", Slug: story}, Atom: atom}}},
 		}}},
 	}}
 }

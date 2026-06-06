@@ -13,7 +13,7 @@ Domain: 1 · Need: 12
 ## Contracts
 
 - [as-agent-author](as-agent-author.md) — Know whether what I authored is correct · *covered*
-- [as-agent-create](as-agent-create.md) — Add a UseCase, Need, ADR or Port to a module · *partial*
+- [as-agent-create](as-agent-create.md) — Add a Contract, Need, ADR or Port to a module · *partial*
 - [as-agent-navigate](as-agent-navigate.md) — Find my way around an unfamiliar spec · *covered*
 - [as-agent-relate](as-agent-relate.md) — Wire one thing to another · *partial*
 - [as-agent-review](as-agent-review.md) — See what I changed between two points · *covered*
