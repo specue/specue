@@ -46,6 +46,18 @@ who observes; a manifesto that denies this lies more than the leak it forbids.*
 It is a status field, not a wiki page that promises to be updated. *Why: an
 unkept promise that says so is information; one that pretends to be kept is rot.*
 
+**1.6 — A WHAT must be positively provable; a negative guarantee is not a WHAT.**
+An invariant is proven by binding the line that *realizes* it — so it must name
+something that *happens*. "Reading does not alter the context", "the directory
+is left untouched", "the call does not mutate" name an *absence* — there is no
+line to bind, and a passing test proves one run, never the guarantee. Such a
+property is never authored as an invariant. It is **derived**: a contract that
+holds no `write`/`produce` infra edge is read-only by construction; the graph
+already knows it. *Why: a non-event has no realizing HOW, so it can never reach
+`proven` honestly — it would sit asserted forever, pretending. The model states
+what the system does and derives what it does not; it never asks an author to
+promise an absence it cannot prove.*
+
 ## 2. HOW — the realization in source
 
 **2.1 — HOW lives in code, through annotations.**
@@ -139,6 +151,27 @@ holding the agreed contract steady so code cannot drift from it.*
 A boundary, a decision, an intent land as nodes; the deliberation that produced
 them does not. *Why: a graph makes the invisible visible and queryable, but a
 tool that tries to host the argument becomes a worse whiteboard.*
+
+**7.4 — The layers are WHAT/HOW/WHY — not WHEN, not WHERE.**
+*When* a thing gets done (deadlines, sprints, ordering) and *where* it runs
+(region, node, cluster, deployment) are not layers of the model. They split, and
+neither half asks for a new layer:
+- their *observable* grain is **already WHAT** — "a token is valid for one
+  hour" (a temporal invariant), "a committed write survives the loss of any one
+  node" (a placement-resilience invariant), the Port/Container topology. These
+  are contracts, expressible today.
+- their *process* grain belongs to other tools — scheduling ("when we will ship
+  it") to a planner (Jira/Notion); physical placement ("where it actually runs")
+  to infrastructure (Terraform/k8s/a runbook); and the *how* of either to code,
+  through annotations.
+
+*Why: WHAT/HOW/WHY is the complete, minimal cut of one question — what is
+promised, what realizes it, why it is shaped so. WHEN and WHERE are not a
+different question about the promise; they are the same promise from another
+angle (→ WHAT) or not about the promise at all (→ a planner, an infra tool). A
+contract may carry a `reference` outward to a ticket or a deployment, but it
+does not absorb their model — the same discipline that chose Need over UserStory
+(rule 5.1).*
 
 ## 8. The boundary is a judgment — and named as one
 

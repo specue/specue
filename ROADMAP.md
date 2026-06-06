@@ -34,12 +34,16 @@ without the code consumes that instead of scanning. *Fits 8.3 — it is already
 Depends on M1.
 
 ### M3. Rename `UseCase` → `Contract` (ADR-13)
-The node carries the Design-by-Contract triad (pre/post/invariants); the term
+The node is a set of observable invariants a service guarantees; the term
 `UseCase` imports UML interaction-scenario baggage it does not honour — the same
-objection ADR-10 raised against UserStory. `Contract` matches the schema and
-keeps internal (operation) contracts legal. *Fits 1.3 / 3.1.* Breaking; write
-ADR-13 first (alternatives considered: Capability — rejected, no place for
-pre/post; it answers "what the system *can*", not "what it *guarantees*").
+objection ADR-10 raised against UserStory. `Contract` reads correctly for a
+guarantee (and for an internal operation contract, normal in Design-by-Contract,
+where "use case without an actor" is an oxymoron). *Fits 1.3 / 3.1.* Breaking;
+write ADR-13 first. Alternatives considered: Capability — rejected, it answers
+"what the system *can* do", not "what it *guarantees*". *Note: the DbC-triad
+argument is weaker than it first looks — pre/post are being removed by M-elem
+(invariants are the substance); ADR-13's body should rest on "Contract = a set of
+provable invariants", not on a full pre/post/invariant triad.*
 
 ### M4. Schema consistency — remove rudimentary / confusing fields
 Stray fields make the model **ambiguous to read** — an author hits a field and
@@ -69,6 +73,28 @@ honest, minimal vocabulary.* Concrete targets:
 Audit the remaining optional fields in the same pass for the same "could an
 author be confused?" test. Best done with M3's schema pass (same breaking
 window).
+
+### M-elem. Collapse contract elements to one shape: invariant{when?, kind?}
+The central model decision of this design pass. Today a Contract carries four
+element slots — `invariants`, `variations`, `preconditions`, `postconditions`.
+They collapse to **one**: the invariant, with an optional `when` guard and an
+optional `kind`. See [MODEL-TARGET.md](MODEL-TARGET.md) §2 for the full shape.
+- **`variation` → optional `when`** on the invariant (it was already an
+  invariant with a guard; `when/then` = EARS / Given-When-Then).
+- **`postconditions` → gone** — a postcondition is always a returned value
+  (invariant), a state change (derived from a `write` edge), or a branch outcome
+  (in a guarded invariant's text). No irreducible content [fact: post≈inv 25/25].
+- **`preconditions` → gone**, absorbed into a `rejects` branch: "session must be
+  valid" becomes `when:"session invalid", kind:rejects`. A precondition slot
+  *and* a rejection would duplicate the text [user insight].
+- **`kind` has exactly two values — `returns` | `rejects`** — the only natures
+  that are both positively provable (manifesto 1.6) and not derivable from edges
+  (5.2). `mutates`/`calls` are derived from infra roles; negative guarantees
+  ("does not alter") are derived from the *absence* of a write edge (1.6) and are
+  never authored; persistent-state properties are plain invariants (no kind).
+*Breaking; the heart of the M3 schema-pass. Fold M3/M4/G2/M-elem into one window.
+This supersedes the earlier "use the pre/post slots" idea — they are removed, not
+populated.*
 
 ### M5. Emergent system promises — node + derived check (DESIGN OPEN)
 A promise of the *whole* that no single Contract carries ("the system stays
@@ -146,10 +172,13 @@ target.
   unexported contracts (`_someReusableContract`) so one contract can build on
   another without exposing it. *Fits 1.1 (visibility is already in the model);
   mostly a resolver capability.*
-- **M7. Returnable-errors layer.** Which error codes a contract may return, as
-  reusable CUE values. *Fits as an observable property of the contract (WHAT) —
-  "callers see code E on condition X" is third-party-checkable.* Needs a schema
-  slot; ADR-light.
+- **M7. Returnable errors — SUBSUMED by M-elem `kind:rejects`.** *Superseded:
+  the original "errors layer with reusable codes" is now just the `rejects`
+  invariants from M-elem. A contract's error surface (which conditions it refuses
+  under) is **derived** from its `rejects`-kind invariants — not a separate slot.
+  An error **code** is NOT authored in the spec: it is implementation detail that
+  lives in code [user]. So M7 needs no new structure beyond M-elem's `kind`;
+  what remains is a derived "error surface" view in query/describe.*
 - **M8. File-backed node text.** Let `body`/ADR text point at a file (large doc,
   own format) instead of inline string. *Tooling-adjacent but touches schema;
   keep the rendered graph the source of truth (ADR-09).*
@@ -194,6 +223,94 @@ manifesto §8 into real structure. None is urgent, all fit.
   hooks. *Powerful but risks reopening the "what may be a node" discipline (the
   size-vs-kind boundary); design last, after the core vocabulary settles.*
 
+- **M11. Schema migration is incremental and idempotent (WHY now, WHAT later).**
+  ADR-06 already says a breaking schema change ships as a new major and authors
+  migrate at their own pace. The properties "a migration is **idempotent**
+  (running it twice equals once) and **incremental** (v1→v3 goes through v2, not
+  a leap)" are observable contracts (manifesto 1.2) — a third party checks them
+  by behaviour, not by reading code. But there is **no migrator today** (we
+  deleted v1→v2), so a `migrate-schema` UseCase now would be an addressee-less
+  asserted contract with no HOW. Correct placement, by layer:
+  - **WHY (do this when the question comes up):** extend/添 an ADR off ADR-06
+    stating migrations must be incremental + idempotent, with the reasoning
+    (authors migrate apart; a re-run must not corrupt). This is the durable part.
+  - **WHAT (defer until a migrator exists):** when a schema-migration mechanism
+    is actually built, add a `migrate-schema` Contract whose invariants are
+    `idempotent` / `incremental`, `decided_by` that ADR, bound to the code.
+  *Do not author the Contract before the code — that is a promise with no
+  addressee (rule 1.3). Record the WHY; materialize the WHAT with the migrator.*
+
+## Expressiveness gaps (found by fan-out analysis + schema check)
+
+Five gaps surfaced by enumerating Port kinds, stock/resource types, and
+cross-cutting behaviors against the model, then attacking each adversarially.
+Four of five survive; most "missing" features were rejected (see below) as
+already-present, already-roadmapped, or out-of-scope by rule 7.4. The surviving
+gaps share **one theme**: the model is *qualitatively* rich (what is guaranteed)
+but *quantitatively* mute (how much / how long / how many at once). G1, G4, G5
+are facets of that; G2 is a cheap structural fix; G3 is small.
+
+### G1. Quantified capacity has no slot (strongest)
+Every "bounded to N", "≤ N concurrent", "1000 rps", "retained 90 days" lives as
+**prose inside an invariant's `text`** — yet it *is* a number-with-a-unit (the
+defining trait of a System-Dynamics stock). Consequence: two contracts can't be
+compared, a limit can't be checked against code, tightening it reads as a text
+edit. The WHAT here is **too vague to check** — the mirror of rule 2.2. Touches
+rate-limit, quota, pool size, retention, timeout. *Open design: a typed
+quantity/bound/unit shape on an invariant, without dragging in runtime values
+(those stay in monitoring, 7.4).*
+
+### G2. Element-grained `depends_on` / `carries` (cheapest — one-line fix)
+`satisfies` can point at an atom (`frs."fr-01"`); `depends_on.to` and `carries`
+are typed `#Node` — whole-node only. So Contract A depending on **one invariant**
+of B over-couples: any change to B looks like a risk to A. **Fix:** widen the
+`to`/`carries` reference type to accept an element (`#invariant`/`#condition`)
+exactly as `satisfies` already accepts `#atom` — the CUE-native resolver already
+dereferences these. No new node/edge, just relaxing a target type. *Fold into
+the M3 schema-pass — it is nearly free.*
+
+### G3. `Container` carries no invariants (small)
+Invariants live only on UseCases (verified: `#Container` has no `invariants[]`).
+So genuinely container-scoped observable promises — "this service runs in a
+bounded working set / does not leak memory" (OOM is third-party-observable →
+WHAT per 7.4) — have nowhere to attach. *Fix: allow invariants on Container, or
+decide such promises must be a Contract about the service.*
+
+### G4. No `lease`/`acquire`/`release` role; no leasable-resource Port kind
+`#role` has read/write/produce/consume/grant but no **acquire → hold → release**.
+The borrow-and-return discipline at the heart of concurrency stocks (connection
+pool, lock, semaphore) can't be expressed as topology, and there is no Port
+`kind` for a held, bounded-count resource — so locks/pools are homeless as
+nodes. *Open design: a `lease` role family + possibly a `resource` Port kind.
+Related to G1 (the bound) and to the responsibility work (M-edge).*
+
+### G5. Liveness-with-deadline — re-examined under rule 1.6 (likely NOT a gap)
+"X is erased after 90 days", "PII gone within 30 days of a delete request" fire
+**without an interaction** and are verified by the *passage of time*. Originally
+flagged as a missing element kind. **Reconsidered:** rule 1.6 (a WHAT must be
+positively provable by binding the line that realizes it) makes these suspect —
+"erased after 90 days" is verified by watching time pass, with no single line to
+bind and no test that proves the guarantee (only one run). That is the same
+non-provability that rules out negative guarantees. The provable, observable
+re-statement is positive and interaction-shaped: "a *retention sweep* deletes
+records older than 90 days" (bind the sweep) or "a *delete request* removes PII
+within 30 days" (bind the request handler) — a guarded invariant
+(`when: delete requested → then: PII removed`), already expressible. *Verdict:
+probably NOT a new element kind — restate the time-promise as a provable
+interaction. Keep only if a genuinely interaction-less, bindable temporal
+guarantee is found; none so far.*
+
+### Port-kind additions (from the same analysis)
+The fan-out also vetted Port kinds. Accept as genuine new transport-surfaces the
+current four cannot express: **`filesystem`** (path-addressed byte store),
+**`objectstore`** (bucket/key blobs — distinct consistency contract),
+**`secretstore`** (the `grant` role already presupposes it), and narrowly
+**`clock`** (only when time crosses a boundary). *Reject* queue/stream/pubsub/
+eventlog/websocket/SSE as new kinds — they are one surface (`channel`) with a
+different **traffic shape**, already expressed by edge role + invariants; and
+cache/searchindex/vectorstore/CDN/lock/ledger as `datastore`-or-`channel` +
+invariant. Fold the accepted kinds into the M3/M4 schema-pass.
+
 ## Rejected / fold-in (model)
 
 - **Explicit mutating vs read-only contracts.** *Rejected as a new field:
@@ -203,6 +320,13 @@ manifesto §8 into real structure. None is urgent, all fit.
 - **Per-edge ADR / authoring provenance (who published, when).** *Rejected:
   largely git history already (manifesto's git-native stance). Add only the thin
   structural owner if M2 federation needs it, never a hand-kept audit log.*
+- **Rejected expressiveness candidates (seemed like gaps, are not):**
+  error/failure modes (= M7); SLO numbers (runtime → monitoring, 7.1); payload
+  schema (already `Port.schema` for rpc/rest); trust boundary (already
+  `Container.boundary`); ownership (= federation + module identity); deprecation
+  (already `deprecated` field + confidence/status); temporal ordering of
+  contracts (= WHEN, 7.4 → planner); cost (no observable grain); test-vectors on
+  an invariant (= HOW/code → T9). *The model is tighter than it looks.*
 
 ---
 

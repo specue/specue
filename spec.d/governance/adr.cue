@@ -227,3 +227,40 @@ adr09RenderedDocDerived: s.#ADR & {
 		only place truth is mutated and treats the markdown as a publishing format.
 		"""
 }
+
+adr13ContractNotUseCase: s.#ADR & {
+	slug:       "ADR-13"
+	title:      "The contract node is named Contract, not UseCase (nor Capability)"
+	status:     "proposed"
+	body: """
+		The node names a logical contract a service guarantees: a set of named,
+		atomic, observable invariants over preconditions and postconditions. That
+		shape is Design-by-Contract (Meyer): pre/post/invariant is its exact triad —
+		the schema fields already are `preconditions`, `postconditions`, `invariants`.
+		But the node is named `UseCase`, and that term carries UML baggage that
+		misleads here the same way UserStory did for intent (ADR-10): a use case in
+		UML is an interaction scenario between an actor and the system — actors,
+		main and alternative flows, extensions. Specue's node is not a scenario; it
+		is a guarantee. A "use case with no actor" is a contradiction, yet the model
+		legitimately has operation contracts that face no external audience (the
+		Plan/context verbs) — so the term fights the model it labels.
+
+		Rename to `Contract`. It matches the Design-by-Contract semantics the schema
+		already encodes, reads correctly for both a contract that faces a Need and an
+		internal operation contract (an "internal contract" is normal in DbC — the
+		contract of a private method — where "use case without an actor" is an
+		oxymoron), and drops the scenario-narrative connotation that does not fit.
+		Rejected alternative: `Capability`. A capability answers "what the system
+		*can* do" — it is a bare possibility with no internal structure; there is no
+		place in a capability for preconditions, postconditions or invariants. The
+		node answers "what the system *guarantees, and under which conditions*",
+		which is a contract, not a capability. (`Capability` would fit a higher,
+		product-ability layer that discards the DbC triad — a different model.)
+
+		This is a breaking rename across schema, model, code annotations
+		(`//specue:req:` targets) and the self-spec; it ships in the pre-release
+		window. Pinning the choice here settles it: future authors find Contract +
+		the DbC rationale, not a recurring "should this be UseCase / Capability"
+		debate — symmetric with ADR-10 fixing Need over UserStory.
+		"""
+}
