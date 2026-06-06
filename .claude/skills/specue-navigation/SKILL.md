@@ -19,7 +19,7 @@ which, and how to phrase a question as a SQL query.
 
 When you read a graph you are walking the **WHAT** layer:
 
-- WHAT (UseCase, Need, ADR, Port, Container, Plan) is what `get`,
+- WHAT (Contract, Need, ADR, Port, Container, Plan) is what `get`,
   `describe` and `query` return.
 - HOW (the code that realizes WHAT) appears as `bindings` rows and as
   status (`proven` / `implemented` / `asserted` / `broken`).
@@ -39,8 +39,8 @@ lists nodes of that type. `get <resource> <module:slug>` narrows to one.
 
 ```
 get                                    # what kinds of node exist
-get usecase                            # every UseCase in the active landscape
-get usecase example:validate-graph     # one UseCase (same row, narrowed)
+get contract                            # every Contract in the active landscape
+get contract example:validate-graph     # one Contract (same row, narrowed)
 get all                                # every node, every type (rarely useful)
 ```
 
@@ -73,10 +73,10 @@ Typical questions and their SQL:
 -- What is the spec's coverage by status?
 SELECT type, status, count(*) FROM nodes GROUP BY type, status ORDER BY type, status;
 
--- Which UseCases are still asserted (declared but not built)?
-SELECT id, title FROM nodes WHERE type = 'UseCase' AND status = 'asserted';
+-- Which Contracts are still asserted (declared but not built)?
+SELECT id, title FROM nodes WHERE type = 'Contract' AND status = 'asserted';
 
--- Which UseCases satisfy a given Need FR?
+-- Which Contracts satisfy a given Need FR?
 SELECT uc_id, atom FROM satisfies WHERE need_id = '<module:slug>' AND atom = 'fr-NN';
 
 -- Which Needs are still uncovered and why?
@@ -91,12 +91,12 @@ SELECT id FROM nodes_fts WHERE nodes_fts MATCH 'idempotent';
 
 The projection is read-only — a write fails fast with an actionable hint.
 Recursive CTEs are how you walk graph relations; `nodes_fts` is how you
-search by phrase. Combine the two when you want "every UseCase mentioning
+search by phrase. Combine the two when you want "every Contract mentioning
 X and the stories they satisfy".
 
 ## bindings — what the code owes
 
-`bindings [<code-module>]` is the code-module view: every UseCase the
+`bindings [<code-module>]` is the code-module view: every Contract the
 module may realize, and for each one a row per binding kind (`req` plus
 any infra roles) with a state — `unbound` / `bound` / `proven` /
 `duplicate` / `orphan`.

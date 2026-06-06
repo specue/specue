@@ -11,7 +11,7 @@ import (
 	gov "specue.io/governance@v0:governance"
 )
 
-createContext: s.#UseCase & {
+createContext: s.#Contract & {
 	slug:        "create-context"
 	title:       "Create a new context"
 	service:     root.specue
@@ -29,7 +29,7 @@ createContext: s.#UseCase & {
 	}]
 }
 
-useContext: s.#UseCase & {
+useContext: s.#Contract & {
 	slug:        "use-context"
 	title:       "Make a context the active one"
 	service:     root.specue
@@ -47,7 +47,7 @@ useContext: s.#UseCase & {
 	}]
 }
 
-readContext: s.#UseCase & {
+readContext: s.#Contract & {
 	slug:        "read-context"
 	title:       "Read the active context"
 	service:     root.specue
@@ -66,7 +66,7 @@ readContext: s.#UseCase & {
 	}]
 }
 
-removeContext: s.#UseCase & {
+removeContext: s.#Contract & {
 	slug:        "remove-context"
 	title:       "Remove a context"
 	service:     root.specue
@@ -83,7 +83,7 @@ removeContext: s.#UseCase & {
 	}]
 }
 
-addModuleToContext: s.#UseCase & {
+addModuleToContext: s.#Contract & {
 	slug:        "add-module-to-context"
 	title:       "Add a module to a context by its directory"
 	service:     root.specue
@@ -108,7 +108,7 @@ addModuleToContext: s.#UseCase & {
 	}]
 }
 
-removeModuleFromContext: s.#UseCase & {
+removeModuleFromContext: s.#Contract & {
 	slug:        "remove-module-from-context"
 	title:       "Remove a module from a context"
 	service:     root.specue
@@ -126,7 +126,7 @@ removeModuleFromContext: s.#UseCase & {
 	}]
 }
 
-initModule: s.#UseCase & {
+initModule: s.#Contract & {
 	slug:        "init-module"
 	title:       "Start a new module of a known kind"
 	service:     root.specue

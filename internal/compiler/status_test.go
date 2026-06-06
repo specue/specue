@@ -22,7 +22,7 @@ func statusOf(g *ResolvedGraph, slug model.Slug) ResolvedNodeStatus {
 	return n.Status
 }
 
-func TestUseCaseStatusTiers(t *testing.T) {
+func TestContractStatusTiers(t *testing.T) {
 	asserted := uc("svc", "asserted", model.Public)
 	implemented := uc("svc", "implemented", model.Public)
 	proven := uc("svc", "proven", model.Public)
@@ -109,8 +109,8 @@ func TestBlockedSatisfierDoesNotDeliver(t *testing.T) {
 	}}
 	// uc1 satisfies fr-01, is implemented+tested, but core-depends on an asserted gap.
 	uc1 := model.PlacedNode{Module: "svc", Node: model.Node{
-		Slug: "uc1", Type: model.TypeUseCase,
-		Body: &model.Body{UseCase: &model.UseCaseBody{Elements: []model.Element{
+		Slug: "uc1", Type: model.TypeContract,
+		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
 			{Kind: model.KindPost, Text: "done",
 				Satisfies: []model.AtomRef{{Need: model.NodeID{Module: "svc", Slug: "tale"}, Atom: "fr-01"}},
 				Deps:      []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "gap"}}}},
@@ -130,11 +130,11 @@ func TestBlockedSatisfierDoesNotDeliver(t *testing.T) {
 	assert.Equal(t, StatusUncovered, tale.Status, "a blocked satisfier does not deliver the atom")
 }
 
-// ucSat builds a UseCase whose postcondition satisfies story#atom.
+// ucSat builds a Contract whose postcondition satisfies story#atom.
 func ucSat(slug model.Slug, story model.Slug, atom model.AtomID) model.PlacedNode {
 	return model.PlacedNode{Module: "svc", Node: model.Node{
-		Slug: slug, Type: model.TypeUseCase,
-		Body: &model.Body{UseCase: &model.UseCaseBody{Elements: []model.Element{
+		Slug: slug, Type: model.TypeContract,
+		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
 			{Kind: model.KindPost, Text: "x", Satisfies: []model.AtomRef{{Need: model.NodeID{Module: "svc", Slug: story}, Atom: atom}}},
 		}}},
 	}}

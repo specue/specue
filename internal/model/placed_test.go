@@ -10,7 +10,7 @@ func TestPlacedNodeID(t *testing.T) {
 	p := PlacedNode{
 		Module: "specue/example",
 		File:   "spec/validate-graph.cue",
-		Node:   Node{Slug: "validate-graph", Type: TypeUseCase},
+		Node:   Node{Slug: "validate-graph", Type: TypeContract},
 	}
 	id := p.ID()
 	assert.Equal(t, ModulePath("specue/example"), id.Module)

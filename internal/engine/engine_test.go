@@ -34,8 +34,8 @@ import s "specue.io/schema@v0:spec"
 example: s.#Container & {
 	type: "Container", slug: "example", title: "Example", confidence: "CONFIRMED", kind: "service"
 }
-apply: s.#UseCase & {
-	type:       "UseCase"
+apply: s.#Contract & {
+	type:       "Contract"
 	slug:       "apply"
 	title:      "Apply"
 	confidence: "CONFIRMED"

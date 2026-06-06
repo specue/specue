@@ -41,7 +41,7 @@ func TestLoadResolvesCrossModuleRef(t *testing.T) {
 	write(t, exampleDir, "nodes.cue", `package example
 import s "specue.io/schema@v0:spec"
 svc: s.#Container & {type:"Container", slug:"example", title:"W", confidence:"CONFIRMED", kind:"service"}
-validateGraph: s.#UseCase & {type:"UseCase", slug:"validate-graph", title:"Apply", confidence:"CONFIRMED", service:svc, postconditions:[{text:"done"}]}
+validateGraph: s.#Contract & {type:"Contract", slug:"validate-graph", title:"Apply", confidence:"CONFIRMED", service:svc, postconditions:[{text:"done"}]}
 `)
 
 	// consumer: depends on example, references validate-graph cue-natively.
@@ -53,8 +53,8 @@ import (
 	w "specue.test/example@v0:example"
 )
 svc: s.#Container & {type:"Container", slug:"consumer", title:"C", confidence:"CONFIRMED", kind:"service"}
-grant: s.#UseCase & {
-	type:"UseCase", slug:"grant", title:"Grant", confidence:"CONFIRMED", service:svc
+grant: s.#Contract & {
+	type:"Contract", slug:"grant", title:"Grant", confidence:"CONFIRMED", service:svc
 	postconditions:[{text:"granted", depends_on:[{to: w.validateGraph, role:"call"}]}]
 }
 `)
@@ -79,7 +79,7 @@ grant: s.#UseCase & {
 	}
 	require.Equal(t, model.Slug("grant"), grant.Node.Slug, "grant loaded")
 
-	dep := grant.Node.Body.UseCase.Elements[0].Deps[0]
+	dep := grant.Node.Body.Contract.Elements[0].Deps[0]
 	assert.Equal(t, model.RoleCall, dep.Role)
 	assert.Equal(t, model.NodeID{Module: "specue.test/example@v0", Slug: "validate-graph"}, dep.To,
 		"cross-module ref resolved to example's full address")
@@ -87,7 +87,7 @@ grant: s.#UseCase & {
 
 // TestLoadMultiPackageModule proves a module may organize nodes across sub-folders
 // (each a CUE sub-package) and they all load as one module, with a cross-folder
-// reference resolved CUE-natively: a UseCase in navigation/ points at the service
+// reference resolved CUE-natively: a Contract in navigation/ points at the service
 // Container in the root package via a module-path import.
 //specue:test:build-graph#multi-folder-modules
 func TestLoadMultiPackageModule(t *testing.T) {
@@ -100,19 +100,19 @@ func TestLoadMultiPackageModule(t *testing.T) {
 
 	write(t, svcDir, "cue.mod/module.cue", "module: \"x.test/svc@v0\"\nlanguage: version: \"v0.16.0\"\ndeps: \"specue.io/schema@v0\": v: \"v0.0.1\"\n")
 	write(t, svcDir, source.ManifestFile, "module: \"x.test/svc@v0\"\nversion: \"v0.1.0\"\nkind: \"service\"\n")
-	// Root package: the service Container every UseCase points at.
+	// Root package: the service Container every Contract points at.
 	write(t, svcDir, "root.cue", `package svc
 import s "specue.io/schema@v0:spec"
 svc: s.#Container & {type:"Container", slug:"specue", title:"the tool", confidence:"CONFIRMED", kind:"service"}
 `)
-	// Sub-folder package: a UseCase that references the root package's service
+	// Sub-folder package: a Contract that references the root package's service
 	// node by importing the module path — the cross-folder, CUE-native edge.
 	write(t, svcDir, "navigation/nav.cue", `package navigation
 import (
 	s "specue.io/schema@v0:spec"
 	root "x.test/svc@v0:svc"
 )
-listResources: s.#UseCase & {type:"UseCase", slug:"list-resources", title:"List", confidence:"CONFIRMED", service: root.svc, postconditions:[{text:"listed"}]}
+listResources: s.#Contract & {type:"Contract", slug:"list-resources", title:"List", confidence:"CONFIRMED", service: root.svc, postconditions:[{text:"listed"}]}
 `)
 
 	parser, err := source.NewCUEParser()

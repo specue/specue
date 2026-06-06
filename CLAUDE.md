@@ -9,7 +9,7 @@ module sits at `spec.d/code/` with `code_root: "../.."` so the Go scan reaches
 `internal/`, `cmd/`, etc. The graph the tool is supposed to produce is the
 graph it produces *of itself*.
 
-If you are not yet familiar with Specue as a model (UseCase, Need, Domain,
+If you are not yet familiar with Specue as a model (Contract, Need, Domain,
 Port, Container, ADR, satisfies, decided_by, the binding lifecycle), read the
 shared Specue skill first — it is the model layer. (It is normally
 registered as a Claude skill named `specue`; the local skills assume you
@@ -18,7 +18,7 @@ have read it.)
 The skills in `.claude/skills/` here are the **repo-specific layer** — what is
 different about this repo on top of the model. Reach for them by task:
 
-- `specue-authoring/` — writing nodes in CUE (UseCase/Need/Domain/ADR/Port).
+- `specue-authoring/` — writing nodes in CUE (Contract/Need/Domain/ADR/Port).
 - `specue-binding/` — `//specue:req:` / `//specue:test:` /
   `//specue:produces:` etc. in the tool's Go source.
 - `specue-navigation/` — `get` / `describe` / `query` / `bindings`, reading
@@ -45,7 +45,7 @@ the git-native invariant (MANIFESTO P20) is honoured:
 ```
 SPECUE_GIT=$(which git) ./specue validate
 SPECUE_GIT=$(which git) ./specue bindings
-SPECUE_GIT=$(which git) ./specue query "SELECT id, status FROM nodes WHERE type='UseCase'"
+SPECUE_GIT=$(which git) ./specue query "SELECT id, status FROM nodes WHERE type='Contract'"
 SPECUE_GIT=$(which git) ./specue describe specue.io/service@v0:validate-graph
 ```
 
@@ -67,7 +67,7 @@ and the read verbs resolve against the four modules of this repo:
 
 ```
 SPECUE_GIT=$(which git) ./specue context use specue-self
-SPECUE_GIT=$(which git) ./specue query "SELECT status, count(*) FROM nodes WHERE type='UseCase' GROUP BY status"
+SPECUE_GIT=$(which git) ./specue query "SELECT status, count(*) FROM nodes WHERE type='Contract' GROUP BY status"
 SPECUE_GIT=$(which git) ./specue bindings | grep -v '^proven'   # what is left to bind/prove
 SPECUE_GIT=$(which git) ./specue describe specue.io/service@v0:build-graph
 ```
@@ -82,7 +82,7 @@ This is the fastest way to understand the tool: read its own contracts.
   function annotated with `//specue:req:<slug>`.
 - `engine/`, `compiler/`, `specload/`, `modules/`, `codescan/`, `source/`,
   `query/`, `diff/`, `plan/`, `context/`, `warm/` — the layers underneath.
-  The contributing skill maps each one to its UseCase.
+  The contributing skill maps each one to its Contract.
 - `spec.d/` — the self-spec (`code/`, `service/`, `domain/`, `governance/`).
 - `spec.d/governance/adr.cue` — the ADRs that justify the tool's shape.
 

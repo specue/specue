@@ -14,7 +14,7 @@ const applyOp = "specue.test/example@v0:validate-graph"
 func TestDescribeFullNode(t *testing.T) {
 	out, _, code := run("describe", applyOp, "-C", walletSpec)
 	require.Equal(t, exitOK, code)
-	assert.Contains(t, out, "UseCase")
+	assert.Contains(t, out, "Contract")
 	assert.Contains(t, out, "service")
 	assert.Contains(t, out, "single-verdict", "named invariant is shown")
 }
@@ -30,7 +30,7 @@ func TestDescribeJSONCarriesTypeAndStatus(t *testing.T) {
 	}
 	require.NoError(t, json.Unmarshal([]byte(out), &got))
 	assert.Equal(t, applyOp, got.ID)
-	assert.Equal(t, "UseCase", got.Type)
+	assert.Equal(t, "Contract", got.Type)
 	assert.NotEmpty(t, got.Status)
 }
 

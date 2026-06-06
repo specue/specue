@@ -15,7 +15,7 @@ import (
 )
 
 // TestJSONIRRendersTreeAndIndex builds a minimal graph (one Need with a single
-// FR, one UseCase that satisfies it, one whole-contract req binding) and
+// FR, one Contract that satisfies it, one whole-contract req binding) and
 // asserts the JSON IR renderer lays the tree out as index.json plus one .json
 // file per node, with the expected shape on each file.
 func TestJSONIRRendersTreeAndIndex(t *testing.T) {
@@ -25,13 +25,13 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 	storyRef := model.NodeRef{Module: prod, Slug: "as-user"}
 	svcRef := model.NodeRef{Module: svc, Slug: "service"}
 
-	usecase := model.PlacedNode{
+	contract := model.PlacedNode{
 		Module: svc,
 		File:   "uc.cue",
 		Node: model.Node{
-			Slug: "do-thing", Type: model.TypeUseCase, Title: "Do the thing",
+			Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
 			Confidence: model.Confirmed,
-			Body: &model.Body{UseCase: &model.UseCaseBody{
+			Body: &model.Body{Contract: &model.ContractBody{
 				Service:     svcRef,
 				Binding:     model.BindingRequired,
 				Interaction: model.InteractionSync,
@@ -64,7 +64,7 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 		},
 	}
 
-	// One whole-contract //req binding on the UseCase, so the renderer emits
+	// One whole-contract //req binding on the Contract, so the renderer emits
 	// a bindings.req entry with no `element` key.
 	fact := compiler.CodeFact{
 		Module: svc,
@@ -77,7 +77,7 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 	c := compiler.New()
 	g, _ := c.Compile(compiler.Input{
 		Modules: []source.LoadedModule{
-			{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{usecase}},
+			{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{contract}},
 			{Manifest: source.Manifest{Path: prod, Kind: source.KindDomain}, Nodes: []model.PlacedNode{story, domain}},
 		},
 		Facts: []compiler.CodeFact{fact},
@@ -114,7 +114,7 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 
 	uc := parse(ucPath)
 	assert.Equal(t, "ex.test/svc@v0:do-thing", uc["id"])
-	assert.Equal(t, "UseCase", uc["type"])
+	assert.Equal(t, "Contract", uc["type"])
 	assert.Equal(t, "ex.test/svc@v0:service", uc["service"])
 	assert.Equal(t, "required", uc["binding"])
 	assert.Equal(t, "sync", uc["interaction"])

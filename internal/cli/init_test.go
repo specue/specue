@@ -147,7 +147,7 @@ func TestActiveContextBeatsImplicitCwdModule(t *testing.T) {
 	t.Chdir(svc)
 
 	// get goes through dispatch, which prints the run-mode banner on stderr.
-	_, errOut, code := run("get", "usecase")
+	_, errOut, code := run("get", "contract")
 	require.Equalf(t, exitOK, code, "stderr: %s", errOut)
 	assert.Contains(t, errOut, "workspace: ws", "the active context wins over the implicit cwd module")
 	assert.NotContains(t, errOut, "isolated", "an implicit cwd module must not silently isolate")

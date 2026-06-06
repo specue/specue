@@ -24,7 +24,7 @@ const allResource = "all"
 
 // resources is the closed registry. Order is the listing order in help.
 var resources = []resource{
-	{"usecase", []string{"uc"}, model.TypeUseCase},
+	{"contract", []string{"ct"}, model.TypeContract},
 	{"need", []string{"story", "us", "userstory"}, model.TypeNeed},
 	{"domain", []string{"prod", "product", "dom"}, model.TypeDomain},
 	{"port", nil, model.TypePort},
@@ -35,7 +35,7 @@ var resources = []resource{
 
 // resolveResource maps a user-supplied resource word (canonical or alias) to its
 // registry entry. Returning the entry (not just the type) lets callers record the
-// CANONICAL name, so an alias never leaks into output — `get uc` and `get usecase`
+// CANONICAL name, so an alias never leaks into output — `get ct` and `get contract`
 // produce identical results. An unknown word is a Problem naming the valid set.
 func resolveResource(word string) (resource, *Problem) {
 	w := strings.ToLower(word)
@@ -54,7 +54,7 @@ func resolveResource(word string) (resource, *Problem) {
 }
 
 // resourceList renders the valid resources with their aliases, for error fixes and
-// help text: "usecase (uc), userstory (story, us), …".
+// help text: "contract (con), userstory (story, us), …".
 func resourceList() string {
 	parts := make([]string, len(resources))
 	for i, r := range resources {

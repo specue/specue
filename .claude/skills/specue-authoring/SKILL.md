@@ -1,11 +1,11 @@
 ---
 name: specue-authoring
-description: Author spec nodes (UseCase, Need, ADR, Port) in CUE for this repo
+description: Author spec nodes (Contract, Need, ADR, Port) in CUE for this repo
 ---
 
 # Authoring spec nodes in this repo
 
-Use this skill when you are creating or editing a `s.#UseCase`,
+Use this skill when you are creating or editing a `s.#Contract`,
 `s.#Need`, `s.#ADR`, `s.#Port`, `s.#Container` or `s.#Domain` in this
 repo's `spec.d/` modules.
 
@@ -21,7 +21,7 @@ single line of text.
 
 **WHAT** — what the system promises and to whom. Need carries an
 audience's intent; its FRs are atomic, observable guarantees of that intent.
-UseCase carries a contract the service guarantees; its invariants are
+Contract carries a contract the service guarantees; its invariants are
 atomic, observable properties of the contract. WHAT is the graph; it is what
 `validate`, `describe`, `query` read.
 
@@ -65,7 +65,7 @@ drop-in layout — see ADR-11):
 
 - `spec.d/domain/` — `kind: domain`. Holds the audience-facing Needs.
   Sub-packages by audience: `agent/`, `human/`, `federated/`, `governance/`.
-- `spec.d/service/` — `kind: service`. Holds the UseCase contracts and the
+- `spec.d/service/` — `kind: service`. Holds the Contract contracts and the
   service Container. Sub-packages by phase: `graph-build/`, `validation/`,
   `navigation/`, `binding/`, `planning/`, `context/`, `federation/`.
 - `spec.d/governance/` — `kind: governance`. Holds the ADRs (and any
@@ -98,23 +98,23 @@ rejects it.
 
 ## Don't repeat the defaults
 
-A node's `type` is fixed by its CUE definition (`s.#UseCase` ⇒ `type:
-"UseCase"`), so don't write the `type:` line — CUE concretizes it through
-unification, and `s.#Port & {type: "UseCase"}` is a unification error
+A node's `type` is fixed by its CUE definition (`s.#Contract` ⇒ `type:
+"Contract"`), so don't write the `type:` line — CUE concretizes it through
+unification, and `s.#Port & {type: "Contract"}` is a unification error
 (exactly the diagnostic the convention buys).
 
 The same goes for any field whose default matches what most nodes carry:
 the schema concretizes it for you. Today that is:
 
 - `type` (every node) — set by the definition
-- `binding: "required"` (UseCase) — the default
+- `binding: "required"` (Contract) — the default
 - `confidence: "CONFIRMED"` — the default
-- `interaction: "sync"` (UseCase) — the default
+- `interaction: "sync"` (Contract) — the default
 
-So a typical UseCase shrinks to:
+So a typical Contract shrinks to:
 
 ```
-diffRefs: s.#UseCase & {
+diffRefs: s.#Contract & {
     slug:    "diff-refs"
     title:   "Report the typed delta between two refs"
     service: root.specue
@@ -133,10 +133,10 @@ when it is not `sync`. Less authored text means less drift and less to read.
   `description: "to X, see Y, and check Z, so that …"` you have three Needs
   or three FRs smuggled into one. The dogfood blind-comprehension test
   caught this; pull it apart into separate FRs.
-- **FR text names concrete domain entities** (UseCase, Need, ADR, Port,
+- **FR text names concrete domain entities** (Contract, Need, ADR, Port,
   Plan, code binding), not abstractions like "node" or "relationship". The
   audience does not come to manipulate nodes — it comes for ADRs to cite,
-  UseCases to implement, Plans to land.
+  Contracts to implement, Plans to land.
 - **Atomic invariants only.** One guarantee per invariant. A composite ("the
   query runs against a projection and cannot mutate the graph") splits into
   two named invariants.

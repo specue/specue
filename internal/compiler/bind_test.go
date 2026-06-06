@@ -10,9 +10,9 @@ import (
 )
 
 // TestReqOnNeedIsUnbindable pins the import-role half of the code-module
-// contract: a code annotation may resolve to a UseCase (implementable) but binding
+// contract: a code annotation may resolve to a Contract (implementable) but binding
 // a Need — which holds no code — is a gate, with the remedy pointing at the
-// realizing UseCase. This is what stops a code module from "implementing" a product
+// realizing Contract. This is what stops a code module from "implementing" a product
 // story directly.
 //
 //specue:test:validate-graph#unbindable-target
@@ -39,7 +39,7 @@ func TestReqOnNeedIsUnbindable(t *testing.T) {
 			msg = d.Message
 		}
 	}
-	assert.Contains(t, msg, "UseCase", "the fix names the implementable type")
+	assert.Contains(t, msg, "Contract", "the fix names the implementable type")
 }
 
 // TestReqAcrossRequiresResolves pins that a code module's bare annotation resolves

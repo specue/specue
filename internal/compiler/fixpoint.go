@@ -81,11 +81,11 @@ func isSync(g *ResolvedGraph, id model.NodeID) bool {
 	if !ok {
 		return false
 	}
-	uc := n.Node().Body.UseCase
+	uc := n.Node().Body.Contract
 	return uc != nil && uc.Interaction == model.InteractionSync
 }
 
-// propagateBlocked marks a ready UseCase blocked when a core (non-branch)
+// propagateBlocked marks a ready Contract blocked when a core (non-branch)
 // dependency is not deliverable. Deliverability is a DFS over CoreUses with the
 // escape hatches that keep benign cases from blocking: an abstract binding and an
 // out-of-view target are deliverable, and a node revisited mid-walk (an async
@@ -94,7 +94,7 @@ func propagateBlocked(g *ResolvedGraph) {
 	d := &blockEval{g: g, memo: map[model.NodeID]blockState{}}
 	var toBlock []*ResolvedNode
 	for n := range g.Nodes() {
-		if n.Node().Type == model.TypeUseCase && ready(n) && !d.deliverable(n.ID()) {
+		if n.Node().Type == model.TypeContract && ready(n) && !d.deliverable(n.ID()) {
 			toBlock = append(toBlock, n)
 		}
 	}
@@ -129,7 +129,7 @@ func (e *blockEval) deliverable(id model.NodeID) bool {
 	if !ok {
 		return true // out of view (cross-unloaded) — validated in its own repo
 	}
-	if uc := n.Node().Body.UseCase; uc != nil && uc.Binding == model.BindingAbstract {
+	if uc := n.Node().Body.Contract; uc != nil && uc.Binding == model.BindingAbstract {
 		return true // conceptual by design — never a gap, never blocks
 	}
 	if !ready(n) {
@@ -151,12 +151,12 @@ func (e *blockEval) deliverable(id model.NodeID) bool {
 	return res
 }
 
-// coreDepsDeliverable reports whether every UseCase core dependency is
+// coreDepsDeliverable reports whether every Contract core dependency is
 // deliverable. Non-UC targets (Ports) and out-of-view targets don't block.
 func (e *blockEval) coreDepsDeliverable(n *ResolvedNode) bool {
 	for _, dep := range n.CoreUses {
 		t, ok := e.g.Node(dep)
-		if !ok || t.Node().Type != model.TypeUseCase {
+		if !ok || t.Node().Type != model.TypeContract {
 			continue
 		}
 		if !e.deliverable(dep) {

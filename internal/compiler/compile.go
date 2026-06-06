@@ -40,7 +40,7 @@ func (compiler) Compile(in Input) (*ResolvedGraph, []Diagnostic) {
 	// UC factual status from the fact collision, then the graph-global passes:
 	// cycles (needs only edges), blocked-propagation (reads UC readiness), and
 	// finally Need coverage (reads blocked, so it runs last).
-	assignUseCaseStatus(g)
+	assignContractStatus(g)
 	diags = append(diags, detectCycles(g)...)
 	propagateBlocked(g)
 	assignNeedStatus(g)

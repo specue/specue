@@ -44,14 +44,14 @@ func consumerRepo(t *testing.T) (map[model.ModulePath]string, *plan.Manager, str
 	write("example/nodes.cue", `package example
 import s "specue.io/schema@v0:spec"
 svc: s.#Container & {type:"Container", slug:"example", title:"Wallet", confidence:"CONFIRMED", kind:"service"}
-applyOp: s.#UseCase & {type:"UseCase", slug:"apply-op", title:"Apply", confidence:"CONFIRMED", service:svc, postconditions:[{text:"done"}]}
+applyOp: s.#Contract & {type:"Contract", slug:"apply-op", title:"Apply", confidence:"CONFIRMED", service:svc, postconditions:[{text:"done"}]}
 `)
 	write("consumer/spec.mod.cue", "module: \"x.test/consumer@v0\"\nversion: \"v0.0.1\"\nkind: \"service\"\nrequire: [{module: \"x.test/example@v0\", version: \"v0.0.1\", replace: \"../example\"}]\n")
 	write("consumer/cue.mod/module.cue", "module: \"x.test/consumer@v0\"\nlanguage: version: \"v0.16.0\"\ndeps: \"specue.io/schema@v0\": v: \"v0.0.1\"\ndeps: \"x.test/example@v0\": v: \"v0.0.1\"\n")
 	write("consumer/nodes.cue", `package consumer
 import s "specue.io/schema@v0:spec"
 svc: s.#Container & {type:"Container", slug:"consumer", title:"Consumer", confidence:"CONFIRMED", kind:"service"}
-validate: s.#UseCase & {type:"UseCase", slug:"validate", title:"Validate", confidence:"CONFIRMED", service:svc, postconditions:[{text:"placed"}]}
+validate: s.#Contract & {type:"Contract", slug:"validate", title:"Validate", confidence:"CONFIRMED", service:svc, postconditions:[{text:"placed"}]}
 `)
 	run("add", "-A")
 	run("commit", "-m", "base")
@@ -89,7 +89,7 @@ import (
 	w "x.test/example@v0:example"
 )
 svc: s.#Container & {type:"Container", slug:"consumer", title:"Consumer", confidence:"CONFIRMED", kind:"service"}
-validate: s.#UseCase & {type:"UseCase", slug:"validate", title:"Validate", confidence:"CONFIRMED", service:svc, postconditions:[{text:"placed", depends_on:[{to: w.applyOp, role:"call"}]}]}
+validate: s.#Contract & {type:"Contract", slug:"validate", title:"Validate", confidence:"CONFIRMED", service:svc, postconditions:[{text:"placed", depends_on:[{to: w.applyOp, role:"call"}]}]}
 `), 0o644))
 	commit(t, bin, root, "a: consumer depends on example apply-op")
 	require.NoError(t, mgr.Base())
@@ -127,8 +127,8 @@ func TestConflictCleanWhenIndependent(t *testing.T) {
 	require.NoError(t, os.WriteFile(filepath.Join(consumerDir, "nodes.cue"), []byte(`package consumer
 import s "specue.io/schema@v0:spec"
 svc: s.#Container & {type:"Container", slug:"consumer", title:"Consumer", confidence:"CONFIRMED", kind:"service"}
-validate: s.#UseCase & {type:"UseCase", slug:"validate", title:"Validate", confidence:"CONFIRMED", service:svc, postconditions:[{text:"placed"}]}
-cashout: s.#UseCase & {type:"UseCase", slug:"cashout", title:"Cashout", confidence:"CONFIRMED", service:svc, postconditions:[{text:"paid"}]}
+validate: s.#Contract & {type:"Contract", slug:"validate", title:"Validate", confidence:"CONFIRMED", service:svc, postconditions:[{text:"placed"}]}
+cashout: s.#Contract & {type:"Contract", slug:"cashout", title:"Cashout", confidence:"CONFIRMED", service:svc, postconditions:[{text:"paid"}]}
 `), 0o644))
 	commit(t, bin, root, "a: add cashout")
 	require.NoError(t, mgr.Base())

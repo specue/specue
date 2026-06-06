@@ -23,9 +23,9 @@ reportChannel: s.#Port & {
 	technology: "stdout"
 }
 
-validateGraph: s.#UseCase & {
+validateGraph: s.#Contract & {
 	slug:       "validate-graph"
-	type:       "UseCase"
+	type:       "Contract"
 	title:      "Validate a spec graph"
 	confidence: "CONFIRMED"
 	service:    specue
@@ -39,9 +39,9 @@ validateGraph: s.#UseCase & {
 	}]
 }
 
-describeNode: s.#UseCase & {
+describeNode: s.#Contract & {
 	slug:       "describe-node"
-	type:       "UseCase"
+	type:       "Contract"
 	title:      "Describe one node in full"
 	confidence: "LIKELY"
 	service:    specue

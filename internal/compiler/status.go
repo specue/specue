@@ -2,14 +2,14 @@ package compiler
 
 import "github.com/specue/specue/internal/model"
 
-// assignUseCaseStatus sets each UseCase's factual status from the collision of
+// assignContractStatus sets each Contract's factual status from the collision of
 // the contract (it exists) with code facts (bound by bind). A node a gate already
 // broke is left broken. proven = implemented + a covering test; implemented = a
 // req binding; asserted = a contract with no code yet (a GAP). Blocked is layered
 // on later by propagateBlocked.
-func assignUseCaseStatus(g *ResolvedGraph) {
+func assignContractStatus(g *ResolvedGraph) {
 	for n := range g.Nodes() {
-		if n.Node().Type != model.TypeUseCase || n.broken() {
+		if n.Node().Type != model.TypeContract || n.broken() {
 			continue
 		}
 		n.Status = useCaseStatus(n)
@@ -59,7 +59,7 @@ func elemProven(n *ResolvedNode, id model.ElementID) bool {
 
 // isVariation reports whether id names a variation element on the node.
 func isVariation(n *ResolvedNode, id model.ElementID) bool {
-	uc := n.Node().Body.UseCase
+	uc := n.Node().Body.Contract
 	if uc == nil {
 		return false
 	}

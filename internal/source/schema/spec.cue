@@ -1,5 +1,5 @@
 // Package spec is the authored shape of a specue node. Authored .cue files
-// import this module, write nodes as `s.#UseCase & {...}`, and reference other
+// import this module, write nodes as `s.#Contract & {...}`, and reference other
 // nodes CUE-NATIVELY (`to: w.validateGraph`, not a string). CUE resolves and
 // type-checks the whole module set into one value tree; the loader reads the
 // resolved tree and recovers each reference's target (module+slug) via Expr() +
@@ -75,9 +75,9 @@ package spec
 	body?:       string
 }
 
-#UseCase: {
+#Contract: {
 	#common
-	type:         "UseCase"
+	type:         "Contract"
 	service!:     #Node
 	binding:      *"required" | "optional" | "abstract"
 	interaction:  *"sync" | "async"
@@ -90,7 +90,7 @@ package spec
 }
 
 // A domain is the top of the intent tree: the audience the system serves.
-// Needs belong to a domain; UseCases cover Needs by satisfying their atoms.
+// Needs belong to a domain; Contracts cover Needs by satisfying their atoms.
 // (Same Domain DDD codifies — RE and DDD lexicons align here.)
 #Domain: {
 	#common
@@ -159,4 +159,4 @@ package spec
 	status!: "proposed" | "accepted" | "superseded"
 }
 
-#Node: #UseCase | #Need | #Domain | #Port | #Container | #Plan | #ADR
+#Node: #Contract | #Need | #Domain | #Port | #Container | #Plan | #ADR

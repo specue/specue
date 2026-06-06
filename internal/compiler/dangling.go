@@ -59,8 +59,8 @@ func refTargets(n model.Node) []model.NodeID {
 		}
 	}
 	switch {
-	case n.Body.UseCase != nil:
-		uc := n.Body.UseCase
+	case n.Body.Contract != nil:
+		uc := n.Body.Contract
 		add(uc.Service, false)
 		for _, e := range uc.Elements {
 			for _, dep := range e.Deps {

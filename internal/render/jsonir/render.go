@@ -19,7 +19,7 @@ import (
 func Default() *render.Renderer {
 	return render.New(
 		[]render.NodeRenderer{
-			UseCase{}, Need{}, Domain{},
+			Contract{}, Need{}, Domain{},
 			Port{}, Container{},
 			ADR{}, Plan{},
 		},

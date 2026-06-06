@@ -14,7 +14,7 @@ editorDX: s.#Need & {
 	consumer:    "a human authoring spec modules in an editor"
 	description: "the editor to understand what I am writing as I write it, so that I produce valid contracts without leaving the file"
 	frs: {
-		"fr-01": {id: "fr-01", text: "The fields a UseCase, Need, ADR or Port expects are offered while authoring it."},
-		"fr-02": {id: "fr-02", text: "A reference to a UseCase, Need, ADR or Port in another module is navigable to its definition."},
+		"fr-01": {id: "fr-01", text: "The fields a Contract, Need, ADR or Port expects are offered while authoring it."},
+		"fr-02": {id: "fr-02", text: "A reference to a Contract, Need, ADR or Port in another module is navigable to its definition."},
 	}
 }

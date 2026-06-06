@@ -55,7 +55,7 @@ func TestWithIndexPages(t *testing.T) {
 	assert.Contains(t, svcStr, "Do the thing")
 	// Status counts on the header line.
 	assert.True(t,
-		strings.Contains(svcStr, "UseCase") || strings.Contains(svcStr, "Container"),
+		strings.Contains(svcStr, "Contract") || strings.Contains(svcStr, "Container"),
 		"leaf module index should carry type counts")
 
 	// Every leaf-module dir produced an index.md.

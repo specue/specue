@@ -55,8 +55,8 @@ func runDescribe(ctx Context, ref string) (DescribeReport, *Problem) {
 //specue:req:describe-node#element-scoped
 func nodeHasElement(n *compiler.ResolvedNode, elem model.ElementID) bool {
 	if b := n.Node().Body; b != nil {
-		if b.UseCase != nil {
-			for _, e := range b.UseCase.Elements {
+		if b.Contract != nil {
+			for _, e := range b.Contract.Elements {
 				if e.ID == elem {
 					return true
 				}
@@ -110,8 +110,8 @@ func renderBody(w io.Writer, n *compiler.ResolvedNode, elem model.ElementID) err
 		return nil
 	}
 	switch {
-	case b.UseCase != nil:
-		return renderUseCase(w, b.UseCase, elem)
+	case b.Contract != nil:
+		return renderContract(w, b.Contract, elem)
 	case b.Need != nil:
 		return renderNeed(w, b.Need, elem)
 	case b.Port != nil:
@@ -126,19 +126,19 @@ func renderBody(w io.Writer, n *compiler.ResolvedNode, elem model.ElementID) err
 	return nil
 }
 
-func renderUseCase(w io.Writer, uc *model.UseCaseBody, elem model.ElementID) error {
+func renderContract(w io.Writer, c *model.ContractBody, elem model.ElementID) error {
 	if elem == "" {
 		if _, err := fmt.Fprintf(w, "\nservice: %s  binding: %s  interaction: %s\n",
-			uc.Service, uc.Binding, uc.Interaction); err != nil {
+			c.Service, c.Binding, c.Interaction); err != nil {
 			return err
 		}
-		if uc.Trigger != "" {
-			if _, err := fmt.Fprintf(w, "trigger: %s\n", uc.Trigger); err != nil {
+		if c.Trigger != "" {
+			if _, err := fmt.Fprintf(w, "trigger: %s\n", c.Trigger); err != nil {
 				return err
 			}
 		}
 	}
-	for _, e := range uc.Elements {
+	for _, e := range c.Elements {
 		if elem != "" && e.ID != elem {
 			continue
 		}
@@ -273,7 +273,7 @@ type nodeJSON struct {
 	Trigger     string        `json:"trigger,omitempty"`
 	Kind        string        `json:"kind,omitempty"`     // port/container kind
 	Schema      string        `json:"schema,omitempty"`   // port wire IDL ref
-	Elements    []elementJSON `json:"elements,omitempty"` // UseCase
+	Elements    []elementJSON `json:"elements,omitempty"` // Contract
 	Atoms       []atomJSON    `json:"atoms,omitempty"`    // Need
 	Uses        []string      `json:"uses,omitempty"`
 	Realizes    []string      `json:"realizes,omitempty"`
@@ -325,14 +325,14 @@ func (r DescribeReport) jsonValue() any {
 
 func fillBodyJSON(j *nodeJSON, b *model.Body, n *compiler.ResolvedNode, elem model.ElementID) {
 	switch {
-	case b.UseCase != nil:
-		uc := b.UseCase
+	case b.Contract != nil:
+		c := b.Contract
 		if elem == "" {
-			j.Service = refStr(uc.Service)
-			j.Binding = string(uc.Binding)
-			j.Trigger = uc.Trigger
+			j.Service = refStr(c.Service)
+			j.Binding = string(c.Binding)
+			j.Trigger = c.Trigger
 		}
-		for _, e := range uc.Elements {
+		for _, e := range c.Elements {
 			if elem != "" && e.ID != elem {
 				continue
 			}

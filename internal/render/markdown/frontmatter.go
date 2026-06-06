@@ -119,7 +119,7 @@ type mkdocsFM struct {
 // materialIcons is a deliberately small map — only the icons the Material
 // theme already ships with no extra packs needed.
 var materialIcons = map[string]string{
-	"UseCase":   "material/play-circle-outline",
+	"Contract":  "material/play-circle-outline",
 	"Need":      "material/clipboard-text-outline",
 	"Domain":    "material/shape-outline",
 	"Port":      "material/connection",

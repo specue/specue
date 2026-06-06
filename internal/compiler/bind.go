@@ -89,13 +89,13 @@ func (g *ResolvedGraph) resolveInRequires(mod model.ModulePath, slug model.Slug)
 func bindOne(n *ResolvedNode, f CodeFact) *Diagnostic {
 	switch f.Verb {
 	case VerbReq, VerbTest:
-		// req/test implement and prove a logical contract — only a UseCase carries
-		// code-bindable elements. A code module may import UseCase/Port (the role-gate
+		// req/test implement and prove a logical contract — only a Contract carries
+		// code-bindable elements. A code module may import Contract/Port (the role-gate
 		// on its require), but binding a Need/Domain/Plan/ADR with code is
 		// meaningless: those hold no implementable elements. Gate it with the remedy.
-		if n.Node().Type != model.TypeUseCase {
+		if n.Node().Type != model.TypeContract {
 			d := newDiag(UnbindableTarget, n.ID(), fmt.Sprintf(
-				"//specue:%s binds %s %q, which holds no code — only a UseCase is implementable; point the annotation at the UseCase that realizes it",
+				"//specue:%s binds %s %q, which holds no code — only a Contract is implementable; point the annotation at the Contract that realizes it",
 				f.Verb, n.Node().Type, n.Node().Slug))
 			return &d
 		}
@@ -120,7 +120,7 @@ func bindInfra(n *ResolvedNode, f CodeFact) *Diagnostic {
 	if role == "" {
 		return nil // not an infra verb
 	}
-	if n.Node().Type != model.TypeUseCase {
+	if n.Node().Type != model.TypeContract {
 		d := newDiag(OrphanBinding, n.ID(),
 			fmt.Sprintf("infra anchor %s:%s but %s is not a use case", f.Verb, f.Target.Slug, n.ID().Slug))
 		return &d

@@ -16,7 +16,7 @@ import (
 func nodeHead(n model.Node) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "type=%s;title=%s;conf=%s;vis=%s", n.Type, n.Title, n.Confidence, n.Visibility)
-	if uc := n.Body.UseCase; uc != nil {
+	if uc := n.Body.Contract; uc != nil {
 		fmt.Fprintf(&b, ";svc=%s;bind=%s;inter=%s;trig=%s;dep=%s",
 			uc.Service, uc.Binding, uc.Interaction, uc.Trigger, uc.Deprecated)
 	}
@@ -71,10 +71,10 @@ func elementDeltas(an, bn model.Node) []ElementDelta {
 // namedElements indexes a use case's named elements by id.
 func namedElements(n model.Node) map[model.ElementID]model.Element {
 	out := map[model.ElementID]model.Element{}
-	if n.Body.UseCase == nil {
+	if n.Body.Contract == nil {
 		return out
 	}
-	for _, e := range n.Body.UseCase.Elements {
+	for _, e := range n.Body.Contract.Elements {
 		if e.ID != "" {
 			out[e.ID] = e
 		}
@@ -113,10 +113,10 @@ func edgeDeltas(an, bn model.Node) []EdgeDelta {
 	}
 	edgeSet := func(n model.Node) map[key]bool {
 		s := map[key]bool{}
-		if n.Body.UseCase == nil {
+		if n.Body.Contract == nil {
 			return s
 		}
-		for _, el := range n.Body.UseCase.Elements {
+		for _, el := range n.Body.Contract.Elements {
 			for _, d := range el.Deps {
 				s[key{to: d.To, role: d.Role}] = true
 			}

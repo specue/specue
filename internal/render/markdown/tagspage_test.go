@@ -36,7 +36,7 @@ func TestWithTagsPage(t *testing.T) {
 	assert.Contains(t, body, "Every node carries tags")
 
 	// Type sections present for every node type in the fixture.
-	assert.Contains(t, body, "## usecase")
+	assert.Contains(t, body, "## contract")
 	assert.Contains(t, body, "## need")
 	assert.Contains(t, body, "## domain")
 	assert.Contains(t, body, "## adr")
@@ -46,9 +46,9 @@ func TestWithTagsPage(t *testing.T) {
 	assert.NotContains(t, body, "## plan\n")
 	assert.NotContains(t, body, "## port\n")
 
-	// Status sections derived from the fixture: ADR is accepted; UseCase is
+	// Status sections derived from the fixture: ADR is accepted; Contract is
 	// proven (has both req binding and a covering atom in fixture? actually
-	// the fixture has no scan binding so the UseCase is asserted). Need is
+	// the fixture has no scan binding so the Contract is asserted). Need is
 	// uncovered. Container has no scan so it ends up asserted too. Assert at
 	// least one of the present statuses appears.
 	assert.Contains(t, body, "## accepted")

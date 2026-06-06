@@ -34,12 +34,12 @@ const (
 //   - Role (when set) makes the dep an infra touch and drives the derived L2
 //     topology (producedBy / consumedBy / servedBy / calledBy).
 type Dep struct {
-	// To is the dependency target: a UseCase for a plain dep, a Port/Container
+	// To is the dependency target: a Contract for a plain dep, a Port/Container
 	// for an infra dep (Role set).
 	To NodeRef
 	// Role, when non-empty, marks this as an infrastructure touch.
 	Role Role
-	// Carries references the UseCase whose logical L3 contract this physical
+	// Carries references the Contract whose logical L3 contract this physical
 	// infra link realizes — the L3→L2 bridge. Set only when that contract differs
 	// from the element's own node (an outgoing link into another service); empty
 	// on the side that owns the contract.

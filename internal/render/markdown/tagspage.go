@@ -61,7 +61,7 @@ type tagsEntry struct {
 
 // type sections, in the order they appear in tags.md.
 var tagsTypeOrder = []model.NodeType{
-	model.TypeUseCase, model.TypeNeed, model.TypeDomain,
+	model.TypeContract, model.TypeNeed, model.TypeDomain,
 	model.TypeADR, model.TypePlan,
 	model.TypePort, model.TypeContainer,
 }

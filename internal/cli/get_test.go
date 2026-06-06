@@ -14,7 +14,7 @@ func TestGetListsResourcesWithoutSpecTree(t *testing.T) {
 	// that has none) so an agent can learn the resource set unconditionally.
 	out, _, code := run("get", "-C", t.TempDir())
 	assert.Equal(t, exitOK, code)
-	assert.Contains(t, out, "usecase")
+	assert.Contains(t, out, "contract")
 	assert.Contains(t, out, "need")
 }
 
@@ -31,22 +31,22 @@ func TestGetResourcesJSON(t *testing.T) {
 	}
 	require.NoError(t, json.Unmarshal([]byte(out), &got))
 	assert.Len(t, got.Resources, 7)
-	assert.Equal(t, "usecase", got.Resources[0].Name)
-	assert.Equal(t, []string{"uc"}, got.Resources[0].Aliases)
+	assert.Equal(t, "contract", got.Resources[0].Name)
+	assert.Equal(t, []string{"ct"}, got.Resources[0].Aliases)
 }
 
 //specue:test:list-resources#nodes-of-a-kind
 func TestGetFiltersByType(t *testing.T) {
-	out, _, code := run("get", "usecase", "-C", walletSpec)
+	out, _, code := run("get", "contract", "-C", walletSpec)
 	require.Equal(t, exitOK, code)
 	assert.Contains(t, out, "validate-graph")
 	assert.Contains(t, out, "asserted")
 }
 
 func TestGetAliasResolves(t *testing.T) {
-	byName, _, _ := run("get", "usecase", "-C", walletSpec, "--json")
-	byAlias, _, _ := run("get", "uc", "-C", walletSpec, "--json")
-	assert.Equal(t, byName, byAlias, "alias `uc` selects the same nodes as `usecase`")
+	byName, _, _ := run("get", "contract", "-C", walletSpec, "--json")
+	byAlias, _, _ := run("get", "ct", "-C", walletSpec, "--json")
+	assert.Equal(t, byName, byAlias, "alias `ct` selects the same nodes as `contract`")
 }
 
 func TestGetAllSpansTypes(t *testing.T) {
@@ -54,7 +54,7 @@ func TestGetAllSpansTypes(t *testing.T) {
 	require.Equal(t, exitOK, code)
 	// the TYPE column appears and nodes of different types are all listed
 	assert.Contains(t, out, "TYPE")
-	assert.Contains(t, out, "UseCase")
+	assert.Contains(t, out, "Contract")
 	assert.Contains(t, out, "Port")
 	assert.Contains(t, out, "Container")
 }
@@ -81,11 +81,11 @@ func TestGetUnknownResourceIsActionable(t *testing.T) {
 	_, errOut, code := run("get", "widget", "-C", walletSpec)
 	assert.Equal(t, exitUsage, code)
 	assert.Contains(t, errOut, "try:")
-	assert.Contains(t, errOut, "usecase", "the fix lists the valid resources")
+	assert.Contains(t, errOut, "contract", "the fix lists the valid resources")
 }
 
 func TestGetSingleNodeNotFoundIsActionable(t *testing.T) {
-	_, errOut, code := run("get", "usecase", "specue.test/example@v0:nope", "-C", walletSpec)
+	_, errOut, code := run("get", "contract", "specue.test/example@v0:nope", "-C", walletSpec)
 	assert.Equal(t, exitUsage, code)
 	assert.Contains(t, errOut, "try:")
 }

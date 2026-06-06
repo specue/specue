@@ -17,7 +17,7 @@ package model
 type NodeType string
 
 const (
-	TypeUseCase   NodeType = "UseCase"
+	TypeContract  NodeType = "Contract"
 	TypeNeed      NodeType = "Need"
 	TypeDomain    NodeType = "Domain"
 	TypePort      NodeType = "Port"
@@ -64,15 +64,15 @@ type Node struct {
 type Body struct {
 	Prose string // free-text narrative (v1 `body`)
 
-	UseCase   *UseCaseBody
+	Contract  *ContractBody
 	Need      *NeedBody
 	Port      *PortBody
 	Container *ContainerBody
 	Gov       *GovBody // Plan and ADR
 }
 
-// UseCaseBody is a logical contract a service guarantees, bound to code.
-type UseCaseBody struct {
+// ContractBody is a logical contract a service guarantees, bound to code.
+type ContractBody struct {
 	// Service references the service node this UC belongs to.
 	Service NodeRef
 	// Trigger names an external event that reaches this UC; set only when the UC
@@ -93,7 +93,7 @@ type UseCaseBody struct {
 }
 
 // NeedBody is the intent seam. It owns the atoms it requires and binds to no
-// code; its coverage is computed from the UseCases that satisfy its atoms.
+// code; its coverage is computed from the Contracts that satisfy its atoms.
 // See ADR-10 for why Need (not UserStory) is the unit here.
 type NeedBody struct {
 	// Domain references the Domain node this Need belongs to.

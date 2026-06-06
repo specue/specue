@@ -144,8 +144,8 @@ func nodeFacets(node model.Node) (service, domain, portKind, transport string) {
 		return
 	}
 	switch {
-	case b.UseCase != nil:
-		service = b.UseCase.Service.String()
+	case b.Contract != nil:
+		service = b.Contract.Service.String()
 	case b.Need != nil:
 		domain = b.Need.Domain.String()
 	case b.Port != nil:
@@ -155,15 +155,15 @@ func nodeFacets(node model.Node) (service, domain, portKind, transport string) {
 	return
 }
 
-// insertElementsAtoms records a UseCase's named elements (+ infra edges they carry)
+// insertElementsAtoms records a Contract's named elements (+ infra edges they carry)
 // and a Need's atoms.
 func insertElementsAtoms(tx *sql.Tx, idStr string, node model.Node) error {
 	b := node.Body
 	if b == nil {
 		return nil
 	}
-	if b.UseCase != nil {
-		for _, e := range b.UseCase.Elements {
+	if b.Contract != nil {
+		for _, e := range b.Contract.Elements {
 			if e.Named() {
 				if _, err := tx.Exec(`INSERT INTO elements (node_id, element, kind, text) VALUES (?,?,?,?)`,
 					idStr, string(e.ID), string(e.Kind), e.Text); err != nil {
@@ -232,8 +232,8 @@ func ftsBody(node model.Node) string {
 	if b == nil {
 		return sb.String()
 	}
-	if b.UseCase != nil {
-		for _, e := range b.UseCase.Elements {
+	if b.Contract != nil {
+		for _, e := range b.Contract.Elements {
 			sb.WriteByte(' ')
 			sb.WriteString(e.Text)
 			if e.When != "" {

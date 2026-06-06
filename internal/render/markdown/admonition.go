@@ -18,7 +18,7 @@ import (
 //specue:req:render-doc#status-admonitions-on-request
 func statusAdmonition(n *compiler.ResolvedNode, ctx render.Context) string {
 	switch n.Node().Type {
-	case model.TypeUseCase:
+	case model.TypeContract:
 		return useCaseAdmonition(n)
 	case model.TypeNeed:
 		return needAdmonition(n, ctx)
@@ -63,7 +63,7 @@ func useCaseAdmonition(n *compiler.ResolvedNode) string {
 // (req + cover both present, honouring whole-contract bindings). Variations
 // and pre/post are not counted — the body line speaks only of invariants.
 func countUCInvariantsProven(n *compiler.ResolvedNode) (total, proven int) {
-	uc := n.Node().Body.UseCase
+	uc := n.Node().Body.Contract
 	if uc == nil {
 		return 0, 0
 	}
@@ -153,7 +153,7 @@ func admonition(kind, title, body string) string {
 	return b.String()
 }
 
-// elementInlineStatus is the one-line marker that follows a UseCase element's
+// elementInlineStatus is the one-line marker that follows a Contract element's
 // body when the flag is on. Unnamed pre/post are skipped (not individually
 // bindable). The labels never reference code locations — only the shape of
 // the bindings.
@@ -195,7 +195,7 @@ func elementBindings(n *compiler.ResolvedNode, e model.Element) (hasReq, hasCov 
 	return hasReq, hasCov
 }
 
-// atomSatisfierLookup is a per-Need cache of UseCase satisfiers, built once
+// atomSatisfierLookup is a per-Need cache of Contract satisfiers, built once
 // per Need page render so per-atom marker cost stays O(satisfiers).
 type atomSatisfierLookup struct {
 	byAtom map[model.AtomID][]atomSatisfier
@@ -250,7 +250,7 @@ func elemHasReq(n *compiler.ResolvedNode, id model.ElementID) bool {
 	return len(n.ReqElems[""]) > 0
 }
 
-// buildAtomLookup walks every UseCase in the graph once and indexes its
+// buildAtomLookup walks every Contract in the graph once and indexes its
 // satisfies edges that target the given Need.
 func buildAtomLookup(ctx render.Context, need model.NodeID) atomSatisfierLookup {
 	out := atomSatisfierLookup{byAtom: map[model.AtomID][]atomSatisfier{}}
@@ -258,7 +258,7 @@ func buildAtomLookup(ctx render.Context, need model.NodeID) atomSatisfierLookup 
 		return out
 	}
 	for n := range ctx.Graph.Nodes() {
-		uc := n.Node().Body.UseCase
+		uc := n.Node().Body.Contract
 		if uc == nil {
 			continue
 		}

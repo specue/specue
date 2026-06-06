@@ -27,10 +27,10 @@ func admonitionFixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModuleP
 	adrRef := model.NodeRef{Module: gov, Slug: "adr-01"}
 	svcRef := model.NodeRef{Module: svc, Slug: "service"}
 
-	usecase := model.PlacedNode{Module: svc, Node: model.Node{
-		Slug: "do-thing", Type: model.TypeUseCase, Title: "Do the thing",
+	contract := model.PlacedNode{Module: svc, Node: model.Node{
+		Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
 		Confidence: model.Confirmed,
-		Body: &model.Body{UseCase: &model.UseCaseBody{
+		Body: &model.Body{Contract: &model.ContractBody{
 			Service: svcRef, Binding: model.BindingRequired, Trigger: "caller asks",
 			Elements: []model.Element{
 				{Kind: model.KindInvariant, ID: "atomic", Text: "Each call is atomic.",
@@ -75,7 +75,7 @@ func admonitionFixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModuleP
 	}
 	g, _ := compiler.New().Compile(compiler.Input{
 		Modules: []source.LoadedModule{
-			{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{usecase, container}},
+			{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{contract, container}},
 			{Manifest: source.Manifest{Path: prod, Kind: source.KindDomain}, Nodes: []model.PlacedNode{story, product}},
 			{Manifest: source.Manifest{Path: gov, Kind: source.KindGovernance}, Nodes: []model.PlacedNode{adr}},
 		},
@@ -97,7 +97,7 @@ func TestStatusAdmonitions_On(t *testing.T) {
 	out, err := r.Render(render.Input{Graph: g, Revisions: revs})
 	require.NoError(t, err)
 
-	// UseCase: proven → success admonition + inline *Proven.* on the
+	// Contract: proven → success admonition + inline *Proven.* on the
 	// invariant.
 	uc := string(out["svc/do-thing.md"])
 	require.NotEmpty(t, uc)

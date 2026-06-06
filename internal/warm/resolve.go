@@ -93,6 +93,6 @@ func writeConsumer(dir string) error {
 	if err := os.WriteFile(filepath.Join(dir, "cue.mod", "module.cue"), []byte(mod), 0o644); err != nil {
 		return err
 	}
-	use := fmt.Sprintf("package warmconsumer\nimport s %q\n_warm: s.#UseCase\n", source.SchemaModulePath+":spec")
+	use := fmt.Sprintf("package warmconsumer\nimport s %q\n_warm: s.#Contract\n", source.SchemaModulePath+":spec")
 	return os.WriteFile(filepath.Join(dir, "use.cue"), []byte(use), 0o644)
 }

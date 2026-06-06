@@ -9,7 +9,7 @@ import "github.com/specue/specue/internal/model"
 // pass, so derive sees only in-view targets (cross-unloaded refs are skipped).
 func deriveAll(g *ResolvedGraph) {
 	for n := range g.Nodes() {
-		uc := n.Node().Body.UseCase
+		uc := n.Node().Body.Contract
 		if uc == nil {
 			continue
 		}
@@ -21,7 +21,7 @@ func deriveAll(g *ResolvedGraph) {
 	// Realizes and Topology depend on every node's Satisfies/deps being known, so
 	// they run in a second sweep.
 	for n := range g.Nodes() {
-		if n.Node().Body.UseCase == nil {
+		if n.Node().Body.Contract == nil {
 			continue
 		}
 		n.Realizes = deriveRealizes(g, n)

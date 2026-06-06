@@ -28,7 +28,7 @@ func checkRoleGate(g *ResolvedGraph) []Diagnostic {
 }
 
 // kindAllows reports whether a module of the given kind may hold a node of the
-// given type. service → UseCase/Port/Container; domain → Domain/Need;
+// given type. service → Contract/Port/Container; domain → Domain/Need;
 // governance → Plan/ADR; topology → Port/Container (the cross-service seam: shared
 // channels/datastores and the broker/gateway boxes that own them); code → nothing
 // (a code module is manifest + require only — it imports the contracts its source
@@ -40,7 +40,7 @@ func kindAllows(kind source.ModuleKind, t model.NodeType) bool {
 	case "":
 		return true
 	case source.KindService:
-		return t == model.TypeUseCase || t == model.TypePort || t == model.TypeContainer
+		return t == model.TypeContract || t == model.TypePort || t == model.TypeContainer
 	case source.KindDomain:
 		return t == model.TypeDomain || t == model.TypeNeed
 	case source.KindGovernance:

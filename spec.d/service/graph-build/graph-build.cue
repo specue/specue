@@ -10,7 +10,7 @@ import (
 	gov "specue.io/governance@v0:governance"
 )
 
-buildGraph: s.#UseCase & {
+buildGraph: s.#Contract & {
 	slug:        "build-graph"
 	title:       "Produce a resolved spec graph from the current context"
 	service:     root.specue

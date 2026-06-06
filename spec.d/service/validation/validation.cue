@@ -9,7 +9,7 @@ import (
 	govaud "specue.io/domain/governance@v0:governance"
 )
 
-validateGraph: s.#UseCase & {
+validateGraph: s.#Contract & {
 	slug:        "validate-graph"
 	title:       "Report whether the current spec is correct"
 	service:     root.specue
@@ -31,13 +31,13 @@ validateGraph: s.#UseCase & {
 		text: "A code annotation that does not resolve to a node in the module's require closure is reported as a failure."
 	}, {
 		id:   "unbindable-target"
-		text: "A code annotation aimed at a node that cannot be bound (anything but a UseCase) is reported as a failure."
+		text: "A code annotation aimed at a node that cannot be bound (anything but a Contract) is reported as a failure."
 	}, {
 		id:   "duplicate-binding"
 		text: "A node bound by more than one code annotation in the same code module is reported as a failure."
 	}, {
-		id:   "unreachable-usecase"
-		text: "A UseCase that no story FR claims, no other contract invokes and no trigger names is reported as a failure."
+		id:   "unreachable-contract"
+		text: "A Contract that no story FR claims, no other contract invokes and no trigger names is reported as a failure."
 	}, {
 		id:   "sync-cycle"
 		text: "A cycle of synchronous dependencies between contracts is reported as a failure."

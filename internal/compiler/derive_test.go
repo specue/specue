@@ -13,8 +13,8 @@ import (
 func TestDeriveBranchExclusion(t *testing.T) {
 	// caller core-depends on core-dep and branch-depends on branch-dep.
 	caller := model.PlacedNode{Module: "svc", Node: model.Node{
-		Slug: "caller", Type: model.TypeUseCase,
-		Body: &model.Body{UseCase: &model.UseCaseBody{Elements: []model.Element{
+		Slug: "caller", Type: model.TypeContract,
+		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
 			{Kind: model.KindPost, Text: "core", Deps: []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "core-dep"}}}},
 			{Kind: model.KindVariation, ID: "v", When: "w", Then: "t",
 				Deps: []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "branch-dep"}, Branch: true}}},
@@ -43,8 +43,8 @@ func TestDeriveSatisfiesAndRealizes(t *testing.T) {
 		}},
 	}}
 	impl := model.PlacedNode{Module: "m", Node: model.Node{
-		Slug: "do-cashout", Type: model.TypeUseCase,
-		Body: &model.Body{UseCase: &model.UseCaseBody{Elements: []model.Element{
+		Slug: "do-cashout", Type: model.TypeContract,
+		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
 			{Kind: model.KindPost, Text: "done", Satisfies: []model.AtomRef{{Need: model.NodeID{Module: "m", Slug: "cashout"}, Atom: "fr-01"}}},
 		}}},
 	}}
@@ -65,8 +65,8 @@ func TestDeriveTopology(t *testing.T) {
 		Body: &model.Body{Port: &model.PortBody{Kind: model.PortChannel, Transport: "kafka"}},
 	}}
 	producer := model.PlacedNode{Module: "topo", Node: model.Node{
-		Slug: "describe-node", Type: model.TypeUseCase,
-		Body: &model.Body{UseCase: &model.UseCaseBody{Elements: []model.Element{
+		Slug: "describe-node", Type: model.TypeContract,
+		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
 			{Kind: model.KindPost, Text: "queued", Deps: []model.Dep{
 				{To: model.NodeRef{Module: "topo", Slug: "report-channel"}, Role: model.RoleProduce}}},
 		}}},

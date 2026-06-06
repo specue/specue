@@ -30,7 +30,7 @@ func New(cfg Config) *render.Renderer {
 		layout = flatLayout{stripPrefix: cfg.StripPrefix}
 	}
 	nodes := []render.NodeRenderer{
-		UseCase{cfg: cfg}, Need{cfg: cfg}, ADR{cfg: cfg}, Plan{cfg: cfg},
+		Contract{cfg: cfg}, Need{cfg: cfg}, ADR{cfg: cfg}, Plan{cfg: cfg},
 		Port{cfg: cfg}, Container{cfg: cfg}, Domain{cfg: cfg},
 	}
 	var idx render.IndexRenderer = Index{cfg: cfg}

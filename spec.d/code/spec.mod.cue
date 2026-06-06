@@ -5,7 +5,7 @@ kind:    "code"
 // starts at the repo root so internal/, cmd/ etc. are visible without the
 // code module claiming sibling spec.d/ subpackages as its own.
 code_root: "../.."
-// The code module realizes the UseCases the service module declares — that is
+// The code module realizes the Contracts the service module declares — that is
 // what its Go source binds through //specue:req: annotations. UserStories
 // (product) and ADRs (governance) are not realized by code, so they are not
 // required here.

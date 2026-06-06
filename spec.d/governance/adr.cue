@@ -1,5 +1,5 @@
 // Package governance holds Specue's architecture decision records: the causal
-// layer. An ADR is a code-unbound node; UseCase elements cite one via decided_by
+// layer. An ADR is a code-unbound node; Contract elements cite one via decided_by
 // to record why a contract is shaped as it is, kept out of the contract's own text.
 package governance
 
@@ -99,7 +99,7 @@ adr07PlansAsBranches: s.#ADR & {
 		repository; its identity is a Plan record in a dedicated governance module
 		of the landscape — kind: governance — that points at those branches. The
 		governance module is where ADRs also live, kept apart from modules that
-		hold UseCases, UserStories or Ports. Speculative work is real CUE on a
+		hold Contracts, UserStories or Ports. Speculative work is real CUE on a
 		real ref the tool can read, diff and overlay, not a separate document
 		store. Acceptance merges the branches; conflicts between plans are gates
 		derived by overlaying both deltas. The intent axis is git, with
@@ -115,7 +115,7 @@ adr08AttestedBindings: s.#ADR & {
 		The spec and the code that realizes it sit on different sides of an access
 		boundary in many real systems: a reader may hold one and not the other.
 		Whoever holds the code publishes a small attestation artifact alongside its
-		spec module — the binding outcomes per UseCase, no source — and a reader
+		spec module — the binding outcomes per Contract, no source — and a reader
 		consumes that instead of scanning. Status is computed by the same rules in
 		both paths, so a reader and a code holder see the same picture and the
 		federated boundary becomes invisible at the spec level.

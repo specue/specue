@@ -49,8 +49,8 @@ deps: "specue.io/schema@v0": v: "v0.0.1"
 	run("config", "user.name", "t")
 
 	svc := `svc: s.#Container & {slug: "svc", type: "Container", title: "Svc", confidence: "CONFIRMED", kind: "service"}`
-	one := `one: s.#UseCase & {slug: "one", type: "UseCase", title: "One", confidence: "CONFIRMED", service: svc}`
-	two := `two: s.#UseCase & {slug: "two", type: "UseCase", title: "Two", confidence: "CONFIRMED", service: svc}`
+	one := `one: s.#Contract & {slug: "one", type: "Contract", title: "One", confidence: "CONFIRMED", service: svc}`
+	two := `two: s.#Contract & {slug: "two", type: "Contract", title: "Two", confidence: "CONFIRMED", service: svc}`
 
 	write("nodes.cue", svcNodes(svc+"\n"+one))
 	run("add", "-A")

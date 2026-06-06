@@ -1,7 +1,7 @@
 package model
 
 // Atom is a Need's testable unit — a functional (FR) or non-functional
-// (NFR) requirement, addressed as need-slug#fr-NN. A UseCase element discharges
+// (NFR) requirement, addressed as need-slug#fr-NN. A Contract element discharges
 // it via a satisfies edge (AtomRef). Coverage and proof are derived by the
 // compiler from that wiring + code, never stored here.
 type AtomKind string

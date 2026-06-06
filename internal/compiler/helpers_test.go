@@ -5,15 +5,15 @@ import (
 	"github.com/specue/specue/internal/source"
 )
 
-// uc builds a UseCase placed node with one postcondition carrying the given deps.
+// uc builds a Contract placed node with one postcondition carrying the given deps.
 func uc(modpath model.ModulePath, slug model.Slug, vis model.Visibility, deps ...model.Dep) model.PlacedNode {
 	return model.PlacedNode{
 		Module: modpath,
 		Node: model.Node{
 			Slug:       slug,
-			Type:       model.TypeUseCase,
+			Type:       model.TypeContract,
 			Visibility: vis,
-			Body: &model.Body{UseCase: &model.UseCaseBody{
+			Body: &model.Body{Contract: &model.ContractBody{
 				Elements: []model.Element{{Kind: model.KindPost, Text: "x", Deps: deps}},
 			}},
 		},

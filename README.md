@@ -29,9 +29,10 @@ for it.
 > ⚠️ **Pre-release, and the model is still moving.** Specue is not at a stable
 > release. The model itself — node types, the schema, the vocabulary, the
 > manifesto — is **speculative and actively changing**. There have already been
-> many backwards-incompatible changes, and there will be more: node types may be
-> renamed (e.g. `UseCase` is likely to become `Contract`), fields may move, and
-> the embedded schema may break pins between versions. Use it to explore the
+> many backwards-incompatible changes, and there will be more: node types get
+> renamed (the contract node was just renamed from `UseCase` to `Contract`),
+> fields move or are removed, and the embedded schema may break pins between
+> versions. Use it to explore the
 > idea, dogfood it, and shape it — but do not yet build anything you are not
 > prepared to migrate by hand. Nothing here is a compatibility promise until a
 > tagged release says otherwise.
@@ -40,8 +41,8 @@ This README walks from the smallest possible spec to the full picture. Each
 step adds one feature — read until the example you need.
 
 - **Install** — one `go install`.
-- **Step 1: One contract** — a service module with a single UseCase.
-- **Step 2: Bind it to code** — a code module beside it; the UC moves
+- **Step 1: One contract** — a service module with a single Contract.
+- **Step 2: Bind it to code** — a code module beside it; the contract moves
   `asserted` → `implemented` → `proven`.
 - **Step 3: Add an intent (Need)** — who the contract is for, what FRs it
   discharges.
@@ -94,7 +95,7 @@ specue bindings                                   # what each contract owes
 
 ## Step 1: One contract
 
-The smallest useful spec is one **service module** with one UseCase. No
+The smallest useful spec is one **service module** with one Contract. No
 intent layer yet, no code binding, no context.
 
 ```sh
@@ -117,7 +118,7 @@ import s "specue.io/schema@v0:spec"
 
 api: s.#Container & {slug: "api", title: "Todo API", kind: "service"}
 
-addTask: s.#UseCase & {
+addTask: s.#Contract & {
     slug: "add-task"
     title: "Add a task to a user's list"
     service: api
@@ -142,7 +143,7 @@ yet. That is the honest state. The next step changes that.
 
 Code lives in a separate module of `kind: "code"` that points at the service
 module it realizes. The Go source carries `//specue:req:<slug>` annotations
-that bind a function to a UseCase, and `//specue:test:<slug>` that bind a
+that bind a function to a Contract, and `//specue:test:<slug>` that bind a
 test.
 
 Add the code module beside the service module — both under `spec.d/`:
@@ -221,7 +222,7 @@ Now:
 ```sh
 specue validate                                   # green
 specue describe acme.test/todo@v0:add-task        # status: proven
-specue bindings                                   # what each UC owes / proves
+specue bindings                                   # what each contract owes / proves
 ```
 
 `add-task` is now **proven**: a function implements it and a test covers it.
@@ -267,7 +268,7 @@ require: [
 ]
 ```
 
-And let the UseCase claim the FR:
+And let the Contract claim the FR:
 
 ```cue
 // spec.d/service/todo.cue
@@ -276,7 +277,7 @@ import (
     d "acme.test/who@v0:who"
 )
 
-addTask: s.#UseCase & {
+addTask: s.#Contract & {
     // ...
     postconditions: [{
         text: "The task is durable: a later read of the same list returns it."
@@ -290,7 +291,7 @@ specue validate
 specue describe acme.test/who@v0:as-user          # status: covered
 ```
 
-The Need is `covered` because a proven UseCase satisfies its only FR. With no
+The Need is `covered` because a proven Contract satisfies its only FR. With no
 satisfying contract it would be `uncovered`; with some but not all, `partial`.
 Coverage is *computed*, not asserted.
 
@@ -323,7 +324,7 @@ adr01TaskOrdering: s.#ADR & {
 }
 ```
 
-Cite it from the UseCase invariant that owes its shape to the decision:
+Cite it from the Contract invariant that owes its shape to the decision:
 
 ```cue
 // spec.d/service/todo.cue
@@ -332,7 +333,7 @@ import (
     g "acme.test/gov@v0:gov"
 )
 
-addTask: s.#UseCase & {
+addTask: s.#Contract & {
     // ...
     invariants: [{
         id: "insertion-order"
@@ -343,7 +344,7 @@ addTask: s.#UseCase & {
 ```
 
 `describe` now prints the ADR ref beside the invariant; `query` joins through
-`decided_by` so "what decisions does this UseCase rest on?" is one SQL away.
+`decided_by` so "what decisions does this Contract rest on?" is one SQL away.
 
 ## Step 5: Propose a change (Plan)
 
@@ -385,7 +386,7 @@ A few questions you reach for:
 # Every contract with no code behind it yet — the honest TODO list.
 specue query "SELECT id, type FROM nodes WHERE status='asserted'"
 
-# Story atoms with no UseCase satisfying them — coverage gaps, by Need.
+# Story atoms with no Contract satisfying them — coverage gaps, by Need.
 specue query "SELECT need_id, atom FROM fr_coverage WHERE uc_id IS NULL"
 
 # Full-text over titles + bodies (porter-stemmed: 'idempotent' finds 'idempotently').
@@ -460,11 +461,11 @@ projection fits what you need to build.
 
 ## Concepts in one paragraph each
 
-**UseCase** — a logical contract a service guarantees, with named invariants
+**Contract** — a logical contract a service guarantees, with named invariants
 the code binds to. The only node that carries code bindings.
 
 **Need** — the intent unit. It names a consumer (who or what requires this)
-and a description, and owns the testable atoms (`fr-NN` / `nfr-NN`) UseCases
+and a description, and owns the testable atoms (`fr-NN` / `nfr-NN`) Contracts
 discharge through `satisfies`. Coverage is *computed* from the contracts that
 satisfy its atoms — not asserted by hand. (Need, not "UserStory", because the
 unit is long-lived and not always human-consumed — see
@@ -475,10 +476,10 @@ unit is long-lived and not always human-consumed — see
 **Port** and **Container** — the C4 L2 surface: typed transports (a channel,
 an RPC service, a datastore) and boundary boxes (an external actor, a
 third-party system). The topology — who produces/consumes/serves/calls a Port
-— is derived from edges the UseCases declare, not authored by hand.
+— is derived from edges the Contracts declare, not authored by hand.
 
 **ADR** — the why-layer. Each ADR records one architecture decision; a
-UseCase invariant cites it through `decided_by`, keeping the contract text
+Contract invariant cites it through `decided_by`, keeping the contract text
 about *what* and the rationale where it belongs.
 
 **Plan** — a speculative change. A Plan record lives in your governance

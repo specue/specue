@@ -10,14 +10,14 @@ import (
 	gov "specue.io/governance@v0:governance"
 )
 
-attestBindings: s.#UseCase & {
+attestBindings: s.#Contract & {
 	slug:        "attest-bindings"
 	title:       "Publish a spec module's binding outcomes for readers without code access"
 	service:     root.specue
 	trigger:     "the holder of the code asks to publish an attestation for a spec module"
 	invariants: [{
 		id:   "no-source-in-attestation"
-		text: "The attestation carries the binding outcome per UseCase and the file:line references; the source content of the code is never included."
+		text: "The attestation carries the binding outcome per Contract and the file:line references; the source content of the code is never included."
 		satisfies: [fed.reader.frs."fr-02"]
 		decided_by: [gov.adr08AttestedBindings]
 	}, {
@@ -26,7 +26,7 @@ attestBindings: s.#UseCase & {
 		decided_by: [gov.adr08AttestedBindings]
 	}, {
 		id:   "status-identical-to-scan"
-		text: "A UseCase's status computed from the attestation matches the status computed from scanning the code."
+		text: "A Contract's status computed from the attestation matches the status computed from scanning the code."
 		satisfies: [fed.reader.frs."fr-01"]
 		decided_by: [gov.adr08AttestedBindings]
 	}]
@@ -36,7 +36,7 @@ attestBindings: s.#UseCase & {
 	}]
 }
 
-renderDoc: s.#UseCase & {
+renderDoc: s.#Contract & {
 	slug:        "render-doc"
 	title:       "Render the resolved spec as a browsable markdown documentation tree"
 	service:     root.specue
@@ -121,7 +121,7 @@ renderDoc: s.#UseCase & {
 	}]
 }
 
-warmSchema: s.#UseCase & {
+warmSchema: s.#Contract & {
 	slug:        "warm-schema"
 	title:       "Seed the editor's cue cache with the schema and the landscape's modules"
 	service:     root.specue

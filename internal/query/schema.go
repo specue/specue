@@ -18,18 +18,18 @@ CREATE TABLE nodes (
 	module     TEXT NOT NULL,
 	slug       TEXT NOT NULL,
 	id         TEXT NOT NULL,            -- canonical module:slug
-	type       TEXT NOT NULL,            -- UseCase | Need | Port | Container | Domain | Plan | ADR
+	type       TEXT NOT NULL,            -- Contract | Need | Port | Container | Domain | Plan | ADR
 	status     TEXT NOT NULL,            -- proven | implemented | asserted | blocked | broken | covered | partial | uncovered
 	title      TEXT,
 	visibility TEXT,                     -- public | private
-	service    TEXT,                     -- UseCase: its service node id
+	service    TEXT,                     -- Contract: its service node id
 	domain     TEXT,                     -- Need: its domain node id
 	port_kind  TEXT,                     -- Port: channel | rpc | rest | datastore
 	transport  TEXT,                     -- Port: open label (kafka, grpc, ...)
 	PRIMARY KEY (module, slug)
 );
 
--- A plain contract dependency (UseCase -> UseCase). core = from a core element
+-- A plain contract dependency (Contract -> Contract). core = from a core element
 -- (not a branch/variation), which is what drives blocked-status propagation.
 CREATE TABLE dep_edges (
 	from_id TEXT NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE dep_edges (
 	core    INTEGER NOT NULL            -- 1 if from a core element
 );
 
--- An infrastructure touch (UseCase -> Port/Container) with its role and the element
+-- An infrastructure touch (Contract -> Port/Container) with its role and the element
 -- it sits on. role is the common filter ("who consumes X").
 CREATE TABLE infra_edges (
 	from_id TEXT NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE infra_edges (
 	element TEXT                        -- the named element it sits on ("" = whole-contract)
 );
 
--- A UseCase discharges a Need atom (FR/NFR). atom is navigational
+-- A Contract discharges a Need atom (FR/NFR). atom is navigational
 -- ("which UCs satisfy fr-01").
 CREATE TABLE satisfies (
 	uc_id   TEXT NOT NULL,
@@ -54,13 +54,13 @@ CREATE TABLE satisfies (
 	atom    TEXT NOT NULL
 );
 
--- Derived: a UseCase realizes a Need (it satisfies at least one of its atoms).
+-- Derived: a Contract realizes a Need (it satisfies at least one of its atoms).
 CREATE TABLE realizes (
 	uc_id   TEXT NOT NULL,
 	need_id TEXT NOT NULL
 );
 
--- A named element (invariant/variation) of a UseCase — addressable by a scoped
+-- A named element (invariant/variation) of a Contract — addressable by a scoped
 -- binding (slug#element).
 CREATE TABLE elements (
 	node_id TEXT NOT NULL,
@@ -103,7 +103,7 @@ CREATE VIRTUAL TABLE nodes_fts USING fts5(id, slug, title, body, tokenize = 'por
 
 -- --- views: pre-joined cuts an agent reaches for often ----------------------
 
--- node_describe: one row per (node, element-or-empty). For a UseCase: one row
+-- node_describe: one row per (node, element-or-empty). For a Contract: one row
 -- per element; for any other node a single row with element = ''. Encodes what
 -- 'describe' prints in row form, so a query can read the whole node — header
 -- plus elements — in one statement.
@@ -135,8 +135,8 @@ CREATE VIEW fr_coverage AS
 const tablesDoc = `Tables (a navigation projection of the spec graph; query them with SQL):
 
   nodes(module, slug, id, type, status, title, visibility, service, domain, port_kind, transport)
-  dep_edges(from_id, to_id, core)            -- UseCase -> UseCase contract deps
-  infra_edges(from_id, to_id, role, element) -- UseCase -> Port/Container infra touches
+  dep_edges(from_id, to_id, core)            -- Contract -> Contract contract deps
+  infra_edges(from_id, to_id, role, element) -- Contract -> Port/Container infra touches
   satisfies(uc_id, need_id, atom)            -- a UC discharges a Need atom
   realizes(uc_id, need_id)                   -- derived: UC realizes a Need
   elements(node_id, element, kind, text)     -- named invariants/variations
@@ -189,7 +189,7 @@ Recipes (the higher-level views — substitute the scope literal):
   SELECT domain, status, count(*) n FROM nodes
   WHERE type = 'Need' GROUP BY domain, status ORDER BY domain;
   SELECT service, status, count(*) n FROM nodes
-  WHERE type = 'UseCase' GROUP BY service, status ORDER BY service;
+  WHERE type = 'Contract' GROUP BY service, status ORDER BY service;
 
   -- DIGEST: one area in depth. Its nodes...
   SELECT id, type, status FROM nodes WHERE service = 'example:specue' OR id = 'example:specue';

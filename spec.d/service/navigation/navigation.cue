@@ -11,7 +11,7 @@ import (
 	gov "specue.io/governance@v0:governance"
 )
 
-listResources: s.#UseCase & {
+listResources: s.#Contract & {
 	slug:        "list-resources"
 	title:       "List the kinds of node the spec holds, and the nodes of one kind"
 	service:     root.specue
@@ -30,7 +30,7 @@ listResources: s.#UseCase & {
 	}]
 }
 
-describeNode: s.#UseCase & {
+describeNode: s.#Contract & {
 	slug:        "describe-node"
 	title:       "Read one node in full by its module-qualified identity"
 	service:     root.specue
@@ -56,7 +56,7 @@ describeNode: s.#UseCase & {
 	}]
 }
 
-queryGraph: s.#UseCase & {
+queryGraph: s.#Contract & {
 	slug:        "query-graph"
 	title:       "Answer a graph query with read-only SQL"
 	service:     root.specue

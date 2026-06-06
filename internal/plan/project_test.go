@@ -25,15 +25,15 @@ const walletSpecMod = "module: \"x.test/example@v0\"\nversion: \"v0.0.1\"\nkind:
 const baseNodes = `package example
 import s "specue.io/schema@v0:spec"
 example: s.#Container & {type:"Container", slug:"example", title:"Wallet", confidence:"CONFIRMED", kind:"service"}
-apply: s.#UseCase & {type:"UseCase", slug:"apply", title:"Apply", confidence:"CONFIRMED", service:example, postconditions:[{text:"done"}]}
+apply: s.#Contract & {type:"Contract", slug:"apply", title:"Apply", confidence:"CONFIRMED", service:example, postconditions:[{text:"done"}]}
 `
 
 // planNodes adds a second use case on the plan branch.
 const planNodes = `package example
 import s "specue.io/schema@v0:spec"
 example: s.#Container & {type:"Container", slug:"example", title:"Wallet", confidence:"CONFIRMED", kind:"service"}
-apply: s.#UseCase & {type:"UseCase", slug:"apply", title:"Apply", confidence:"CONFIRMED", service:example, postconditions:[{text:"done"}]}
-reverse: s.#UseCase & {type:"UseCase", slug:"reverse", title:"Reverse", confidence:"CONFIRMED", service:example, postconditions:[{text:"compensated"}]}
+apply: s.#Contract & {type:"Contract", slug:"apply", title:"Apply", confidence:"CONFIRMED", service:example, postconditions:[{text:"done"}]}
+reverse: s.#Contract & {type:"Contract", slug:"reverse", title:"Reverse", confidence:"CONFIRMED", service:example, postconditions:[{text:"compensated"}]}
 `
 
 // projectRepo lays out a single-repo workspace (governance + example), commits base,

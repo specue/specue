@@ -5,7 +5,7 @@ package jsonir
 // JSON output is one flat object. Adding a new node type means adding one new
 // file struct here and one builder in render.go — nothing else moves.
 
-type fileUseCase struct {
+type fileContract struct {
 	commonJSON
 	useCaseJSON
 	Derived  *derivedJSON  `json:"derived,omitempty"`

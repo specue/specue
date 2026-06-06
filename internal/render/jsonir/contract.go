@@ -6,16 +6,16 @@ import (
 	"github.com/specue/specue/internal/render"
 )
 
-// UseCase renders a UseCase as one JSON file: the common envelope, the
+// Contract renders a Contract as one JSON file: the common envelope, the
 // use-case payload, derived facts, and code bindings.
-type UseCase struct{}
+type Contract struct{}
 
-func (UseCase) Type() model.NodeType { return model.TypeUseCase }
+func (Contract) Type() model.NodeType { return model.TypeContract }
 
-func (UseCase) Render(n *compiler.ResolvedNode, ctx render.Context) (render.FileContent, error) {
-	f := fileUseCase{commonJSON: buildCommon(n, ctx.Revisions)}
-	if body := n.Node().Body; body != nil && body.UseCase != nil {
-		uc := body.UseCase
+func (Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.FileContent, error) {
+	f := fileContract{commonJSON: buildCommon(n, ctx.Revisions)}
+	if body := n.Node().Body; body != nil && body.Contract != nil {
+		uc := body.Contract
 		pre, post, inv, vari := buildElements(uc.Elements)
 		f.useCaseJSON = useCaseJSON{
 			Service:        refStr(uc.Service),

@@ -17,7 +17,7 @@ graph or planning a change, reach for the other skills first
 ## The three layers, on the contributor side
 
 You are touching the **HOW** layer. The tool's **WHAT** lives in
-`spec.d/service/` — every verb, every gate, every behaviour is a UseCase
+`spec.d/service/` — every verb, every gate, every behaviour is a Contract
 with named invariants. Read the relevant UC before you write the code:
 `describe specue.io/service@v0:<slug>`. The shape you implement is the
 shape the UC declares.
@@ -30,7 +30,7 @@ goes where in *this* code base.
 
 ## Package map
 
-Map each layer to the UseCases it realizes. Use this to find both "where
+Map each layer to the Contracts it realizes. Use this to find both "where
 do I change X" and "where does Y of the contract live".
 
 | Package | Realizes | Notes |

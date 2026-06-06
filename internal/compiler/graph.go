@@ -7,13 +7,13 @@ import (
 	"github.com/specue/specue/internal/source"
 )
 
-// ResolvedNodeStatus is a node's computed state. A UseCase collides parser facts
+// ResolvedNodeStatus is a node's computed state. A Contract collides parser facts
 // (the contract exists) with scanner facts (code binds it); a Need's status
 // is computed from the coverage of its atoms. broken means a gate failed.
 type ResolvedNodeStatus string
 
 const (
-	// UseCase statuses.
+	// Contract statuses.
 	StatusProven      ResolvedNodeStatus = "proven"      // implemented and a test covers it
 	StatusImplemented ResolvedNodeStatus = "implemented" // bound in code, no covering test
 	StatusAsserted    ResolvedNodeStatus = "asserted"    // a contract with no code yet (a GAP)
@@ -26,7 +26,7 @@ const (
 	StatusUncovered ResolvedNodeStatus = "uncovered" // no atom covered
 )
 
-// AtomAddr is the full address of an atom on a Need that a UseCase element satisfies.
+// AtomAddr is the full address of an atom on a Need that a Contract element satisfies.
 type AtomAddr struct {
 	Need model.NodeID
 	Atom model.AtomID

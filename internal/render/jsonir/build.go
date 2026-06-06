@@ -144,15 +144,15 @@ func flattenInfra(n *compiler.ResolvedNode) []infraBindingJSON {
 	return out
 }
 
-// resolveInfraTarget walks the UseCase's authored elements to find the Dep
+// resolveInfraTarget walks the Contract's authored elements to find the Dep
 // that matches the InfraKey's (Role, Element) and returns its target as
 // "module:slug". Empty when no match (binding without an authored anchor).
 func resolveInfraTarget(n *compiler.ResolvedNode, k compiler.InfraKey) string {
 	uc := n.Node().Body
-	if uc == nil || uc.UseCase == nil {
+	if uc == nil || uc.Contract == nil {
 		return ""
 	}
-	for _, e := range uc.UseCase.Elements {
+	for _, e := range uc.Contract.Elements {
 		if e.ID != k.Element {
 			continue
 		}
@@ -172,7 +172,7 @@ func locOf(b compiler.Binding) string {
 	return string(b.File)
 }
 
-// buildElements groups a UseCase's Elements by kind into four slices and
+// buildElements groups a Contract's Elements by kind into four slices and
 // converts each into the wire shape, dropping kinds with no elements.
 func buildElements(els []model.Element) (pre, post, inv, vari []elemJSON) {
 	for _, e := range els {

@@ -18,7 +18,7 @@ import (
 
 // The schema is a CUE module (specue.io/schema): its package files plus its
 // own cue.mod/module.cue, embedded as a tree. Authored spec modules import it, so
-// CUE type-checks each node against #UseCase/#Need/etc. and the editor
+// CUE type-checks each node against #Contract/#Need/etc. and the editor
 // autocompletes the schema. Because a dependency must be a real OS directory
 // (cue refuses an in-memory FS for a dep), the embedded tree is materialized to
 // disk at startup; see MaterializeSchema.

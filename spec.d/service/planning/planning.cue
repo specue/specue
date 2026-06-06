@@ -11,14 +11,14 @@ import (
 	gov "specue.io/governance@v0:governance"
 )
 
-diffRefs: s.#UseCase & {
+diffRefs: s.#Contract & {
 	slug:        "diff-refs"
 	title:       "Report the typed delta between the spec at two versioned points"
 	service:     root.specue
 	trigger:     "the caller asks for the difference between two refs of a module"
 	invariants: [{
 		id:   "typed-over-the-spec-graph"
-		text: "The delta is over UseCases, UserStories, Ports and their elements, not over file lines."
+		text: "The delta is over Contracts, UserStories, Ports and their elements, not over file lines."
 		satisfies: [agent.review.frs."fr-01"]
 	}, {
 		id:   "every-change-named"
@@ -33,7 +33,7 @@ diffRefs: s.#UseCase & {
 	}]
 }
 
-registerPlan: s.#UseCase & {
+registerPlan: s.#Contract & {
 	slug:        "register-plan"
 	title:       "Open a new Plan as a Plan record plus branches"
 	service:     root.specue
@@ -63,7 +63,7 @@ registerPlan: s.#UseCase & {
 	}]
 }
 
-usePlan: s.#UseCase & {
+usePlan: s.#Contract & {
 	slug:        "use-plan"
 	title:       "Switch the working tree into a Plan"
 	service:     root.specue
@@ -81,7 +81,7 @@ usePlan: s.#UseCase & {
 	}]
 }
 
-returnToBase: s.#UseCase & {
+returnToBase: s.#Contract & {
 	slug:        "return-to-base"
 	title:       "Leave a Plan and return to the base branch"
 	service:     root.specue
@@ -99,7 +99,7 @@ returnToBase: s.#UseCase & {
 	}]
 }
 
-dropPlan: s.#UseCase & {
+dropPlan: s.#Contract & {
 	slug:        "drop-plan"
 	title:       "Abandon a Plan without accepting it"
 	service:     root.specue
@@ -117,7 +117,7 @@ dropPlan: s.#UseCase & {
 	}]
 }
 
-pendingOverlay: s.#UseCase & {
+pendingOverlay: s.#Contract & {
 	slug:        "pending-overlay"
 	title:       "Show a Plan against the current spec without switching the working tree"
 	service:     root.specue
@@ -140,7 +140,7 @@ pendingOverlay: s.#UseCase & {
 	}]
 }
 
-detectConflict: s.#UseCase & {
+detectConflict: s.#Contract & {
 	slug:        "detect-conflict"
 	title:       "Report conflicts between two open Plans"
 	service:     root.specue
@@ -152,15 +152,15 @@ detectConflict: s.#UseCase & {
 		decided_by: [gov.adr07PlansAsBranches]
 	}, {
 		id:   "co-touch-surfaces-for-review"
-		text: "Two Plans that touch the same UseCase or Port but both apply cleanly are reported as advisory for human or agent review, not blocked."
+		text: "Two Plans that touch the same Contract or Port but both apply cleanly are reported as advisory for human or agent review, not blocked."
 		satisfies: [agent.planner.frs."fr-04"]
 	}]
 	postconditions: [{
-		text: "Each conflict names the two Plans, the shared UseCase or Port, and whether it is blocking or advisory."
+		text: "Each conflict names the two Plans, the shared Contract or Port, and whether it is blocking or advisory."
 	}]
 }
 
-acceptPlan: s.#UseCase & {
+acceptPlan: s.#Contract & {
 	slug:        "accept-plan"
 	title:       "Apply a Plan to the current spec and close it"
 	service:     root.specue

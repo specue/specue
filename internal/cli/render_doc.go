@@ -83,7 +83,7 @@ func newRenderCmd(g *Globals, out, err io.Writer, code *int) *cobra.Command {
 	cmd.Flags().BoolVar(&withTagsPage, "with-tags-page", false,
 		"emit a tags.md grouping nodes by type and status (for MkDocs Material's tags plugin)")
 	cmd.Flags().BoolVar(&withStatusAdmonitions, "with-status-admonitions", false,
-		"emit a Material admonition with the node's status at the top of every UseCase/Need/ADR/Plan page; mark each Requirement and Invariant inline with its own status")
+		"emit a Material admonition with the node's status at the top of every Contract/Need/ADR/Plan page; mark each Requirement and Invariant inline with its own status")
 	return cmd
 }
 

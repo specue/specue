@@ -9,18 +9,18 @@ import (
 	gov "specue.io/governance@v0:governance"
 )
 
-scanCode: s.#UseCase & {
+scanCode: s.#Contract & {
 	slug:        "scan-code"
 	title:       "Read code annotations as binding facts"
 	service:     root.specue
-	trigger:     "any verb that needs to know which code realizes which UseCases asks for the scan"
+	trigger:     "any verb that needs to know which code realizes which Contracts asks for the scan"
 	invariants: [{
 		id:   "language-agnostic-match"
 		text: "An annotation is recognised by its lexical shape, independent of the host language's syntax."
 		decided_by: [gov.adr05CodeAsModule]
 	}, {
 		id:   "annotation-is-the-only-binding-channel"
-		text: "Code is bound to a UseCase only by an annotation in its source; nothing else (a file name, a path convention) counts as a binding."
+		text: "Code is bound to a Contract only by an annotation in its source; nothing else (a file name, a path convention) counts as a binding."
 		satisfies: [agent.relate.frs."fr-04"]
 		decided_by: [gov.adr05CodeAsModule]
 	}, {
@@ -36,7 +36,7 @@ scanCode: s.#UseCase & {
 	}]
 }
 
-reportBindings: s.#UseCase & {
+reportBindings: s.#Contract & {
 	slug:        "report-bindings"
 	title:       "Show a code module's bindable contracts and their state"
 	service:     root.specue
@@ -47,12 +47,12 @@ reportBindings: s.#UseCase & {
 		decided_by: [gov.adr05CodeAsModule]
 	}, {
 		id:   "allowed-from-require-closure"
-		text: "The contracts the caller may bind are exactly the UseCases reachable through the code module's require closure."
+		text: "The contracts the caller may bind are exactly the Contracts reachable through the code module's require closure."
 		satisfies: [agent.author.frs."fr-02"]
 		decided_by: [gov.adr05CodeAsModule]
 	}, {
 		id:   "per-element-state"
-		text: "Each row's state (unbound, bound, proven, duplicate, orphan) reflects whether the specific element has a binding and a proving test, not the UseCase as a whole."
+		text: "Each row's state (unbound, bound, proven, duplicate, orphan) reflects whether the specific element has a binding and a proving test, not the Contract as a whole."
 		satisfies: [agent.author.frs."fr-02"]
 	}]
 	postconditions: [{

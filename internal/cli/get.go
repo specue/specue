@@ -109,7 +109,7 @@ func runGet(ctx Context, word string, id string) (GetReport, *Problem) {
 	}
 
 	// Resource records the CANONICAL name (rsc.name), so an alias never leaks into
-	// output — `get uc` and `get usecase` produce identical results. For the `all`
+	// output — `get ct` and `get contract` produce identical results. For the `all`
 	// pseudo-resource there is no registry entry, so the word itself is canonical.
 	canonical := word
 	if !all {
@@ -153,9 +153,9 @@ func rowFor(n *compiler.ResolvedNode, withType bool) nodeRow {
 func detailOf(n *compiler.ResolvedNode) string {
 	b := n.Node().Body
 	switch n.Node().Type {
-	case model.TypeUseCase:
-		if b != nil && b.UseCase != nil {
-			return "service " + b.UseCase.Service.String()
+	case model.TypeContract:
+		if b != nil && b.Contract != nil {
+			return "service " + b.Contract.Service.String()
 		}
 	case model.TypeNeed:
 		if b != nil && b.Need != nil {

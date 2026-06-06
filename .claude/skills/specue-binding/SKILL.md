@@ -19,7 +19,7 @@ annotation, when not to, how to keep the bindings view honest.
 
 Binding is the **HOW** layer talking back to the **WHAT** layer.
 
-- WHAT lives in the spec as a UseCase with named invariants.
+- WHAT lives in the spec as a Contract with named invariants.
 - HOW lives in the function or method that realizes the invariant; the
   annotation declares the link.
 - WHY is not the code's concern; `decided_by` already lives on the spec

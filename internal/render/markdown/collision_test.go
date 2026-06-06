@@ -111,7 +111,7 @@ func TestResolveNodeFolderCollisionsSuppressesAutoIndex(t *testing.T) {
 	require.NoError(t, err)
 
 	// Synthesise a collision: rename the leaf so its parent slug clashes
-	// with the slug of a synthetic UseCase placed at svc/do-thing.md beside
+	// with the slug of a synthetic Contract placed at svc/do-thing.md beside
 	// a svc/do-thing/ subdir.
 	tree[render.RelPath("svc/do-thing/child.md")] = render.FileContent("# child\n")
 
@@ -129,7 +129,7 @@ func TestResolveNodeFolderCollisionsSuppressesAutoIndex(t *testing.T) {
 
 	collisions.Apply(tree)
 
-	// The UseCase moved.
+	// The Contract moved.
 	_, hasOld := tree[render.RelPath("svc/do-thing.md")]
 	assert.False(t, hasOld)
 	_, hasNew := tree[render.RelPath("svc/do-thing/index.md")]

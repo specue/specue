@@ -14,7 +14,7 @@ import (
 )
 
 // TestSchemaImportTypeChecks proves an authored node file can import the schema
-// module and unify against #UseCase — the foundation of CUE-native authoring
+// module and unify against #Contract — the foundation of CUE-native authoring
 // (type-checking + editor autocomplete come from this import).
 func TestSchemaImportTypeChecks(t *testing.T) {
 	schema, err := modules.NewSchemaModule()
@@ -36,8 +36,8 @@ import s "specue.io/schema@v0:spec"
 example: s.#Container & {
 	type: "Container", slug: "example", title: "Wallet", confidence: "CONFIRMED", kind: "service"
 }
-validateGraph: s.#UseCase & {
-	type:       "UseCase"
+validateGraph: s.#Contract & {
+	type:       "Contract"
 	slug:       "validate-graph"
 	title:      "Apply"
 	confidence: "CONFIRMED"
@@ -59,7 +59,7 @@ validateGraph: s.#UseCase & {
 	require.NoError(t, v.Validate(cue.Concrete(true)))
 
 	slug, _ := v.LookupPath(cue.ParsePath("validateGraph.slug")).String()
-	assert.Equal(t, "validate-graph", slug, "node type-checked against imported #UseCase")
+	assert.Equal(t, "validate-graph", slug, "node type-checked against imported #Contract")
 }
 
 // TestSchemaImportRejectsBadField proves the imported schema actually constrains:
@@ -80,7 +80,7 @@ deps: "specue.io/schema@v0": v: "v0.0.1"
 package example
 import s "specue.io/schema@v0:spec"
 svc: s.#Container & {type: "Container", slug: "w", title: "W", confidence: "CONFIRMED", kind: "service"}
-bad: s.#UseCase & {type: "UseCase", slug: "x", title: "t", confidence: "BOGUS", service: svc, postconditions: [{text: "y"}]}
+bad: s.#Contract & {type: "Contract", slug: "x", title: "t", confidence: "BOGUS", service: svc, postconditions: [{text: "y"}]}
 `),
 	}
 	ctx := cuecontext.New()

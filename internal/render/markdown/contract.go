@@ -9,16 +9,16 @@ import (
 	"github.com/specue/specue/internal/render"
 )
 
-// UseCase renders a UseCase node as one .md file: frontmatter carrying the
+// Contract renders a Contract node as one .md file: frontmatter carrying the
 // machine-readable shape, then a body identical in content to `describe`
 // (trigger, invariants with satisfies/decided_by, postconditions, realizes).
-type UseCase struct{ cfg Config }
+type Contract struct{ cfg Config }
 
-func (UseCase) Type() model.NodeType { return model.TypeUseCase }
+func (Contract) Type() model.NodeType { return model.TypeContract }
 
 //specue:req:render-doc#cross-links-resolve-as-markdown
-func (u UseCase) Render(n *compiler.ResolvedNode, ctx render.Context) (render.FileContent, error) {
-	uc := n.Node().Body.UseCase
+func (u Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.FileContent, error) {
+	uc := n.Node().Body.Contract
 	fm := baseFrontmatter(n, ctx)
 	fm.Status = string(n.Status)
 	fm.Service = refStr(uc.Service)
@@ -116,7 +116,7 @@ func writeElement(b *strings.Builder, from model.NodeID, e model.Element, ctx re
 // collectUCSatisfies flattens every element's satisfies into the node-level
 // frontmatter list — a deduped, sorted view for tooling that wants the
 // node-level summary without walking elements.
-func collectUCSatisfies(uc *model.UseCaseBody) []string {
+func collectUCSatisfies(uc *model.ContractBody) []string {
 	seen := map[string]struct{}{}
 	var out []string
 	for _, e := range uc.Elements {
@@ -134,7 +134,7 @@ func collectUCSatisfies(uc *model.UseCaseBody) []string {
 
 // collectUCDecidedBy flattens every element's decided_by into the node-level
 // frontmatter list, deduped.
-func collectUCDecidedBy(uc *model.UseCaseBody) []string {
+func collectUCDecidedBy(uc *model.ContractBody) []string {
 	seen := map[string]struct{}{}
 	var out []string
 	for _, e := range uc.Elements {

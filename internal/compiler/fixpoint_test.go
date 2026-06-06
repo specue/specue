@@ -10,15 +10,15 @@ import (
 	"github.com/specue/specue/internal/source"
 )
 
-// ucWith builds a UseCase node with a chosen interaction and core deps.
+// ucWith builds a Contract node with a chosen interaction and core deps.
 func ucWith(slug model.Slug, interaction model.Interaction, deps ...model.Slug) model.PlacedNode {
 	var ds []model.Dep
 	for _, d := range deps {
 		ds = append(ds, model.Dep{To: model.NodeRef{Module: "svc", Slug: d}})
 	}
 	return model.PlacedNode{Module: "svc", Node: model.Node{
-		Slug: slug, Type: model.TypeUseCase,
-		Body: &model.Body{UseCase: &model.UseCaseBody{
+		Slug: slug, Type: model.TypeContract,
+		Body: &model.Body{Contract: &model.ContractBody{
 			Interaction: interaction,
 			Elements:    []model.Element{{Kind: model.KindPost, Text: "x", Deps: ds}},
 		}},
@@ -88,7 +88,7 @@ func TestBlockedAbstractDoesNotBlock(t *testing.T) {
 	// A dep with an abstract binding is deliverable by design — no block.
 	readyN := ucWith("ready", model.InteractionAsync, "concept")
 	concept := ucWith("concept", model.InteractionAsync)
-	concept.Node.Body.UseCase.Binding = model.BindingAbstract
+	concept.Node.Body.Contract.Binding = model.BindingAbstract
 	g, _ := New().Compile(Input{Modules: []source.LoadedModule{
 		loadedMod("svc", source.KindService, []model.PlacedNode{readyN, concept}),
 	}})
@@ -103,8 +103,8 @@ func TestBlockedAbstractDoesNotBlock(t *testing.T) {
 func TestBranchDepDoesNotBlock(t *testing.T) {
 	// A branch dep on an asserted node must NOT block the parent (CoreUses excludes it).
 	ready := model.PlacedNode{Module: "svc", Node: model.Node{
-		Slug: "ready", Type: model.TypeUseCase,
-		Body: &model.Body{UseCase: &model.UseCaseBody{Elements: []model.Element{
+		Slug: "ready", Type: model.TypeContract,
+		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
 			{Kind: model.KindVariation, ID: "v", When: "w", Then: "t",
 				Deps: []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "gap"}, Branch: true}}},
 		}}},

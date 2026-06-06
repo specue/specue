@@ -16,9 +16,9 @@ import (
 )
 
 // fixtureGraph builds a small graph with one service module (a Container, a
-// UseCase with two named invariants, one of which satisfies a Need FR),
+// Contract with two named invariants, one of which satisfies a Need FR),
 // one domain module (the Need + Domain), and one governance module (one ADR
-// cited from the UseCase). Enough to exercise every renderer-side invariant.
+// cited from the Contract). Enough to exercise every renderer-side invariant.
 func fixtureGraph(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]string) {
 	t.Helper()
 
@@ -30,10 +30,10 @@ func fixtureGraph(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]s
 	adrRef := model.NodeRef{Module: gov, Slug: "adr-01"}
 	svcRef := model.NodeRef{Module: svc, Slug: "service"}
 
-	usecase := model.PlacedNode{Module: svc, Node: model.Node{
-		Slug: "do-thing", Type: model.TypeUseCase, Title: "Do the thing",
+	contract := model.PlacedNode{Module: svc, Node: model.Node{
+		Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
 		Confidence: model.Confirmed,
-		Body: &model.Body{UseCase: &model.UseCaseBody{
+		Body: &model.Body{Contract: &model.ContractBody{
 			Service: svcRef, Binding: model.BindingRequired, Trigger: "caller asks",
 			Elements: []model.Element{
 				{Kind: model.KindInvariant, ID: "atomic", Text: "Each call is atomic.",
@@ -77,7 +77,7 @@ func fixtureGraph(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]s
 
 	c := compiler.New()
 	g, _ := c.Compile(compiler.Input{Modules: []source.LoadedModule{
-		{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{usecase, container}},
+		{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{contract, container}},
 		{Manifest: source.Manifest{Path: prod, Kind: source.KindDomain}, Nodes: []model.PlacedNode{story, product}},
 		{Manifest: source.Manifest{Path: gov, Kind: source.KindGovernance}, Nodes: []model.PlacedNode{adr}},
 	}})
@@ -135,7 +135,7 @@ func TestRenderMachineReadableFrontmatter(t *testing.T) {
 
 	assert.True(t, strings.HasPrefix(uc, "---\n"), "frontmatter fence")
 	assert.Contains(t, uc, "id: ex.test/svc@v0:do-thing")
-	assert.Contains(t, uc, "type: UseCase")
+	assert.Contains(t, uc, "type: Contract")
 	assert.Contains(t, uc, "module: ex.test/svc@v0")
 	assert.Contains(t, uc, "rendered_from: abc123def456")
 	assert.Contains(t, uc, "ex.test/dom@v0:as-user#fr-01", "satisfies flattened into frontmatter")

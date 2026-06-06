@@ -26,10 +26,10 @@ func fixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]string
 	adrRef := model.NodeRef{Module: gov, Slug: "adr-01"}
 	svcRef := model.NodeRef{Module: svc, Slug: "service"}
 
-	usecase := model.PlacedNode{Module: svc, Node: model.Node{
-		Slug: "do-thing", Type: model.TypeUseCase, Title: "Do the thing",
+	contract := model.PlacedNode{Module: svc, Node: model.Node{
+		Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
 		Confidence: model.Confirmed,
-		Body: &model.Body{UseCase: &model.UseCaseBody{
+		Body: &model.Body{Contract: &model.ContractBody{
 			Service: svcRef, Binding: model.BindingRequired, Trigger: "caller asks",
 			Elements: []model.Element{
 				{Kind: model.KindInvariant, ID: "atomic", Text: "Each call is atomic.",
@@ -64,7 +64,7 @@ func fixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]string
 
 	c := compiler.New()
 	g, _ := c.Compile(compiler.Input{Modules: []source.LoadedModule{
-		{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{usecase, container}},
+		{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{contract, container}},
 		{Manifest: source.Manifest{Path: prod, Kind: source.KindDomain}, Nodes: []model.PlacedNode{story, product}},
 		{Manifest: source.Manifest{Path: gov, Kind: source.KindGovernance}, Nodes: []model.PlacedNode{adr}},
 	}})
@@ -124,7 +124,7 @@ func TestFrontmatterMinimal(t *testing.T) {
 	require.NoError(t, err)
 	uc := string(out["ex.test-gp-svc-v0/do-thing.md"])
 	assert.Contains(t, uc, "title: Do the thing")
-	assert.Contains(t, uc, "type: UseCase")
+	assert.Contains(t, uc, "type: Contract")
 	assert.NotContains(t, uc, "module: ex.test")
 	assert.NotContains(t, uc, "rendered_from:")
 	assert.NotContains(t, uc, "satisfies:")
@@ -141,7 +141,7 @@ func TestFrontmatterMark(t *testing.T) {
 	assert.Contains(t, uc, "Title: Do the thing")
 	assert.Contains(t, uc, "Space: ENG")
 	assert.Contains(t, uc, "Parent: svc")
-	assert.Contains(t, uc, "- usecase")
+	assert.Contains(t, uc, "- contract")
 }
 
 // TestFrontmatterMkdocs: lowercase, tags, optional icon.
@@ -153,7 +153,7 @@ func TestFrontmatterMkdocs(t *testing.T) {
 	uc := string(out["ex.test-gp-svc-v0/do-thing.md"])
 	assert.Contains(t, uc, "title: Do the thing")
 	assert.Contains(t, uc, "tags:")
-	assert.Contains(t, uc, "- usecase")
+	assert.Contains(t, uc, "- contract")
 	assert.Contains(t, uc, "icon:")
 }
 

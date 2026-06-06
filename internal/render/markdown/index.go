@@ -51,14 +51,14 @@ func (i Index) Render(byModule map[model.ModulePath][]*compiler.ResolvedNode, ct
 	return render.FileContent(b.String()), nil
 }
 
-// countByType returns "UseCase: 12", "Need: 8", … in a stable order.
+// countByType returns "Contract: 12", "Need: 8", … in a stable order.
 func countByType(nodes []*compiler.ResolvedNode) []string {
 	c := map[model.NodeType]int{}
 	for _, n := range nodes {
 		c[n.Node().Type]++
 	}
 	order := []model.NodeType{
-		model.TypeDomain, model.TypeNeed, model.TypeUseCase,
+		model.TypeDomain, model.TypeNeed, model.TypeContract,
 		model.TypeContainer, model.TypePort, model.TypeADR, model.TypePlan,
 	}
 	var out []string

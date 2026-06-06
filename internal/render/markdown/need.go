@@ -10,7 +10,7 @@ import (
 )
 
 // Need renders a Need: frontmatter with domain/status, consumer + description,
-// FR/NFR list with anchors so cross-files (UseCases satisfying them) can link
+// FR/NFR list with anchors so cross-files (Contracts satisfying them) can link
 // directly to the atom.
 type Need struct{ cfg Config }
 

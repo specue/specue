@@ -8,7 +8,7 @@ import (
 )
 
 // The bindings view answers a code module's question: of the contracts I may
-// implement (the public UseCases in my require-closure), which elements have I
+// implement (the public Contracts in my require-closure), which elements have I
 // bound, which are still open, and which annotations went wrong. It is a re-pivot
 // of the same scan facts the graph already collided — keyed by the CODE module, not
 // by the contract — for the moment an author writes //req, distinct from the
@@ -23,7 +23,7 @@ const (
 	BindBound     BindState = "bound"     // bound (a req without a test, or an infra anchor present)
 	BindProven    BindState = "proven"    // a req and a covering test (provable kinds only)
 	BindDuplicate BindState = "duplicate" // more than one binding from this module
-	BindOrphan    BindState = "orphan"    // an annotation that resolved to no node / a non-UseCase
+	BindOrphan    BindState = "orphan"    // an annotation that resolved to no node / a non-Contract
 )
 
 // BindKind is the kind of binding a row is about. `req` is the provable axis
@@ -53,7 +53,7 @@ type BindingsView struct {
 
 // BindingsFor computes the bindings view for codeModule. ok is false if codeModule
 // is not a code module (the caller turns that into an actionable error). It walks
-// the public UseCases the module requires, enumerates each one's bindable elements,
+// the public Contracts the module requires, enumerates each one's bindable elements,
 // and assigns a state from the bindings this module sourced; orphan/unbindable
 // annotations (which hang on no valid target) are folded in from the diagnostics.
 //specue:req:report-bindings#scoped-to-code-module
@@ -67,10 +67,10 @@ func (g *ResolvedGraph) BindingsFor(codeModule model.ModulePath, diags []Diagnos
 	view := BindingsView{Module: codeModule}
 	for _, req := range info.Requires {
 		for _, n := range g.bySlug[req.Module] {
-			if n.Node().Type != model.TypeUseCase || n.Node().Visibility != model.Public {
+			if n.Node().Type != model.TypeContract || n.Node().Visibility != model.Public {
 				continue
 			}
-			view.Rows = append(view.Rows, rowsForUseCase(n, codeModule)...)
+			view.Rows = append(view.Rows, rowsForContract(n, codeModule)...)
 		}
 	}
 	view.Rows = append(view.Rows, orphanRows(codeModule, diags)...)
@@ -88,15 +88,15 @@ func (g *ResolvedGraph) BindingsFor(codeModule model.ModulePath, diags []Diagnos
 	return view, true
 }
 
-// rowsForUseCase yields the bindable rows of a UseCase from a code module's view:
+// rowsForContract yields the bindable rows of a Contract from a code module's view:
 // the implementation (req) rows — the whole contract plus each named element — and
-// one fact row per infra edge the UseCase declares (produce/consume/serve/…), each
+// one fact row per infra edge the Contract declares (produce/consume/serve/…), each
 // stated from codeModule's bindings.
-func rowsForUseCase(n *ResolvedNode, codeModule model.ModulePath) []BindingRow {
+func rowsForContract(n *ResolvedNode, codeModule model.ModulePath) []BindingRow {
 	var rows []BindingRow
 	rows = append(rows, reqRow(n, "", codeModule))
-	if b := n.Node().Body; b != nil && b.UseCase != nil {
-		for _, e := range b.UseCase.Elements {
+	if b := n.Node().Body; b != nil && b.Contract != nil {
+		for _, e := range b.Contract.Elements {
 			if e.Named() {
 				rows = append(rows, reqRow(n, e.ID, codeModule))
 			}
@@ -129,18 +129,18 @@ func reqRow(n *ResolvedNode, elem model.ElementID, codeModule model.ModulePath) 
 	return row
 }
 
-// infraRows yields one fact row per infra edge the UseCase declares — the (element,
+// infraRows yields one fact row per infra edge the Contract declares — the (element,
 // role) touch-points the code must anchor (//specue:produces:, :serves:, …).
 // Fact axis: unbound until the anchor is present, then bound; >1 is duplicate.
 // There is no proven — an infra edge is real once its anchor exists, no test.
 func infraRows(n *ResolvedNode, codeModule model.ModulePath) []BindingRow {
 	b := n.Node().Body
-	if b == nil || b.UseCase == nil {
+	if b == nil || b.Contract == nil {
 		return nil
 	}
 	var rows []BindingRow
 	seen := map[InfraKey]bool{}
-	for _, e := range b.UseCase.Elements {
+	for _, e := range b.Contract.Elements {
 		for _, dep := range e.Deps {
 			if dep.Role == "" {
 				continue // a plain contract dep, not infra
@@ -180,7 +180,7 @@ func bindingsFrom(bs []Binding, codeModule model.ModulePath) []Binding {
 }
 
 // orphanRows surfaces this module's annotations that bound nothing valid — an
-// orphan (resolved to no node) or an unbindable target (a non-UseCase). They hang
+// orphan (resolved to no node) or an unbindable target (a non-Contract). They hang
 // on no element, so they come from the diagnostics, scoped to the code module. One
 // row per distinct target: several annotations to the same dead slug collapse into
 // one row carrying every location, not a row each.

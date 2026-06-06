@@ -37,8 +37,8 @@ func MapNode(v cue.Value, attrib Attributor) (model.Node, error) {
 	}
 
 	switch n.Type {
-	case model.TypeUseCase:
-		n.Body.UseCase = mapUseCase(v, attrib)
+	case model.TypeContract:
+		n.Body.Contract = mapContract(v, attrib)
 	case model.TypeNeed:
 		n.Body.Need = mapNeed(v, attrib)
 	case model.TypeDomain:
@@ -55,8 +55,8 @@ func MapNode(v cue.Value, attrib Attributor) (model.Node, error) {
 	return n, nil
 }
 
-func mapUseCase(v cue.Value, attrib Attributor) *model.UseCaseBody {
-	return &model.UseCaseBody{
+func mapContract(v cue.Value, attrib Attributor) *model.ContractBody {
+	return &model.ContractBody{
 		Service:     mapRef(v.LookupPath(cue.ParsePath("service")), attrib),
 		Trigger:     optString(v, "trigger"),
 		Binding:     model.Binding(orDefault(optString(v, "binding"), string(model.BindingRequired))),

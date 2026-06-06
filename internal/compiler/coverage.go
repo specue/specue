@@ -32,7 +32,7 @@ type satisfierIndex map[AtomAddr][]satisfier
 func collectSatisfiers(g *ResolvedGraph) satisfierIndex {
 	idx := satisfierIndex{}
 	for n := range g.Nodes() {
-		uc := n.Node().Body.UseCase
+		uc := n.Node().Body.Contract
 		if uc == nil {
 			continue
 		}

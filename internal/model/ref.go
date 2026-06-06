@@ -19,10 +19,10 @@ type Alias string
 // import are enforced by CUE itself (an invalid reference is a CUE build error),
 // so those gates left the compiler.
 
-// NodeRef is a resolved reference to a node (UseCase, Need, Port, Container,
+// NodeRef is a resolved reference to a node (Contract, Need, Port, Container,
 // governance ADR/Plan): the full (Module, Slug) address its CUE reference pointed
 // at. It is the target of a dep edge's To/Carries, a decided_by edge, and a
-// UseCase's Service / a Need's Domain. The same shape as NodeID — a resolved
+// Contract's Service / a Need's Domain. The same shape as NodeID — a resolved
 // ref *is* an identity.
 type NodeRef = NodeID
 

@@ -229,7 +229,7 @@ manifesto §8 into real structure. None is urgent, all fit.
   (running it twice equals once) and **incremental** (v1→v3 goes through v2, not
   a leap)" are observable contracts (manifesto 1.2) — a third party checks them
   by behaviour, not by reading code. But there is **no migrator today** (we
-  deleted v1→v2), so a `migrate-schema` UseCase now would be an addressee-less
+  deleted v1→v2), so a `migrate-schema` Contract now would be an addressee-less
   asserted contract with no HOW. Correct placement, by layer:
   - **WHY (do this when the question comes up):** extend/添 an ADR off ADR-06
     stating migrations must be incremental + idempotent, with the reasoning
@@ -270,7 +270,7 @@ dereferences these. No new node/edge, just relaxing a target type. *Fold into
 the M3 schema-pass — it is nearly free.*
 
 ### G3. `Container` carries no invariants (small)
-Invariants live only on UseCases (verified: `#Container` has no `invariants[]`).
+Invariants live only on Contracts (verified: `#Container` has no `invariants[]`).
 So genuinely container-scoped observable promises — "this service runs in a
 bounded working set / does not leak memory" (OOM is third-party-observable →
 WHAT per 7.4) — have nowhere to attach. *Fix: allow invariants on Container, or

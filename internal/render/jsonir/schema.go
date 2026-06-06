@@ -24,7 +24,7 @@ type commonJSON struct {
 	RenderedFrom string `json:"rendered_from,omitempty"`
 }
 
-// useCaseJSON is the UseCase-specific payload: service, binding, interaction,
+// useCaseJSON is the Contract-specific payload: service, binding, interaction,
 // trigger, deprecated, and the four element kinds in their own slices so
 // callers can iterate one kind without scanning a mixed list.
 type useCaseJSON struct {

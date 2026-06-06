@@ -12,7 +12,7 @@ import (
 	"github.com/specue/specue/internal/source"
 )
 
-// graph builds a tiny landscape: a story with one FR, and two UseCases — one
+// graph builds a tiny landscape: a story with one FR, and two Contracts — one
 // satisfies the FR and depends on the other (a contract dep), the second produces
 // to a port. Enough to exercise nodes, dep_edges, infra_edges, satisfies, atoms,
 // and FTS.
@@ -26,9 +26,9 @@ func graph(t *testing.T) (*compiler.ResolvedGraph, []compiler.Diagnostic) {
 		}},
 	}}
 	apply := model.PlacedNode{Module: "example", Node: model.Node{
-		Slug: "validate-graph", Type: model.TypeUseCase, Visibility: model.Public,
+		Slug: "validate-graph", Type: model.TypeContract, Visibility: model.Public,
 		Title: "Validate the graph",
-		Body: &model.Body{UseCase: &model.UseCaseBody{
+		Body: &model.Body{Contract: &model.ContractBody{
 			Service: model.NodeID{Module: "example", Slug: "example"},
 			Elements: []model.Element{
 				{Kind: model.KindPost, Text: "verdict emitted", Deps: []model.Dep{
@@ -41,8 +41,8 @@ func graph(t *testing.T) (*compiler.ResolvedGraph, []compiler.Diagnostic) {
 		}},
 	}}
 	validate := model.PlacedNode{Module: "example", Node: model.Node{
-		Slug: "validate", Type: model.TypeUseCase, Visibility: model.Public, Title: "Validate input",
-		Body: &model.Body{UseCase: &model.UseCaseBody{Service: model.NodeID{Module: "example", Slug: "example"}}},
+		Slug: "validate", Type: model.TypeContract, Visibility: model.Public, Title: "Validate input",
+		Body: &model.Body{Contract: &model.ContractBody{Service: model.NodeID{Module: "example", Slug: "example"}}},
 	}}
 
 	g, diags := compiler.New().Compile(compiler.Input{Modules: []source.LoadedModule{
@@ -134,7 +134,7 @@ func TestOrphansProjected(t *testing.T) {
 }
 
 // TestPreJoinedViews covers query-graph#pre-joined-views: node_describe yields
-// one row per element of a UseCase, and fr_coverage yields one row per
+// one row per element of a Contract, and fr_coverage yields one row per
 // satisfying UC for a given story atom (with its status), so the common reads
 // are one statement instead of a chain of joins.
 //

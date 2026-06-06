@@ -28,7 +28,7 @@ package markdown
 //     the module-qualified id and a status badge. MkDocs Material's tags
 //     plugin recognises `tags.md` and uses it as the tags index page, so
 //     the per-node tag pills link straight into our sections by anchor.
-//   - WithStatusAdmonitions: when true, every UseCase/Need/ADR/Plan page
+//   - WithStatusAdmonitions: when true, every Contract/Need/ADR/Plan page
 //     opens (just after the H1) with a Material admonition block carrying
 //     the node's status and a one-line summary, AND every Requirement /
 //     Invariant / Variation / named Pre/Post gets an inline status marker.

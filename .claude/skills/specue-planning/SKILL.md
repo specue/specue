@@ -40,7 +40,7 @@ Reach for a Plan when:
   together — a single commit would mean coordinating writes across repos;
 - the change is **speculative** — you want to *see* how it lands before
   committing to it (diff, conflict-check, then accept or drop);
-- you want to **review** before merging, with a typed diff over UseCases
+- you want to **review** before merging, with a typed diff over Contracts
   and edges instead of a line-by-line patch.
 
 Reach for a direct commit when the change is additive on one module and
@@ -66,7 +66,7 @@ every plan verb refuses with the next step to take.
   and closes the record. **Mutates the working tree** (returns to base
   and removes branches).
 - `diff plan <id>` — typed delta of the Plan against the current spec
-  (added/removed/modified/rewired over UseCases, Needs, Ports and
+  (added/removed/modified/rewired over Contracts, Needs, Ports and
   their elements). **Does not touch the working tree** — reads through
   git.
 - `plan conflict <a> <b>` — overlays both Plans together and reports
@@ -79,7 +79,7 @@ every plan verb refuses with the next step to take.
 
 ## Structural vs co-touch conflicts
 
-Two Plans can both edit the same UseCase and still both apply cleanly —
+Two Plans can both edit the same Contract and still both apply cleanly —
 one adds an invariant, the other tightens a different one. That is a
 **co-touch advisory**: the tool surfaces the pair for review but does not
 block. Two Plans that cannot both apply — one removes what the other
@@ -128,7 +128,7 @@ or be dropped.
 ## Worked example — render-doc
 
 A real Plan run in this repo, end to end. The change: add a `render-doc`
-UseCase that closes two federated FRs (`as-federated-owner#fr-04` and
+Contract that closes two federated FRs (`as-federated-owner#fr-04` and
 `as-federated-reader#fr-03`) plus a new ADR justifying the shape. Two
 modules touched — `spec.d/service/` and `spec.d/governance/` — so a Plan is
 the right tool.

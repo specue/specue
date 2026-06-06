@@ -8,7 +8,7 @@ import "github.com/specue/specue/internal/model"
 // the reverse index of the infra edges, the L3→L2 bridge.
 func deriveTopology(g *ResolvedGraph) {
 	for n := range g.Nodes() {
-		uc := n.Node().Body.UseCase
+		uc := n.Node().Body.Contract
 		if uc == nil {
 			continue
 		}

@@ -14,8 +14,8 @@ const mod = model.ModulePath("svc")
 
 func uc(slug model.Slug, title string, els ...model.Element) model.PlacedNode {
 	return model.PlacedNode{Module: mod, Node: model.Node{
-		Slug: slug, Type: model.TypeUseCase, Title: title,
-		Body: &model.Body{UseCase: &model.UseCaseBody{Elements: els}},
+		Slug: slug, Type: model.TypeContract, Title: title,
+		Body: &model.Body{Contract: &model.ContractBody{Elements: els}},
 	}}
 }
 

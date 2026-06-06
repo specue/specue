@@ -17,7 +17,7 @@ rots into ritual.
 
 **1.1 — A WHAT is a promise to an addressee.**
 A `Need` carries an audience's intent (its FRs are atomic, observable
-guarantees); a `UseCase` carries a contract a service guarantees (its invariants
+guarantees); a `Contract` carries what a service guarantees (its invariants
 are atomic, observable properties). *Why: a promise with no one to keep it for
 is not a contract, it is a note to self.*
 
@@ -27,13 +27,14 @@ outside. "A task added today is visible later in the same list" — yes. "AddTas
 writes to Mongo" — no, that is HOW. *Why: an observable promise survives a
 refactor; an implementation sentence breaks every time the code moves.*
 
-**1.3 — A UseCase is two-natured; name which nature it is.**
-A *contract UseCase* faces a `Need` — it is true WHAT. An *operation UseCase*
+**1.3 — A Contract is two-natured; name which nature it is.**
+An *external Contract* faces a `Need` — it is true WHAT. An *operation Contract*
 has no external audience; its addressee is the tool itself. Both are legal, but
-an operation UseCase must still name its addressee, not pose as an external
-contract. *Why: the self-spec has operation UseCases (the Plan/context verbs);
-pretending they face an audience they do not is the dishonesty rule 1.1 exists
-to catch.*
+an operation Contract must still name its addressee, not pose as an external one.
+*Why: the self-spec has operation Contracts (the Plan/context verbs); pretending
+they face an audience they do not is the dishonesty rule 1.1 exists to catch.*
+(In Design-by-Contract an internal contract — the contract of a private routine —
+is normal; "a use case with no actor" was the oxymoron the old name carried.)
 
 **1.4 — The WHAT/HOW line is observer-relative, and that is admitted, not
 hidden.**
@@ -72,8 +73,8 @@ If it does, lift the HOW down into code where it belongs. (Subject to 1.4 for a
 self-addressed tool.) *Why: every such name welds the contract to today's
 implementation and makes tomorrow's refactor a spec edit.*
 
-**2.3 — A binding aimed at anything but a UseCase is an error.**
-Only a UseCase carries code bindings; an annotation on a Need or ADR resolves to
+**2.3 — A binding aimed at anything but a Contract is an error.**
+Only a Contract carries code bindings; an annotation on a Need or ADR resolves to
 nothing. *Why: status is computed from contract↔code; binding the non-bindable
 would fake a status that means nothing.*
 
