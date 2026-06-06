@@ -231,36 +231,46 @@ adr09RenderedDocDerived: s.#ADR & {
 adr13ContractNotUseCase: s.#ADR & {
 	slug:       "ADR-13"
 	title:      "The contract node is named Contract, not UseCase (nor Capability)"
+	status:     "accepted"
+	body: """
+		The node names a logical contract a service guarantees. `UseCase` carries
+		UML baggage that misleads the way UserStory did for intent (ADR-10): a use
+		case is an actor-system interaction scenario. Specue's node is not a
+		scenario, it is a guarantee — and "a use case with no actor" is a
+		contradiction the operation contracts (the Plan/context verbs, which face no
+		external audience) break.
+
+		Rename to `Contract`. It reads right for both a Need-facing contract and an
+		internal operation contract (an internal contract is normal in
+		Design-by-Contract). Rejected `Capability`: a capability is a bare "can do"
+		with no place for the guarantees a contract carries.
+
+		Breaking rename across schema, model, code annotations and the self-spec;
+		ships in the pre-release window. Fixes only the node's name, not the shape
+		of its guarantees. Symmetric with ADR-10 fixing Need over UserStory.
+		"""
+}
+
+adr14OneInvariantKind: s.#ADR & {
+	slug:       "ADR-14"
+	title:      "A Contract is a set of invariants; pre/post/variation collapse into one typed kind"
 	status:     "proposed"
 	body: """
-		The node names a logical contract a service guarantees: a set of named,
-		atomic, observable invariants over preconditions and postconditions. That
-		shape is Design-by-Contract (Meyer): pre/post/invariant is its exact triad —
-		the schema fields already are `preconditions`, `postconditions`, `invariants`.
-		But the node is named `UseCase`, and that term carries UML baggage that
-		misleads here the same way UserStory did for intent (ADR-10): a use case in
-		UML is an interaction scenario between an actor and the system — actors,
-		main and alternative flows, extensions. Specue's node is not a scenario; it
-		is a guarantee. A "use case with no actor" is a contradiction, yet the model
-		legitimately has operation contracts that face no external audience (the
-		Plan/context verbs) — so the term fights the model it labels.
+		The schema carried four element collections — preconditions, postconditions,
+		invariants, variations — but none has content the invariant cannot hold: a
+		postcondition is an invariant over the result; a variation is an invariant
+		with a `when` guard; a precondition's only observable content is the
+		rejection when it is violated.
 
-		Rename to `Contract`. It matches the Design-by-Contract semantics the schema
-		already encodes, reads correctly for both a contract that faces a Need and an
-		internal operation contract (an "internal contract" is normal in DbC — the
-		contract of a private method — where "use case without an actor" is an
-		oxymoron), and drops the scenario-narrative connotation that does not fit.
-		Rejected alternative: `Capability`. A capability answers "what the system
-		*can* do" — it is a bare possibility with no internal structure; there is no
-		place in a capability for preconditions, postconditions or invariants. The
-		node answers "what the system *guarantees, and under which conditions*",
-		which is a contract, not a capability. (`Capability` would fit a higher,
-		product-ability layer that discards the DbC triad — a different model.)
+		Collapse to one element kind: an `invariant` with `text`, an optional `when`
+		guard, and an optional `kind: "returns" | "rejects"`. `returns` and `rejects`
+		are the only two natures worth authoring — both positively provable (rule
+		1.6) and not already edge facts (rule 5.2). `mutates`/`calls` come from infra
+		edges; a negative guarantee ("does not alter") comes from the absence of a
+		write edge — never authored.
 
-		This is a breaking rename across schema, model, code annotations
-		(`//specue:req:` targets) and the self-spec; it ships in the pre-release
-		window. Pinning the choice here settles it: future authors find Contract +
-		the DbC rationale, not a recurring "should this be UseCase / Capability"
-		debate — symmetric with ADR-10 fixing Need over UserStory.
+		Breaking across schema, model and the self-spec; ships in the pre-release
+		window with ADR-13. Pins the element shape so the "how many element kinds"
+		question stays settled — symmetric with ADR-10 (Need) and ADR-13 (Contract).
 		"""
 }

@@ -25,13 +25,15 @@ buildGraph: s.#Contract & {
 		decided_by: [gov.adr01CUENativeResolution]
 	}, {
 		id:   "incremental"
-		text: "The graph is rebuilt only when the spec or the code that feeds it has changed since the last build."
+		when: "the spec or the code that feeds it has changed since the last build"
+		text: "the graph is rebuilt"
 	}, {
 		id:   "multi-folder-modules"
-		text: "A module's nodes are loaded from every sub-folder of the module, not only its root."
+		text: "A module's nodes are loaded from every sub-folder of the module."
 		satisfies: [agent.create.frs."fr-03"]
-	}]
-	postconditions: [{
+	}, {
+		id:   "returns-graph-and-diagnostics"
+		kind: "returns"
 		text: "The resolved graph is returned together with diagnostics produced while resolving it."
 	}]
 }

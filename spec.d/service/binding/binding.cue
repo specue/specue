@@ -30,8 +30,9 @@ scanCode: s.#Contract & {
 		id:   "scan-rooted-at-code-root"
 		text: "The scan begins at the code module's declared code_root (relative to its manifest), defaulting to the manifest's own directory, so a code module may live in a subfolder of the repository it scans without claiming sibling spec modules as its own subpackages."
 		decided_by: [gov.adr11CodeRootAndLayout]
-	}]
-	postconditions: [{
+	}, {
+		id:   "binding-fact-carries-location"
+		kind: "returns"
 		text: "Each binding fact carries the file and line that produced it."
 	}]
 }
@@ -43,7 +44,12 @@ reportBindings: s.#Contract & {
 	trigger:     "the caller asks what a code module may realize and where it stands"
 	invariants: [{
 		id:   "scoped-to-code-module"
-		text: "The report is computed for one code module; asking on a non-code module is refused with a remedy."
+		text: "The report is computed for one code module."
+		decided_by: [gov.adr05CodeAsModule]
+	}, {
+		id:   "refuses-non-code-module"
+		kind: "rejects"
+		when: "the report is asked on a non-code module"
 		decided_by: [gov.adr05CodeAsModule]
 	}, {
 		id:   "allowed-from-require-closure"
@@ -52,10 +58,12 @@ reportBindings: s.#Contract & {
 		decided_by: [gov.adr05CodeAsModule]
 	}, {
 		id:   "per-element-state"
+		kind: "returns"
 		text: "Each row's state (unbound, bound, proven, duplicate, orphan) reflects whether the specific element has a binding and a proving test, not the Contract as a whole."
 		satisfies: [agent.author.frs."fr-02"]
-	}]
-	postconditions: [{
+	}, {
+		id:   "row-names-contract-and-locations"
+		kind: "returns"
 		text: "Each row names the contract, the kind of binding, the state and the locations of any code that produced it."
 	}]
 }

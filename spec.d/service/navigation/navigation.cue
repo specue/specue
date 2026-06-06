@@ -24,8 +24,9 @@ listResources: s.#Contract & {
 		id:   "nodes-of-a-kind"
 		text: "Given a node kind, every node of that kind in the current spec is returned."
 		satisfies: [agent.navigate.frs."fr-01"]
-	}]
-	postconditions: [{
+	}, {
+		id:   "stable-result-shape"
+		kind: "returns"
 		text: "The result is one stable shape whether the caller asks for the kinds or for the nodes of one kind."
 	}]
 }
@@ -41,17 +42,20 @@ describeNode: s.#Contract & {
 		satisfies: [agent.navigate.frs."fr-02"]
 	}, {
 		id:   "shown-in-full"
-		text: "The node's whole contract is returned: its conditions, its invariants, its variations and its declared edges."
+		kind: "returns"
+		text: "The node's whole contract is returned: its invariants and its declared edges."
 		satisfies: [
 			agent.navigate.frs."fr-02",
 			govaud.decisionKeeper.frs."fr-01",
 		]
 	}, {
 		id:   "element-scoped"
-		text: "When the identity carries a named-element suffix, the result is narrowed to that single element — the inquirer reads one invariant or one story FR without scrolling the whole node."
+		when: "the identity carries a named-element suffix"
+		text: "the result is narrowed to that single element — the inquirer reads one invariant or one story FR without scrolling the whole node."
 		satisfies: [agent.navigate.frs."fr-02"]
-	}]
-	postconditions: [{
+	}, {
+		id:   "returns-node-with-status"
+		kind: "returns"
 		text: "The node is returned together with its current status."
 	}]
 }
@@ -68,7 +72,8 @@ queryGraph: s.#Contract & {
 		satisfies: [agent.navigate.frs."fr-03"]
 	}, {
 		id:   "cannot-mutate"
-		text: "The query cannot mutate the graph."
+		kind: "rejects"
+		when: "the query attempts to write (insert, update, delete)"
 		decided_by: [gov.adr02SQLQuery]
 	}, {
 		id:   "schema-is-discoverable"
@@ -82,8 +87,9 @@ queryGraph: s.#Contract & {
 		id:   "pre-joined-views"
 		text: "The projection exposes pre-joined views for the questions a caller asks most often (a node with its elements, a story FR with the contracts that cover it), so common reads are one statement instead of a chain of joins."
 		satisfies: [agent.navigate.frs."fr-04"]
-	}]
-	postconditions: [{
+	}, {
+		id:   "rows-are-machine-readable"
+		kind: "returns"
 		text: "Matching rows are returned as machine-readable data."
 	}]
 }

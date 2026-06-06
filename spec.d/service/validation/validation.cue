@@ -16,33 +16,42 @@ validateGraph: s.#Contract & {
 	trigger:     "the caller asks to validate the current spec"
 	invariants: [{
 		id:   "single-verdict"
+		kind: "returns"
 		text: "The result is a single verdict over the whole spec: correct, or broken with the list of failures."
 		satisfies: [agent.author.frs."fr-01"]
 	}, {
 		id:   "role-gate"
-		text: "A node whose type is not allowed by its module's kind is reported as a failure."
+		kind: "rejects"
+		when: "a node's type is not allowed by its module's kind"
 		satisfies: [govaud.decisionKeeper.frs."fr-03"]
 	}, {
 		id:   "unique-slug-within-module"
-		text: "Two nodes that share a slug within the same module are reported as a failure."
+		kind: "rejects"
+		when: "two nodes share a slug within the same module"
 		satisfies: [agent.create.frs."fr-01"]
 	}, {
 		id:   "dangling-binding"
-		text: "A code annotation that does not resolve to a node in the module's require closure is reported as a failure."
+		kind: "rejects"
+		when: "a code annotation does not resolve to a node in the module's require closure"
 	}, {
 		id:   "unbindable-target"
-		text: "A code annotation aimed at a node that cannot be bound (anything but a Contract) is reported as a failure."
+		kind: "rejects"
+		when: "a code annotation is aimed at a node that cannot be bound (anything but a Contract)"
 	}, {
 		id:   "duplicate-binding"
-		text: "A node bound by more than one code annotation in the same code module is reported as a failure."
+		kind: "rejects"
+		when: "a node is bound by more than one code annotation in the same code module"
 	}, {
 		id:   "unreachable-contract"
-		text: "A Contract that no story FR claims, no other contract invokes and no trigger names is reported as a failure."
+		kind: "rejects"
+		when: "a Contract is claimed by no story FR, invoked by no other contract and named by no trigger"
 	}, {
 		id:   "sync-cycle"
-		text: "A cycle of synchronous dependencies between contracts is reported as a failure."
-	}]
-	postconditions: [{
+		kind: "rejects"
+		when: "a cycle of synchronous dependencies between contracts exists"
+	}, {
+		id:   "failure-carries-next-step"
+		kind: "returns"
 		text: "Each failure carries the next step the caller takes to resolve it."
 		satisfies: [agent.author.frs."fr-03"]
 	}]
