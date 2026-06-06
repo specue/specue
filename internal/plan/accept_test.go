@@ -71,8 +71,8 @@ func TestAcceptRollsBackOnBrokenSpec(t *testing.T) {
 	broken := `package example
 import s "specue.io/schema@v0:spec"
 example: s.#Container & {type:"Container", slug:"example", title:"Wallet", confidence:"CONFIRMED", kind:"service"}
-apply: s.#Contract & {type:"Contract", slug:"apply", title:"Apply", confidence:"CONFIRMED", service:example, postconditions:[{text:"done"}]}
-ghostref: s.#Contract & {type:"Contract", slug:"ghostref", title:"G", confidence:"CONFIRMED", service:example, postconditions:[{text:"x", depends_on:[{to: missing}]}]}
+apply: s.#Contract & {type:"Contract", slug:"apply", title:"Apply", confidence:"CONFIRMED", service:example, invariants:[{id:"post", text:"done"}]}
+ghostref: s.#Contract & {type:"Contract", slug:"ghostref", title:"G", confidence:"CONFIRMED", service:example, invariants:[{id:"post", text:"x", depends_on:[{to: missing}]}]}
 `
 	require.NoError(t, os.WriteFile(filepath.Join(exampleDir, "nodes.cue"), []byte(broken), 0o644))
 	commit(t, bin, root, "plan: broken")

@@ -43,10 +43,7 @@ func (u Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.F
 		fmt.Fprintf(&b, "**Trigger.** %s\n\n", uc.Trigger)
 	}
 
-	writeElements(&b, n, uc.Elements, model.KindInvariant, "Invariants", ctx, u.cfg)
-	writeElements(&b, n, uc.Elements, model.KindVariation, "Variations", ctx, u.cfg)
-	writeElements(&b, n, uc.Elements, model.KindPost, "Postconditions", ctx, u.cfg)
-	writeElements(&b, n, uc.Elements, model.KindPre, "Preconditions", ctx, u.cfg)
+	writeElements(&b, n, uc.Elements, "Invariants", ctx, u.cfg)
 
 	if len(n.Realizes) > 0 {
 		b.WriteString("## Realizes\n\n")
@@ -59,14 +56,11 @@ func (u Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.F
 	return render.FileContent(b.String()), nil
 }
 
-// writeElements emits one section per element kind, with anchors on named
-// elements (so cross-files can link `#<element-id>`). Empty kinds are skipped.
-func writeElements(b *strings.Builder, n *compiler.ResolvedNode, els []model.Element, kind model.ElementKind, title string, ctx render.Context, cfg Config) {
+// writeElements emits the invariants section, with anchors on named elements
+// (so cross-files can link `#<element-id>`). Skipped when there are none.
+func writeElements(b *strings.Builder, n *compiler.ResolvedNode, els []model.Element, title string, ctx render.Context, cfg Config) {
 	first := true
 	for _, e := range els {
-		if e.Kind != kind {
-			continue
-		}
 		if first {
 			fmt.Fprintf(b, "## %s\n\n", title)
 			first = false
@@ -81,19 +75,31 @@ func writeElements(b *strings.Builder, n *compiler.ResolvedNode, els []model.Ele
 	}
 }
 
-// writeElement renders one element: an `<a id>` anchor on named ones, the text,
-// when/then for variations, and any satisfies/decided_by as markdown links.
+// writeElement renders one invariant: an `<a id>` anchor on named ones, the
+// nature, the text, the when guard, and any satisfies/decided_by as links.
 func writeElement(b *strings.Builder, from model.NodeID, e model.Element, ctx render.Context) {
 	if e.ID != "" {
 		fmt.Fprintf(b, "### <a id=%q></a>%s\n\n", string(e.ID), string(e.ID))
 	} else {
 		b.WriteString("### —\n\n")
 	}
-	if e.Text != "" {
-		fmt.Fprintf(b, "%s\n\n", e.Text)
-	}
-	if e.When != "" || e.Then != "" {
-		fmt.Fprintf(b, "*When* %s → *then* %s\n\n", e.When, e.Then)
+	// A rejection reads as one sentence — "Rejects when <condition>" — since its
+	// when carries the meaning and its text (if any) is the extra detail.
+	if e.Kind == model.KindRejects && e.When != "" {
+		fmt.Fprintf(b, "**Rejects** when %s.\n\n", strings.TrimRight(e.When, "."))
+		if e.Text != "" {
+			fmt.Fprintf(b, "%s\n\n", e.Text)
+		}
+	} else {
+		if !e.IsPlain() {
+			fmt.Fprintf(b, "*(%s)* ", string(e.Kind))
+		}
+		if e.Text != "" {
+			fmt.Fprintf(b, "%s\n\n", e.Text)
+		}
+		if e.When != "" {
+			fmt.Fprintf(b, "*When* %s\n\n", e.When)
+		}
 	}
 	if len(e.Satisfies) > 0 {
 		b.WriteString("Satisfies: ")

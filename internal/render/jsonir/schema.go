@@ -19,24 +19,19 @@ type commonJSON struct {
 	Status       string `json:"status,omitempty"`
 	Confidence   string `json:"confidence,omitempty"`
 	Visibility   string `json:"visibility,omitempty"`
-	LegacyID     string `json:"legacy_id,omitempty"`
 	Body         string `json:"body,omitempty"`
 	RenderedFrom string `json:"rendered_from,omitempty"`
 }
 
 // useCaseJSON is the Contract-specific payload: service, binding, interaction,
-// trigger, deprecated, and the four element kinds in their own slices so
-// callers can iterate one kind without scanning a mixed list.
+// trigger, deprecated, and the invariants.
 type useCaseJSON struct {
-	Service        string     `json:"service,omitempty"`
-	Binding        string     `json:"binding,omitempty"`
-	Interaction    string     `json:"interaction,omitempty"`
-	Trigger        string     `json:"trigger,omitempty"`
-	Deprecated     string     `json:"deprecated,omitempty"`
-	Preconditions  []elemJSON `json:"preconditions,omitempty"`
-	Postconditions []elemJSON `json:"postconditions,omitempty"`
-	Invariants     []elemJSON `json:"invariants,omitempty"`
-	Variations     []elemJSON `json:"variations,omitempty"`
+	Service     string     `json:"service,omitempty"`
+	Binding     string     `json:"binding,omitempty"`
+	Interaction string     `json:"interaction,omitempty"`
+	Trigger     string     `json:"trigger,omitempty"`
+	Deprecated  string     `json:"deprecated,omitempty"`
+	Invariants  []elemJSON `json:"invariants,omitempty"`
 }
 
 // needJSON is the Need-specific payload: domain, consumer, description, and
@@ -71,14 +66,13 @@ type govJSON struct {
 	Branch    string `json:"branch,omitempty"`
 }
 
-// elemJSON is one Element (precondition / postcondition / invariant /
-// variation) — the only place spec edges attach.
+// elemJSON is one invariant — the only place spec edges attach. Kind carries the
+// element's nature (returns / rejects; empty for a plain guarantee).
 type elemJSON struct {
 	ID        string        `json:"id,omitempty"`
-	Kind      string        `json:"kind"`
+	Kind      string        `json:"kind,omitempty"`
 	Text      string        `json:"text,omitempty"`
 	When      string        `json:"when,omitempty"`
-	Then      string        `json:"then,omitempty"`
 	Rev       int           `json:"rev,omitempty"`
 	DependsOn []depJSON     `json:"depends_on,omitempty"`
 	Satisfies []satisfyJSON `json:"satisfies,omitempty"`

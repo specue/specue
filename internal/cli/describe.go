@@ -149,18 +149,23 @@ func renderContract(w io.Writer, c *model.ContractBody, elem model.ElementID) er
 	return nil
 }
 
-// renderElement prints one WHAT-element: its kind, id, text, and any satisfies it
-// discharges. A variation shows its when/then guard.
+// renderElement prints one invariant: its nature, id, text, and any satisfies it
+// discharges. A guarded invariant shows its when condition.
 func renderElement(w io.Writer, e model.Element) error {
 	id := string(e.ID)
 	if id == "" {
 		id = "—"
 	}
-	if _, err := fmt.Fprintf(w, "  • [%s %s] %s\n", e.Kind, id, e.Text); err != nil {
+
+	head := fmt.Sprintf("  • [%s %s]", e.Kind, id)
+	if e.Text != "" {
+		head += " " + e.Text
+	}
+	if _, err := fmt.Fprintf(w, "%s\n", head); err != nil {
 		return err
 	}
-	if e.When != "" || e.Then != "" {
-		if _, err := fmt.Fprintf(w, "      when %s → then %s\n", e.When, e.Then); err != nil {
+	if e.When != "" {
+		if _, err := fmt.Fprintf(w, "      when %s\n", e.When); err != nil {
 			return err
 		}
 	}
@@ -281,11 +286,10 @@ type nodeJSON struct {
 }
 
 type elementJSON struct {
-	Kind      string   `json:"kind"`
+	Kind      string   `json:"kind,omitempty"` // nature: plain | returns | rejects
 	ID        string   `json:"id,omitempty"`
 	Text      string   `json:"text,omitempty"`
 	When      string   `json:"when,omitempty"`
-	Then      string   `json:"then,omitempty"`
 	Satisfies []string `json:"satisfies,omitempty"`
 }
 
@@ -338,7 +342,7 @@ func fillBodyJSON(j *nodeJSON, b *model.Body, n *compiler.ResolvedNode, elem mod
 			}
 			j.Elements = append(j.Elements, elementJSON{
 				Kind: string(e.Kind), ID: string(e.ID), Text: e.Text,
-				When: e.When, Then: e.Then, Satisfies: atomStrings(e.Satisfies),
+				When: e.When, Satisfies: atomStrings(e.Satisfies),
 			})
 		}
 	case b.Need != nil:

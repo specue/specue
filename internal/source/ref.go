@@ -21,15 +21,35 @@ import (
 //
 // An absent reference (an optional carries/schema not authored) yields the zero
 // NodeRef.
+//
+// G2: a dep may target an element (an #invariant) rather than a whole node. An
+// element value has no `slug` of its own (it carries `id`+`text`); when the
+// dereferenced target has no slug, the owning node is recovered from the
+// reference path minus its last segment — so an element-grained dep resolves to
+// the owning Contract, never to an empty/garbage NodeRef.
 func mapRef(v cue.Value, attrib Attributor) model.NodeRef {
 	if !v.Exists() {
 		return model.NodeRef{}
 	}
 	ref := referenceOperand(v)
 	target := cue.Dereference(ref)
-	slug, _ := target.LookupPath(cue.ParsePath("slug")).String()
-	mod, _ := attrib(target.Pos().Filename())
-	return model.NodeRef{Module: mod, Slug: model.Slug(slug)}
+	if slug, _ := target.LookupPath(cue.ParsePath("slug")).String(); slug != "" {
+		mod, _ := attrib(target.Pos().Filename())
+		return model.NodeRef{Module: mod, Slug: model.Slug(slug)}
+	}
+	// No slug on the target → it is an element (e.g. `dep.invariants[0]`). Recover
+	// the owning node by climbing the reference path from the element back toward
+	// the root, stopping at the first ancestor that carries a `slug` — the node.
+	root, path := ref.ReferencePath()
+	selectors := path.Selectors()
+	for i := len(selectors) - 1; i >= 1; i-- {
+		owner := root.LookupPath(cue.MakePath(selectors[:i]...))
+		if slug, _ := owner.LookupPath(cue.ParsePath("slug")).String(); slug != "" {
+			mod, _ := attrib(owner.Pos().Filename())
+			return model.NodeRef{Module: mod, Slug: model.Slug(slug)}
+		}
+	}
+	return model.NodeRef{}
 }
 
 // referenceOperand returns the operand of v that is the authored reference. For a

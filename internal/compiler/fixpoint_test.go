@@ -20,7 +20,7 @@ func ucWith(slug model.Slug, interaction model.Interaction, deps ...model.Slug) 
 		Slug: slug, Type: model.TypeContract,
 		Body: &model.Body{Contract: &model.ContractBody{
 			Interaction: interaction,
-			Elements:    []model.Element{{Kind: model.KindPost, Text: "x", Deps: ds}},
+			Elements:    []model.Element{{Text: "x", Deps: ds}},
 		}},
 	}}
 }
@@ -105,8 +105,7 @@ func TestBranchDepDoesNotBlock(t *testing.T) {
 	ready := model.PlacedNode{Module: "svc", Node: model.Node{
 		Slug: "ready", Type: model.TypeContract,
 		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
-			{Kind: model.KindVariation, ID: "v", When: "w", Then: "t",
-				Deps: []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "gap"}, Branch: true}}},
+			{ID: "v", When: "w", Deps: []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "gap"}, Branch: true}}},
 		}}},
 	}}
 	gap := ucWith("gap", model.InteractionAsync)

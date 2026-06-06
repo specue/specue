@@ -32,7 +32,7 @@ func fixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]string
 		Body: &model.Body{Contract: &model.ContractBody{
 			Service: svcRef, Binding: model.BindingRequired, Trigger: "caller asks",
 			Elements: []model.Element{
-				{Kind: model.KindInvariant, ID: "atomic", Text: "Each call is atomic.",
+				{ID: "atomic", Text: "Each call is atomic.",
 					Satisfies: []model.AtomRef{{Need: storyRef, Atom: "fr-01"}},
 					DecidedBy: []model.NodeRef{adrRef}},
 			},
@@ -184,6 +184,54 @@ func TestNavSnippet(t *testing.T) {
 	assert.Contains(t, s, "nav:")
 	assert.Contains(t, s, "svc:")
 	assert.Contains(t, s, "do-thing: svc/do-thing.md")
+}
+
+// TestRenderInvariantKindAndWhen: a rejects invariant renders as one "Rejects
+// when <cond>" sentence; a plain invariant shows no nature/when adornment.
+// (ADR-14: one invariant kind.)
+func TestRenderInvariantKindAndWhen(t *testing.T) {
+	svc := model.ModulePath("ex.test/svc@v0")
+	svcRef := model.NodeRef{Module: svc, Slug: "service"}
+	contract := model.PlacedNode{Module: svc, Node: model.Node{
+		Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
+		Confidence: model.Confirmed,
+		Body: &model.Body{Contract: &model.ContractBody{
+			Service: svcRef, Binding: model.BindingRequired,
+			Elements: []model.Element{
+				{ID: "plain-inv", Text: "Always holds."},
+				{ID: "refuses", Kind: model.KindRejects, When: "input is bad", Text: "the call is refused."},
+			},
+		}},
+	}}
+	container := model.PlacedNode{Module: svc, Node: model.Node{
+		Slug: "service", Type: model.TypeContainer, Title: "The service",
+		Confidence: model.Confirmed,
+		Body:       &model.Body{Container: &model.ContainerBody{Kind: model.ContainerService}},
+	}}
+	g, _ := compiler.New().Compile(compiler.Input{Modules: []source.LoadedModule{
+		{Manifest: source.Manifest{Path: svc, Kind: source.KindService}, Nodes: []model.PlacedNode{contract, container}},
+	}})
+	require.NotNil(t, g)
+
+	out, err := markdown.New(markdown.Config{Layout: markdown.LayoutFlat}).
+		Render(render.Input{Graph: g, Revisions: map[model.ModulePath]string{svc: "abc"}})
+	require.NoError(t, err)
+	body := string(out["ex.test-svc-v0/do-thing.md"])
+	require.NotEmpty(t, body)
+
+	plainIdx := strings.Index(body, "plain-inv")
+	rejIdx := strings.Index(body, "refuses")
+	require.Greater(t, plainIdx, 0)
+	require.Greater(t, rejIdx, plainIdx)
+
+	// The rejects section reads as one "Rejects when …" sentence.
+	rejSection := body[rejIdx:]
+	assert.Contains(t, rejSection, "**Rejects** when input is bad.")
+	// The plain invariant (before the rejects section) shows no adornment.
+	plainSection := body[plainIdx:rejIdx]
+	assert.NotContains(t, plainSection, "*(")
+	assert.NotContains(t, plainSection, "Rejects")
+	assert.NotContains(t, plainSection, "*When*")
 }
 
 // TestDefaultUnchanged: zero-config New(Config{}) is byte-identical to Default().

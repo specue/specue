@@ -51,11 +51,7 @@ type Node struct {
 	Title      string
 	Visibility Visibility
 	Confidence Confidence
-	// LegacyID is an optional transitional alias (e.g. GCS-UC-5); refs through it
-	// resolve with a migrate warning.
-	LegacyID string
-
-	Body *Body // type-specific authored payload; nil only on a malformed node
+	Body       *Body // type-specific authored payload; nil only on a malformed node
 }
 
 // Body holds the authored payload that varies by node type. One struct with
@@ -89,7 +85,7 @@ type ContractBody struct {
 	// Deprecated, when non-empty, is an advisory retirement note on inbound refs.
 	Deprecated string
 
-	Elements []Element // preconditions, postconditions, invariants, variations
+	Elements []Element // the contract's invariants (plain, returns, or rejects)
 }
 
 // NeedBody is the intent seam. It owns the atoms it requires and binds to no

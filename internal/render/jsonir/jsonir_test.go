@@ -37,7 +37,7 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 				Interaction: model.InteractionSync,
 				Trigger:     "caller asks",
 				Elements: []model.Element{
-					{Kind: model.KindInvariant, ID: "single-verdict",
+					{ID: "single-verdict",
 						Text:      "A repeat is a no-op.",
 						Satisfies: []model.AtomRef{{Need: storyRef, Atom: "fr-01"}}},
 				},
@@ -124,7 +124,8 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 	require.Len(t, invs, 1)
 	inv0, _ := invs[0].(map[string]any)
 	assert.Equal(t, "single-verdict", inv0["id"])
-	assert.Equal(t, "invariant", inv0["kind"])
+	_, hasKind := inv0["kind"]
+	assert.False(t, hasKind, "a plain invariant omits kind")
 	sat, _ := inv0["satisfies"].([]any)
 	require.Len(t, sat, 1)
 	sat0, _ := sat[0].(map[string]any)

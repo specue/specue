@@ -33,7 +33,7 @@ func admonitionFixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModuleP
 		Body: &model.Body{Contract: &model.ContractBody{
 			Service: svcRef, Binding: model.BindingRequired, Trigger: "caller asks",
 			Elements: []model.Element{
-				{Kind: model.KindInvariant, ID: "atomic", Text: "Each call is atomic.",
+				{ID: "atomic", Text: "Each call is atomic.",
 					Satisfies: []model.AtomRef{{Need: storyRef, Atom: "fr-01"}},
 					DecidedBy: []model.NodeRef{adrRef}},
 			},

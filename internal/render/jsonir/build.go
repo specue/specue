@@ -24,7 +24,6 @@ func buildCommon(n *compiler.ResolvedNode, revisions map[model.ModulePath]string
 		Status:       string(n.Status),
 		Confidence:   string(nd.Confidence),
 		Visibility:   string(nd.Visibility),
-		LegacyID:     nd.LegacyID,
 		RenderedFrom: revisions[id.Module],
 	}
 	if nd.Body != nil {
@@ -172,31 +171,20 @@ func locOf(b compiler.Binding) string {
 	return string(b.File)
 }
 
-// buildElements groups a Contract's Elements by kind into four slices and
-// converts each into the wire shape, dropping kinds with no elements.
-func buildElements(els []model.Element) (pre, post, inv, vari []elemJSON) {
+// buildElements converts a Contract's invariants into the wire shape. Kind
+// carries the element's nature (returns/rejects, empty for plain).
+func buildElements(els []model.Element) (inv []elemJSON) {
 	for _, e := range els {
-		ej := elemJSON{
+		inv = append(inv, elemJSON{
 			ID:        string(e.ID),
 			Kind:      string(e.Kind),
 			Text:      e.Text,
 			When:      e.When,
-			Then:      e.Then,
 			Rev:       e.Rev,
 			DependsOn: depsToJSON(e.Deps),
 			Satisfies: satisfiesToJSON(e.Satisfies),
 			DecidedBy: refsToJSON(e.DecidedBy),
-		}
-		switch e.Kind {
-		case model.KindPre:
-			pre = append(pre, ej)
-		case model.KindPost:
-			post = append(post, ej)
-		case model.KindInvariant:
-			inv = append(inv, ej)
-		case model.KindVariation:
-			vari = append(vari, ej)
-		}
+		})
 	}
 	return
 }

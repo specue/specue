@@ -20,7 +20,7 @@ func uc(slug model.Slug, title string, els ...model.Element) model.PlacedNode {
 }
 
 func inv(id model.ElementID, text string, deps ...model.Dep) model.Element {
-	return model.Element{Kind: model.KindInvariant, ID: id, Text: text, Deps: deps}
+	return model.Element{ID: id, Text: text, Deps: deps}
 }
 
 func dep(to model.Slug, role model.Role) model.Dep {
@@ -79,6 +79,24 @@ func TestElementAddedRemovedModified(t *testing.T) {
 	assert.Equal(t, diff.Removed, got["drop"])
 	assert.Equal(t, diff.Modified, got["edit"])
 	assert.NotContains(t, got, model.ElementID("keep"), "unchanged element absent from delta")
+}
+
+// TestElementKindOrWhenChangeIsModified proves the element signature tracks the
+// invariant fields (ADR-14): changing only an invariant's kind (nature) or its when guard —
+// id and text unchanged — still marks the element Modified.
+func TestElementKindOrWhenChangeIsModified(t *testing.T) {
+	plain := model.Element{ID: "i", Text: "t"}
+	typed := model.Element{ID: "i", Text: "t", Kind: model.KindRejects, When: "bad input"}
+
+	a := []model.PlacedNode{uc("x", "X", plain)}
+	b := []model.PlacedNode{uc("x", "X", typed)}
+
+	nd := nodeOf(t, diff.Compute(a, b), "x")
+	require.Equal(t, diff.Modified, nd.Change)
+	require.Len(t, nd.Elements, 1)
+	assert.Equal(t, model.ElementID("i"), nd.Elements[0].ID)
+	assert.Equal(t, diff.Modified, nd.Elements[0].Change,
+		"kind/when are part of the element signature")
 }
 
 func TestEdgeRewire(t *testing.T) {

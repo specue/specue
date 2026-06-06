@@ -29,11 +29,12 @@ validateGraph: s.#Contract & {
 	title:      "Validate a spec graph"
 	confidence: "CONFIRMED"
 	service:    specue
-	postconditions: [{
+	invariants: [{
+		id:   "verdict-on-channel"
+		kind: "returns"
 		text: "A verdict is emitted on the report channel."
 		depends_on: [{to: reportChannel, role: "produce"}]
-	}]
-	invariants: [{
+	}, {
 		id:   "single-verdict"
 		text: "A run emits one verdict; partial reports are not surfaced."
 	}]
@@ -45,7 +46,9 @@ describeNode: s.#Contract & {
 	title:      "Describe one node in full"
 	confidence: "LIKELY"
 	service:    specue
-	postconditions: [{
+	invariants: [{
+		id:   "returns-resolved-contract"
+		kind: "returns"
 		text: "The node's resolved contract is returned."
 	}]
 }

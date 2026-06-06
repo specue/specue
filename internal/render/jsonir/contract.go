@@ -16,17 +16,13 @@ func (Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.Fil
 	f := fileContract{commonJSON: buildCommon(n, ctx.Revisions)}
 	if body := n.Node().Body; body != nil && body.Contract != nil {
 		uc := body.Contract
-		pre, post, inv, vari := buildElements(uc.Elements)
 		f.useCaseJSON = useCaseJSON{
-			Service:        refStr(uc.Service),
-			Binding:        string(uc.Binding),
-			Interaction:    string(uc.Interaction),
-			Trigger:        uc.Trigger,
-			Deprecated:     uc.Deprecated,
-			Preconditions:  pre,
-			Postconditions: post,
-			Invariants:     inv,
-			Variations:     vari,
+			Service:     refStr(uc.Service),
+			Binding:     string(uc.Binding),
+			Interaction: string(uc.Interaction),
+			Trigger:     uc.Trigger,
+			Deprecated:  uc.Deprecated,
+			Invariants:  buildElements(uc.Elements),
 		}
 	}
 	f.Derived = buildDerived(n)

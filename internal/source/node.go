@@ -31,7 +31,6 @@ func MapNode(v cue.Value, attrib Attributor) (model.Node, error) {
 		Type:       model.NodeType(typ),
 		Title:      mustString(v, "title"),
 		Confidence: model.Confidence(mustString(v, "confidence")),
-		LegacyID:   optString(v, "legacy_id"),
 		Visibility: model.Public, // specload stamps Private from the path
 		Body:       &model.Body{Prose: optString(v, "body")},
 	}
@@ -66,38 +65,31 @@ func mapContract(v cue.Value, attrib Attributor) *model.ContractBody {
 	}
 }
 
-// mapElements flattens the four authored element sections into one ordered slice,
-// tagging each with its kind. Deps on a variation are branch edges.
+// mapElements reads the single `invariants` section into an ordered slice. A
+// guarded invariant (When set) has branch deps — a conditional branch must not
+// block the parent's main contract — so branch is derived per element from the
+// presence of `when`.
 func mapElements(v cue.Value, attrib Attributor) []model.Element {
-	var out []model.Element
-	out = append(out, mapElementsOf(v, "preconditions", model.KindPre, false, attrib)...)
-	out = append(out, mapElementsOf(v, "postconditions", model.KindPost, false, attrib)...)
-	out = append(out, mapElementsOf(v, "invariants", model.KindInvariant, false, attrib)...)
-	out = append(out, mapElementsOf(v, "variations", model.KindVariation, true, attrib)...)
-	return out
-}
-
-func mapElementsOf(v cue.Value, field string, kind model.ElementKind, branch bool, attrib Attributor) []model.Element {
-	list := v.LookupPath(cue.ParsePath(field))
+	list := v.LookupPath(cue.ParsePath("invariants"))
 	if !list.Exists() {
 		return nil
 	}
 	var out []model.Element
 	for it, _ := list.List(); it.Next(); {
-		out = append(out, mapElement(it.Value(), kind, branch, attrib))
+		out = append(out, mapElement(it.Value(), attrib))
 	}
 	return out
 }
 
-func mapElement(e cue.Value, kind model.ElementKind, branch bool, attrib Attributor) model.Element {
+func mapElement(e cue.Value, attrib Attributor) model.Element {
+	when := optString(e, "when")
 	return model.Element{
-		Kind:      kind,
 		ID:        model.ElementID(optString(e, "id")),
 		Text:      optString(e, "text"),
-		When:      optString(e, "when"),
-		Then:      optString(e, "then"),
+		Kind:      model.ElementKind(optString(e, "kind")),
+		When:      when,
 		Rev:       optInt(e, "rev"),
-		Deps:      mapDeps(e, branch, attrib),
+		Deps:      mapDeps(e, when != "", attrib),
 		Satisfies: mapSatisfies(e, attrib),
 		DecidedBy: mapDecidedBy(e, attrib),
 	}

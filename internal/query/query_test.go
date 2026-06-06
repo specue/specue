@@ -31,11 +31,11 @@ func graph(t *testing.T) (*compiler.ResolvedGraph, []compiler.Diagnostic) {
 		Body: &model.Body{Contract: &model.ContractBody{
 			Service: model.NodeID{Module: "example", Slug: "example"},
 			Elements: []model.Element{
-				{Kind: model.KindPost, Text: "verdict emitted", Deps: []model.Dep{
+				{Text: "verdict emitted", Deps: []model.Dep{
 					{To: model.NodeID{Module: "example", Slug: "validate"}},
 					{To: model.NodeID{Module: "topo", Slug: "report-channel"}, Role: model.RoleProduce},
 				}},
-				{Kind: model.KindInvariant, ID: "single-verdict", Text: "a run emits a single verdict",
+				{ID: "single-verdict", Text: "a run emits a single verdict",
 					Satisfies: []model.AtomRef{{Need: model.NodeID{Module: "prod", Slug: "describe-node"}, Atom: "fr-01"}}},
 			},
 		}},
@@ -153,7 +153,7 @@ func TestPreJoinedViews(t *testing.T) {
 	found := false
 	for _, r := range rows {
 		if r["element"] == "single-verdict" {
-			assert.Equal(t, "invariant", r["element_kind"])
+			assert.Equal(t, "", r["element_kind"], "a plain invariant has empty nature")
 			found = true
 		}
 	}
