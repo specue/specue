@@ -127,6 +127,36 @@ Write a field only when it overrides a default. Write `confidence` when
 it is not `CONFIRMED`, `binding` when it is not `required`, `interaction`
 when it is not `sync`. Less authored text means less drift and less to read.
 
+## The invariant shape
+
+A Contract's guarantees are `invariants`. An invariant is:
+
+```
+{
+    id:   "kebab-id"                       // required, unique within the Contract
+    text: "an observable guarantee"        // required for plain/returns; optional for rejects
+    when: "a guard condition"              // optional — a conditional guarantee
+    kind: "plain" | "returns" | "rejects"  // defaults to "plain"
+    // satisfies / depends_on / decided_by attach here
+}
+```
+
+- **plain** (the default): an always-holds guarantee.
+  `{ id: "survives", text: "the context survives across invocations" }`.
+- **`returns`**: a property of what the caller gets back.
+  `{ id: "returns-status", kind: "returns", text: "the node is returned with its current status" }`.
+- **`rejects`**: a refusal-to-serve under a condition. `when` is **required**;
+  `text` is **optional** (the meaning is "when `<when>`, refused" — write `text`
+  only for extra detail).
+  `{ id: "name-is-unique", kind: "rejects", when: "a context with that name already exists" }`.
+- **`when` without a `kind`**: a conditional behaviour.
+  `{ id: "incremental", when: "the spec changed since the last build", text: "the graph is rebuilt" }`.
+
+**Never author a negative guarantee** ("does not alter", "is left untouched"):
+it has no line to bind and cannot reach `proven` (MANIFESTO 1.6). Read-only-ness
+is *derived* from the absence of a write edge. Reformulate positively (what the
+call *does* return or refuse), or drop it and let the graph derive it.
+
 ## Authoring discipline (lessons from the dogfood)
 
 - **A Need's description is one coherent want, not a list.** If you write
@@ -163,7 +193,7 @@ frs: {
 
 ## satisfies and decided_by
 
-`satisfies` ties a specific UC element (an invariant or a postcondition) to
+`satisfies` ties a specific Contract invariant to
 a specific Need FR — as a **bare cue-native reference** into the Need's
 `frs`/`nfrs` struct. The loader recovers both the owning Need and the wire
 atom id from the reference; the author never repeats them.

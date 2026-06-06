@@ -123,13 +123,20 @@ addTask: s.#Contract & {
     title: "Add a task to a user's list"
     service: api
     trigger: "the user submits a new task"
-    postconditions: [{
+    invariants: [{
+        id:   "durable"
         text: "The task is durable: a later read of the same list returns it."
+    }, {
+        id:   "rejects-empty"
+        kind: "rejects"
+        when: "the task text is empty"
     }]
 }
 ```
 
-Read the graph back:
+A Contract is a set of **invariants** — observable guarantees. Each is plain, or
+typed `returns` (a property of the result) or `rejects` (a refusal under a
+`when` condition). Read the graph back:
 
 ```sh
 specue -C ./spec.d/service validate                              # ✓ 2 node(s) valid
@@ -279,7 +286,8 @@ import (
 
 addTask: s.#Contract & {
     // ...
-    postconditions: [{
+    invariants: [{
+        id:   "durable"
         text: "The task is durable: a later read of the same list returns it."
         satisfies: [d.user.frs."fr-01"]
     }]

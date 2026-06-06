@@ -50,9 +50,8 @@ and small, and downstream tooling parses it cleanly.
 ## describe — read one node in full
 
 `describe <module:slug>` is the single-node read. It prints the contract:
-trigger, preconditions, every invariant (with its `satisfies` and
-`decided_by`), every variation, postconditions, the derived edges, and
-the current status.
+trigger, every invariant (with its nature, its `when` guard if any, and its
+`satisfies` and `decided_by`), the derived edges, and the current status.
 
 Use it after editing a node to confirm the tool resolved it the way you
 intended (qualified imports, satisfies wiring, decided_by). It is also the
