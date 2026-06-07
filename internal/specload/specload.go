@@ -117,6 +117,12 @@ func (l *loader) loadModule(m modules.ResolvedModule, reg registry, attrib sourc
 			}
 			return nil, inst.Err
 		}
+		// BuildInstance unifies the package against the imported schema, so CUE's
+		// own type-checking of every edge runs here: a `service` that is not a
+		// #Container, or a `depends_on` whose `to` does not match its role, makes
+		// the instance value carry an error ("empty disjunction") and the build
+		// fails before any node reaches the graph.
+		//specue:req:build-graph#edges-are-type-checked
 		v := l.ctx.BuildInstance(inst)
 		if v.Err() != nil {
 			return nil, v.Err()

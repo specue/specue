@@ -58,7 +58,6 @@ func mapContract(v cue.Value, attrib Attributor) *model.ContractBody {
 	return &model.ContractBody{
 		Service:     mapRef(v.LookupPath(cue.ParsePath("service")), attrib),
 		Trigger:     optString(v, "trigger"),
-		Binding:     model.Binding(orDefault(optString(v, "binding"), string(model.BindingRequired))),
 		Interaction: model.Interaction(orDefault(optString(v, "interaction"), string(model.InteractionAsync))),
 		Deprecated:  optString(v, "deprecated"),
 		Elements:    mapElements(v, attrib),

@@ -31,7 +31,7 @@ func admonitionFixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModuleP
 		Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
 		Confidence: model.Confirmed,
 		Body: &model.Body{Contract: &model.ContractBody{
-			Service: svcRef, Binding: model.BindingRequired, Trigger: "caller asks",
+			Service: svcRef, Trigger: "caller asks",
 			Elements: []model.Element{
 				{ID: "atomic", Text: "Each call is atomic.",
 					Satisfies: []model.AtomRef{{Need: storyRef, Atom: "fr-01"}},

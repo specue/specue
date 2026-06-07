@@ -37,8 +37,8 @@ func (u Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.F
 	if u.cfg.WithStatusAdmonitions {
 		b.WriteString(statusAdmonition(n, ctx))
 	}
-	fmt.Fprintf(&b, "Service: %s  •  binding: %s  •  interaction: %s\n\n",
-		linkRef(n.ID(), uc.Service, ctx.Layout), uc.Binding, uc.Interaction)
+	fmt.Fprintf(&b, "Service: %s  •  interaction: %s\n\n",
+		linkRef(n.ID(), uc.Service, ctx.Layout), uc.Interaction)
 	if uc.Trigger != "" {
 		fmt.Fprintf(&b, "**Trigger.** %s\n\n", uc.Trigger)
 	}

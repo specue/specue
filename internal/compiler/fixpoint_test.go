@@ -84,22 +84,6 @@ func TestBlockedPropagation(t *testing.T) {
 	assert.True(t, mustNode(t, g, "ready").Blocked)
 }
 
-func TestBlockedAbstractDoesNotBlock(t *testing.T) {
-	// A dep with an abstract binding is deliverable by design — no block.
-	readyN := ucWith("ready", model.InteractionAsync, "concept")
-	concept := ucWith("concept", model.InteractionAsync)
-	concept.Node.Body.Contract.Binding = model.BindingAbstract
-	g, _ := New().Compile(Input{Modules: []source.LoadedModule{
-		loadedMod("svc", source.KindService, []model.PlacedNode{readyN, concept}),
-	}})
-
-	mustNode(t, g, "ready").Status = StatusImplemented
-	mustNode(t, g, "concept").Status = StatusAsserted
-	propagateBlocked(g)
-
-	assert.NotEqual(t, StatusBlocked, mustNode(t, g, "ready").Status, "abstract dep never blocks")
-}
-
 func TestBranchDepDoesNotBlock(t *testing.T) {
 	// A branch dep on an asserted node must NOT block the parent (CoreUses excludes it).
 	ready := model.PlacedNode{Module: "svc", Node: model.Node{

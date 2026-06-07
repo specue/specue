@@ -23,13 +23,19 @@ package spec
 
 // A dep points at another node by a cue-native reference (`to: w.validateGraph`).
 // `to` is the bare reference so its provenance is recoverable; role makes it an
-// infra touch; carries is the L3 contract this physical link realizes (also a
-// node reference). Both `to` and `carries` may target an element (an #invariant)
-// as well as a whole node — the way satisfies targets a Need atom (G2), so a
-// Contract can depend on one guarantee of another without over-coupling.
+// infra touch. The target is typed by the role: a plain dep (no role) is a
+// logical dependency on a #Contract (or one of its #invariant elements, G2 — the
+// way satisfies targets a Need atom, so a Contract can depend on one guarantee of
+// another without over-coupling); an infra dep (role set) is a physical touch on
+// a #Port or #Container. carries is the L3 contract this physical link realizes.
 #dep: {
-	to!:      #Node | #invariant
 	role?:    #role
+	if role == _|_ {
+		to!: #Contract | #invariant
+	}
+	if role != _|_ {
+		to!: #Port | #Container
+	}
 	carries?: #Node | #invariant
 }
 
@@ -89,8 +95,7 @@ package spec
 #Contract: {
 	#common
 	type:         "Contract"
-	service!:     #Node
-	binding:      *"required" | "optional" | "abstract"
+	service!:     #Container
 	interaction:  *"sync" | "async"
 	trigger?:     string
 	deprecated?:  string
@@ -120,7 +125,7 @@ package spec
 #Need: {
 	#common
 	type:        "Need"
-	domain!:     #Node
+	domain!:     #Domain
 	consumer!:   string
 	description!: string
 	frs?: [string]: #atom

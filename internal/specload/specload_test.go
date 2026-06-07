@@ -55,7 +55,7 @@ import (
 svc: s.#Container & {type:"Container", slug:"consumer", title:"C", confidence:"CONFIRMED", kind:"service"}
 grant: s.#Contract & {
 	type:"Contract", slug:"grant", title:"Grant", confidence:"CONFIRMED", service:svc
-	invariants:[{id:"post", text:"granted", depends_on:[{to: w.validateGraph, role:"call"}]}]
+	invariants:[{id:"post", text:"granted", depends_on:[{to: w.validateGraph}]}]
 }
 `)
 
@@ -80,7 +80,6 @@ grant: s.#Contract & {
 	require.Equal(t, model.Slug("grant"), grant.Node.Slug, "grant loaded")
 
 	dep := grant.Node.Body.Contract.Elements[0].Deps[0]
-	assert.Equal(t, model.RoleCall, dep.Role)
 	assert.Equal(t, model.NodeID{Module: "specue.test/example@v0", Slug: "validate-graph"}, dep.To,
 		"cross-module ref resolved to example's full address")
 }
@@ -188,7 +187,7 @@ uc: s.#Contract & {
 		{id:"plain-inv", text:"always"},
 		{id:"ret", kind:"returns", text:"result"},
 		// guarded rejects whose dep targets dep's invariant (element-grained, G2):
-		{id:"rej", kind:"rejects", when:"bad input", text:"refused", depends_on:[{to: dep.invariants[0], role:"call"}]},
+		{id:"rej", kind:"rejects", when:"bad input", text:"refused", depends_on:[{to: dep.invariants[0]}]},
 	]
 }
 `)
@@ -228,4 +227,39 @@ uc: s.#Contract & {
 	assert.True(t, rej.Deps[0].Branch, "a guarded (When) invariant's deps are branch deps")
 	assert.Equal(t, model.NodeID{Module: "x.test/svc@v0", Slug: "dep"}, rej.Deps[0].To,
 		"a dep targeting an invariant resolves to the owning Contract (G2)")
+}
+
+// TestLoadRejectsMisTypedEdge proves the schema gate (ADR-15): CUE type-checks
+// every edge at load, so a `service` aimed at a node that is not a Container
+// makes the build fail at resolution — a mis-aimed relationship never reaches the
+// graph. (The same gate rejects a depends_on whose `to` does not match its role;
+// the service case is the simplest to exercise.)
+//specue:test:build-graph#edges-are-type-checked
+func TestLoadRejectsMisTypedEdge(t *testing.T) {
+	base := t.TempDir()
+	svcDir := filepath.Join(base, "svc")
+
+	schema, err := modules.NewSchemaModule()
+	require.NoError(t, err)
+	defer schema.Cleanup()
+
+	write(t, svcDir, "cue.mod/module.cue", "module: \"x.test/svc@v0\"\nlanguage: version: \"v0.16.0\"\ndeps: \"specue.io/schema@v0\": v: \"v0.0.1\"\n")
+	write(t, svcDir, source.ManifestFile, "module: \"x.test/svc@v0\"\nversion: \"v0.1.0\"\nkind: \"service\"\n")
+	// adr is an #ADR, not a #Container — service must be a #Container, so this
+	// edge is ill-typed and CUE must refuse it at resolution.
+	write(t, svcDir, "nodes.cue", `package svc
+import s "specue.io/schema@v0:spec"
+adr: s.#ADR & {type:"ADR", slug:"adr-x", title:"A", confidence:"CONFIRMED", status:"accepted"}
+uc: s.#Contract & {type:"Contract", slug:"uc", title:"UC", confidence:"CONFIRMED", service: adr, invariants:[{id:"g", text:"guarantee"}]}
+`)
+
+	parser, err := source.NewCUEParser()
+	require.NoError(t, err)
+	resolver := modules.NewResolver(parser, modules.NewReplaceLocator())
+	closure, err := resolver.Resolve([]modules.RootModule{{Path: "x.test/svc@v0", Dir: svcDir}})
+	require.NoError(t, err)
+	closure.Modules = append(closure.Modules, schema.ResolvedModule)
+
+	_, err = specload.New().Load(closure)
+	require.Error(t, err, "a service aimed at a non-Container is refused at load")
 }

@@ -18,7 +18,6 @@ func (Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.Fil
 		uc := body.Contract
 		f.useCaseJSON = useCaseJSON{
 			Service:     refStr(uc.Service),
-			Binding:     string(uc.Binding),
 			Interaction: string(uc.Interaction),
 			Trigger:     uc.Trigger,
 			Deprecated:  uc.Deprecated,
