@@ -30,7 +30,7 @@ func fixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]string
 		Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
 		Confidence: model.Confirmed,
 		Body: &model.Body{Contract: &model.ContractBody{
-			Service: svcRef, Binding: model.BindingRequired, Trigger: "caller asks",
+			Service: svcRef, Trigger: "caller asks",
 			Elements: []model.Element{
 				{ID: "atomic", Text: "Each call is atomic.",
 					Satisfies: []model.AtomRef{{Need: storyRef, Atom: "fr-01"}},
@@ -196,7 +196,7 @@ func TestRenderInvariantKindAndWhen(t *testing.T) {
 		Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
 		Confidence: model.Confirmed,
 		Body: &model.Body{Contract: &model.ContractBody{
-			Service: svcRef, Binding: model.BindingRequired,
+			Service: svcRef,
 			Elements: []model.Element{
 				{ID: "plain-inv", Text: "Always holds."},
 				{ID: "refuses", Kind: model.KindRejects, When: "input is bad", Text: "the call is refused."},

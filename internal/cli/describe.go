@@ -128,8 +128,8 @@ func renderBody(w io.Writer, n *compiler.ResolvedNode, elem model.ElementID) err
 
 func renderContract(w io.Writer, c *model.ContractBody, elem model.ElementID) error {
 	if elem == "" {
-		if _, err := fmt.Fprintf(w, "\nservice: %s  binding: %s  interaction: %s\n",
-			c.Service, c.Binding, c.Interaction); err != nil {
+		if _, err := fmt.Fprintf(w, "\nservice: %s  interaction: %s\n",
+			c.Service, c.Interaction); err != nil {
 			return err
 		}
 		if c.Trigger != "" {
@@ -274,7 +274,6 @@ type nodeJSON struct {
 	Domain      string        `json:"domain,omitempty"`
 	Consumer    string        `json:"consumer,omitempty"`
 	Description string        `json:"description,omitempty"`
-	Binding     string        `json:"binding,omitempty"`
 	Trigger     string        `json:"trigger,omitempty"`
 	Kind        string        `json:"kind,omitempty"`     // port/container kind
 	Schema      string        `json:"schema,omitempty"`   // port wire IDL ref
@@ -333,7 +332,6 @@ func fillBodyJSON(j *nodeJSON, b *model.Body, n *compiler.ResolvedNode, elem mod
 		c := b.Contract
 		if elem == "" {
 			j.Service = refStr(c.Service)
-			j.Binding = string(c.Binding)
 			j.Trigger = c.Trigger
 		}
 		for _, e := range c.Elements {

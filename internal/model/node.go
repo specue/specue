@@ -10,7 +10,7 @@ package model
 //
 // On open vs closed value types: an enum is closed (a Go const set) only when the
 // tool branches on its value — NodeType, Role, ElementKind, PortKind, Visibility,
-// Interaction, Binding, Lifecycle drive role-gating, cycle detection, and
+// Interaction, Lifecycle drive role-gating, cycle detection, and
 // blocked-propagation, so they live in code. A pure label the tool never reasons
 // about — Transport, Technology — is an open string; its allowed values live in
 // the CUE schema, so adding one is a schema bump, not a tool change.
@@ -75,9 +75,6 @@ type ContractBody struct {
 	// is event-triggered (otherwise reachability comes from an inbound edge or a
 	// satisfies).
 	Trigger string
-	// Binding is how others may rely on this contract: required (default) means
-	// it must be implemented in code; optional / abstract relax that.
-	Binding Binding
 	// Interaction is how callers invoke it: async (default) or sync. Load-bearing
 	// for cycle detection (a sync cycle is broken, an async one is fine) — must
 	// survive simplification.
@@ -156,15 +153,6 @@ type GovBody struct {
 	// empty defaults to plan/<slug>.
 	Branch string
 }
-
-// Binding is closed: required gates implementation-in-code.
-type Binding string
-
-const (
-	BindingRequired Binding = "required"
-	BindingOptional Binding = "optional"
-	BindingAbstract Binding = "abstract"
-)
 
 // Interaction is closed: sync vs async changes cycle detection.
 type Interaction string

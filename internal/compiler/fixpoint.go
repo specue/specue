@@ -129,9 +129,6 @@ func (e *blockEval) deliverable(id model.NodeID) bool {
 	if !ok {
 		return true // out of view (cross-unloaded) — validated in its own repo
 	}
-	if uc := n.Node().Body.Contract; uc != nil && uc.Binding == model.BindingAbstract {
-		return true // conceptual by design — never a gap, never blocks
-	}
 	if !ready(n) {
 		return false // asserted/broken — a real gap
 	}

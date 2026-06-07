@@ -33,7 +33,6 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 			Confidence: model.Confirmed,
 			Body: &model.Body{Contract: &model.ContractBody{
 				Service:     svcRef,
-				Binding:     model.BindingRequired,
 				Interaction: model.InteractionSync,
 				Trigger:     "caller asks",
 				Elements: []model.Element{
@@ -116,7 +115,6 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 	assert.Equal(t, "ex.test/svc@v0:do-thing", uc["id"])
 	assert.Equal(t, "Contract", uc["type"])
 	assert.Equal(t, "ex.test/svc@v0:service", uc["service"])
-	assert.Equal(t, "required", uc["binding"])
 	assert.Equal(t, "sync", uc["interaction"])
 	assert.Equal(t, "caller asks", uc["trigger"])
 	invs, ok := uc["invariants"].([]any)

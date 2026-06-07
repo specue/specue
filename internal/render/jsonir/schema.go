@@ -27,7 +27,6 @@ type commonJSON struct {
 // trigger, deprecated, and the invariants.
 type useCaseJSON struct {
 	Service     string     `json:"service,omitempty"`
-	Binding     string     `json:"binding,omitempty"`
 	Interaction string     `json:"interaction,omitempty"`
 	Trigger     string     `json:"trigger,omitempty"`
 	Deprecated  string     `json:"deprecated,omitempty"`

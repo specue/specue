@@ -45,12 +45,22 @@ argument is weaker than it first looks — pre/post are being removed by M-elem
 (invariants are the substance); ADR-13's body should rest on "Contract = a set of
 provable invariants", not on a full pre/post/invariant triad.*
 
-### M4. Schema consistency — remove rudimentary / confusing fields — PARTIAL (legacy_id DONE)
+### M4. Schema consistency — remove rudimentary / confusing fields — DONE except `visibility` (ADR-14, ADR-15)
 *`legacy_id` removed end-to-end on `plan/m-elem` (schema + model + source +
-jsonir + the `migrate-legacy` diagnostic). `visibility` is KEPT: it is
-load-bearing (the bindings gate filters Contracts to Public, stamped from the
-`internal/` path); dropping it is a separate, larger change — not folded in.*
-
+jsonir + the `migrate-legacy` diagnostic; ADR-14 window).*
+*`binding`, the ungated typed refs, and the role-untyped `#dep.to` all closed on
+`plan/m4-schema-hygiene` (ADR-15): `binding` dropped entirely (it was 1 bit —
+`abstract` vs not — and `abstract` is what ADR/Plan nodes already express, so a
+Contract with no code is now an honest gap); `service!: #Container` and
+`domain!: #Domain` typed so CUE rejects a mis-aimed edge; `#dep.to` gated by
+role (plain → `#Contract | #invariant`, infra → `#Port | #Container`). The
+role-gate surfaced two test fixtures that pointed an infra `role:"call"` at a
+Contract — exactly the upside-down edge M-edge-invert removes — reshaped to plain
+deps. Self-spec validates 72 nodes / 0 advisories with all three in force.*
+*`visibility` is KEPT: it is load-bearing (the bindings gate filters Contracts to
+Public, stamped from the `internal/` path); dropping or deriving it from CUE
+visibility is a separate, larger change — still open below.*
+****
 Stray fields make the model **ambiguous to read** — an author hits a field and
 wonders if it is theirs to set. While the model is still breaking, removing
 confusion is cheaper now than after adoption. *Fits the manifesto's drive for an
@@ -75,7 +85,8 @@ honest, minimal vocabulary.* Concrete targets:
   visibility if it must be exposed at all (computed, per 5.2), or drop the field
   outright. Either way it should stop being a standalone node attribute.
 
-- **`binding: required | optional | abstract`** on `#Contract` — every self-spec
+- **`binding: required | optional | abstract`** on `#Contract` — DONE (ADR-15):
+  dropped entirely. *Was:* every self-spec
   contract uses the default `required`; **none** authors `optional` or `abstract`.
   Worse, the tool only branches on `abstract` (one site: `fixpoint.go` — an
   abstract contract never blocks and is never a gap) and **never branches on
@@ -87,7 +98,9 @@ honest, minimal vocabulary.* Concrete targets:
   this today) or drop it, leaving `required | abstract`; and add an `abstract`
   self-spec instance + test if the value is kept. Found dogfooding M-elem.
 
-- **Typed refs accept any node (`service`/`domain`/`schema`)** — `#Contract.service`,
+- **Typed refs accept any node (`service`/`domain`/`schema`)** — DONE for
+  `service`/`domain` (ADR-15: `service!: #Container`, `domain!: #Domain`);
+  `#Port.schema` stays `#Node` (no dedicated IDL node type yet). *Was:* `#Contract.service`,
   `#Need.domain` and `#Port.schema` are all typed `#Node` (the any-node union), so
   CUE accepts `service: someADR` or `domain: aContract`, and the compiler only
   checks the target *resolves*, not its type (`dangling.go` adds `uc.Service`
@@ -99,7 +112,8 @@ honest, minimal vocabulary.* Concrete targets:
   Container refs resolve — it is a one-line type change per field, no compiler
   work needed.* Found dogfooding M-elem.
 
-- **`#dep.to` accepts any node, regardless of role** — a plain dep (no `role`)
+- **`#dep.to` accepts any node, regardless of role** — DONE (ADR-15): gated by
+  role exactly as drafted below. *Was:* a plain dep (no `role`)
   should target a `#Contract`; an infra dep (`role` set) should target a
   `#Port | #Container`. Today `to!: #Node | #invariant` accepts either for both,
   and the compiler silently ignores a mis-typed infra target (`topology.go` skips

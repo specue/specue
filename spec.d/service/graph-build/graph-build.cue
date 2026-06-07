@@ -32,6 +32,13 @@ buildGraph: s.#Contract & {
 		text: "A module's nodes are loaded from every sub-folder of the module."
 		satisfies: [agent.create.frs."fr-03"]
 	}, {
+		id:   "edges-are-type-checked"
+		kind: "rejects"
+		when: "a reference is aimed at a node whose type the edge forbids (a service that is not a Container, or a depends_on whose target does not match its role)"
+		text: "the build fails at resolution — a mis-aimed relationship never reaches the graph."
+		satisfies: [agent.relate.frs."fr-03"]
+		decided_by: [gov.adr15SchemaHygiene]
+	}, {
 		id:   "returns-graph-and-diagnostics"
 		kind: "returns"
 		text: "The resolved graph is returned together with diagnostics produced while resolving it."
