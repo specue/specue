@@ -60,9 +60,9 @@ func refTargets(n model.Node) []model.NodeID {
 	}
 	switch {
 	case n.Body.Contract != nil:
-		uc := n.Body.Contract
-		add(uc.Service, false)
-		for _, e := range uc.Elements {
+		c := n.Body.Contract
+		add(c.Service, false)
+		for _, e := range c.Elements {
 			for _, dep := range e.Deps {
 				add(dep.To, true) // a dep always has an authored target; empty = dangling
 				add(dep.Carries, false)

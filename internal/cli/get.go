@@ -13,7 +13,7 @@ import (
 
 // GetReport is the typed result of `get <resource>`: a flat row per matching node.
 // The columns are uniform (id, status, detail) so a human table and a JSON array
-// share one shape; detail is a per-type summary (a UC's service, a Need's
+// share one shape; detail is a per-type summary (a Contract's service, a Need's
 // coverage, a port's transport).
 type GetReport struct {
 	Resource string    `json:"resource"`

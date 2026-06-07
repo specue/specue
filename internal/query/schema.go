@@ -118,7 +118,7 @@ CREATE VIEW node_describe AS
   FROM nodes n
   JOIN atoms a ON a.need_id = n.id;
 
--- fr_coverage: one row per Need atom + every UC that satisfies it + that UC's
+-- fr_coverage: one row per Need atom + every Contract that satisfies it + that Contract's
 -- status. Multiple UCs per atom yield multiple rows; an atom with no satisfier
 -- shows up with NULLs in the uc_* columns (LEFT JOIN preserves the gap). The
 -- single most-asked question — "is fr-NN proven, by whom?" — is one SELECT.
@@ -137,8 +137,8 @@ const tablesDoc = `Tables (a navigation projection of the spec graph; query them
   nodes(module, slug, id, type, status, title, visibility, service, domain, port_kind, transport)
   dep_edges(from_id, to_id, core)            -- Contract -> Contract contract deps
   infra_edges(from_id, to_id, role, element) -- Contract -> Port/Container infra touches
-  satisfies(uc_id, need_id, atom)            -- a UC discharges a Need atom
-  realizes(uc_id, need_id)                   -- derived: UC realizes a Need
+  satisfies(uc_id, need_id, atom)            -- a Contract discharges a Need atom
+  realizes(uc_id, need_id)                   -- derived: Contract realizes a Need
   elements(node_id, element, kind, text)     -- named invariants (kind: ''|returns|rejects)
   atoms(need_id, atom, kind, text)           -- Need FR/NFR
   bindings(node_id, element, bind_kind, loc, source_module)  -- loc = file:line
@@ -149,7 +149,7 @@ Views (pre-joined cuts you reach for often):
   node_describe(id, type, status, title, element, element_kind, element_text)
                                              -- one row per node element / atom; what describe prints
   fr_coverage(need_id, atom, atom_kind, atom_text, uc_id, uc_status)
-                                             -- per Need atom: every UC that satisfies it + its status
+                                             -- per Need atom: every Contract that satisfies it + its status
 
 ids are canonical "module:slug". The projection is read-only.
 
@@ -178,14 +178,14 @@ Examples:
   SELECT element, element_kind, element_text FROM node_describe
   WHERE id = 'example:validate-graph' AND element != '';
 
-  -- coverage trace for a single FR — every UC that satisfies it + its status
+  -- coverage trace for a single FR — every Contract that satisfies it + its status
   SELECT uc_id, uc_status FROM fr_coverage
   WHERE need_id = 'example:as-agent-setup' AND atom = 'fr-01';
 
 Recipes (the higher-level views — substitute the scope literal):
 
   -- MAP: the whole landscape at a glance — Need coverage per domain,
-  -- UC implementation per service. One call instead of reading every node.
+  -- Contract implementation per service. One call instead of reading every node.
   SELECT domain, status, count(*) n FROM nodes
   WHERE type = 'Need' GROUP BY domain, status ORDER BY domain;
   SELECT service, status, count(*) n FROM nodes
@@ -199,7 +199,7 @@ Recipes (the higher-level views — substitute the scope literal):
   UNION SELECT DISTINCT to_id FROM infra_edges WHERE from_id IN
     (SELECT id FROM nodes WHERE service = 'example:specue');
 
-  -- COVERAGE GAP: a Need's atoms no proven UC discharges (the honest gap).
+  -- COVERAGE GAP: a Need's atoms no proven Contract discharges (the honest gap).
   SELECT a.atom, a.text FROM atoms a
   WHERE a.need_id = 'example:describe-node' AND a.atom NOT IN (
     SELECT s.atom FROM satisfies s JOIN nodes n ON n.id = s.uc_id

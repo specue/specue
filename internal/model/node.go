@@ -69,9 +69,9 @@ type Body struct {
 
 // ContractBody is a logical contract a service guarantees, bound to code.
 type ContractBody struct {
-	// Service references the service node this UC belongs to.
+	// Service references the service node this Contract belongs to.
 	Service NodeRef
-	// Trigger names an external event that reaches this UC; set only when the UC
+	// Trigger names an external event that reaches this Contract; set only when the Contract
 	// is event-triggered (otherwise reachability comes from an inbound edge or a
 	// satisfies).
 	Trigger string

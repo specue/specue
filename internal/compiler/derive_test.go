@@ -19,8 +19,8 @@ func TestDeriveBranchExclusion(t *testing.T) {
 			{ID: "v", When: "w", Deps: []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "branch-dep"}, Branch: true}}},
 		}}},
 	}}
-	coreDep := uc("svc", "core-dep", model.Public)
-	branchDep := uc("svc", "branch-dep", model.Public)
+	coreDep := contract("svc", "core-dep", model.Public)
+	branchDep := contract("svc", "branch-dep", model.Public)
 
 	g, _ := New().Compile(Input{Modules: []source.LoadedModule{
 		loadedMod("svc", source.KindService, []model.PlacedNode{caller, coreDep, branchDep}),

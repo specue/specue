@@ -19,32 +19,32 @@ func assignNeedStatus(g *ResolvedGraph) {
 // satisfier is one element of one use case that discharges an atom; coverage is
 // evaluated from these after blocked is known.
 type satisfier struct {
-	uc      *ResolvedNode
+	node    *ResolvedNode
 	element model.ElementID
 }
 
 // satisfierIndex maps an atom address to the elements that satisfy it.
 type satisfierIndex map[AtomAddr][]satisfier
 
-// collectSatisfiers walks every UC element's satisfies edges, indexing them by
+// collectSatisfiers walks every Contract element's satisfies edges, indexing them by
 // the atom they discharge along with the satisfying element (needed for the
 // whole-vs-scoped binding rule).
 func collectSatisfiers(g *ResolvedGraph) satisfierIndex {
 	idx := satisfierIndex{}
 	for n := range g.Nodes() {
-		uc := n.Node().Body.Contract
-		if uc == nil {
+		cb := n.Node().Body.Contract
+		if cb == nil {
 			continue
 		}
 		from := n.ID().Module
-		for _, el := range uc.Elements {
+		for _, el := range cb.Elements {
 			for _, ref := range el.Satisfies {
 				need, ok := resolveNeed(g, from, ref)
 				if !ok {
 					continue
 				}
 				addr := AtomAddr{Need: need, Atom: ref.Atom}
-				idx[addr] = append(idx[addr], satisfier{uc: n, element: el.ID})
+				idx[addr] = append(idx[addr], satisfier{node: n, element: el.ID})
 			}
 		}
 	}
@@ -81,13 +81,13 @@ func needStatus(need *ResolvedNode, sat satisfierIndex) ResolvedNodeStatus {
 // does not count — a broken chain must not show as covered.
 func atomCoverage(need model.NodeID, atom model.AtomID, sat satisfierIndex) (covered, proven bool) {
 	for _, s := range sat[AtomAddr{Need: need, Atom: atom}] {
-		if s.uc.Blocked {
+		if s.node.Blocked {
 			continue
 		}
-		if elemImplemented(s.uc, s.element) {
+		if elemImplemented(s.node, s.element) {
 			covered = true
 		}
-		if elemProven(s.uc, s.element) {
+		if elemProven(s.node, s.element) {
 			proven = true
 		}
 	}

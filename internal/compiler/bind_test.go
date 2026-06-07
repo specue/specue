@@ -46,7 +46,7 @@ func TestReqOnNeedIsUnbindable(t *testing.T) {
 // against a module it requires — the contract it implements lives in the required
 // service module, not in the (node-free) code module.
 func TestReqAcrossRequiresResolves(t *testing.T) {
-	svc := uc("x.test/example@v0", "validate-graph", model.Public)
+	svc := contract("x.test/example@v0", "validate-graph", model.Public)
 	codeMod := source.LoadedModule{
 		Manifest: source.Manifest{
 			Path: "x.test/wallet-code@v0", Kind: source.KindCode,
@@ -67,5 +67,5 @@ func TestReqAcrossRequiresResolves(t *testing.T) {
 	assert.NotContains(t, codesOf(diags), OrphanBinding, "a bare req resolves via the code module's requires")
 	n, ok := g.Node(model.NodeID{Module: "x.test/example@v0", Slug: "validate-graph"})
 	assert.True(t, ok)
-	assert.Equal(t, StatusImplemented, n.Status, "the required module's UC is implemented by the code module")
+	assert.Equal(t, StatusImplemented, n.Status, "the required module's Contract is implemented by the code module")
 }

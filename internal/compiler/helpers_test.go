@@ -5,8 +5,8 @@ import (
 	"github.com/specue/specue/internal/source"
 )
 
-// uc builds a Contract placed node with one postcondition carrying the given deps.
-func uc(modpath model.ModulePath, slug model.Slug, vis model.Visibility, deps ...model.Dep) model.PlacedNode {
+// contract builds a Contract placed node with one invariant carrying the given deps.
+func contract(modpath model.ModulePath, slug model.Slug, vis model.Visibility, deps ...model.Dep) model.PlacedNode {
 	return model.PlacedNode{
 		Module: modpath,
 		Node: model.Node{

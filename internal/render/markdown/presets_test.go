@@ -109,11 +109,11 @@ func TestCrossLinkResolveInTree(t *testing.T) {
 		StripPrefix: "ex.test/gp/",
 	}).Render(render.Input{Graph: g, Revisions: revs})
 	require.NoError(t, err)
-	uc := string(out["svc/do-thing.md"])
-	require.NotEmpty(t, uc)
-	assert.Contains(t, uc, "(../dom/as-user.md#fr-01)")
-	assert.Contains(t, uc, "(../gov/adr-01.md)")
-	assert.Contains(t, uc, "(service.md)", "same-module link stays bare")
+	doc := string(out["svc/do-thing.md"])
+	require.NotEmpty(t, doc)
+	assert.Contains(t, doc, "(../dom/as-user.md#fr-01)")
+	assert.Contains(t, doc, "(../gov/adr-01.md)")
+	assert.Contains(t, doc, "(service.md)", "same-module link stays bare")
 }
 
 // TestFrontmatterMinimal: only title, type, status keys.
@@ -122,12 +122,12 @@ func TestFrontmatterMinimal(t *testing.T) {
 	out, err := markdown.New(markdown.Config{Frontmatter: markdown.FrontmatterMinimal}).
 		Render(render.Input{Graph: g, Revisions: revs})
 	require.NoError(t, err)
-	uc := string(out["ex.test-gp-svc-v0/do-thing.md"])
-	assert.Contains(t, uc, "title: Do the thing")
-	assert.Contains(t, uc, "type: Contract")
-	assert.NotContains(t, uc, "module: ex.test")
-	assert.NotContains(t, uc, "rendered_from:")
-	assert.NotContains(t, uc, "satisfies:")
+	doc := string(out["ex.test-gp-svc-v0/do-thing.md"])
+	assert.Contains(t, doc, "title: Do the thing")
+	assert.Contains(t, doc, "type: Contract")
+	assert.NotContains(t, doc, "module: ex.test")
+	assert.NotContains(t, doc, "rendered_from:")
+	assert.NotContains(t, doc, "satisfies:")
 }
 
 // TestFrontmatterMark: PascalCase keys, Labels, Space optional.
@@ -137,11 +137,11 @@ func TestFrontmatterMark(t *testing.T) {
 		Frontmatter: markdown.FrontmatterMark, Space: "ENG"}).
 		Render(render.Input{Graph: g, Revisions: revs})
 	require.NoError(t, err)
-	uc := string(out["ex.test-gp-svc-v0/do-thing.md"])
-	assert.Contains(t, uc, "Title: Do the thing")
-	assert.Contains(t, uc, "Space: ENG")
-	assert.Contains(t, uc, "Parent: svc")
-	assert.Contains(t, uc, "- contract")
+	doc := string(out["ex.test-gp-svc-v0/do-thing.md"])
+	assert.Contains(t, doc, "Title: Do the thing")
+	assert.Contains(t, doc, "Space: ENG")
+	assert.Contains(t, doc, "Parent: svc")
+	assert.Contains(t, doc, "- contract")
 }
 
 // TestFrontmatterMkdocs: lowercase, tags, optional icon.
@@ -150,11 +150,11 @@ func TestFrontmatterMkdocs(t *testing.T) {
 	out, err := markdown.New(markdown.Config{Frontmatter: markdown.FrontmatterMkDocs}).
 		Render(render.Input{Graph: g, Revisions: revs})
 	require.NoError(t, err)
-	uc := string(out["ex.test-gp-svc-v0/do-thing.md"])
-	assert.Contains(t, uc, "title: Do the thing")
-	assert.Contains(t, uc, "tags:")
-	assert.Contains(t, uc, "- contract")
-	assert.Contains(t, uc, "icon:")
+	doc := string(out["ex.test-gp-svc-v0/do-thing.md"])
+	assert.Contains(t, doc, "title: Do the thing")
+	assert.Contains(t, doc, "tags:")
+	assert.Contains(t, doc, "- contract")
+	assert.Contains(t, doc, "icon:")
 }
 
 // TestFrontmatterNone: no fence at all.
@@ -163,9 +163,9 @@ func TestFrontmatterNone(t *testing.T) {
 	out, err := markdown.New(markdown.Config{Frontmatter: markdown.FrontmatterNone}).
 		Render(render.Input{Graph: g, Revisions: revs})
 	require.NoError(t, err)
-	uc := string(out["ex.test-gp-svc-v0/do-thing.md"])
-	assert.False(t, strings.HasPrefix(uc, "---\n"), "no frontmatter fence")
-	assert.True(t, strings.HasPrefix(uc, "# "), "starts with heading")
+	doc := string(out["ex.test-gp-svc-v0/do-thing.md"])
+	assert.False(t, strings.HasPrefix(doc, "---\n"), "no frontmatter fence")
+	assert.True(t, strings.HasPrefix(doc, "# "), "starts with heading")
 }
 
 // TestNavSnippet: nav.yml entry is produced via EmitNavSnippet.

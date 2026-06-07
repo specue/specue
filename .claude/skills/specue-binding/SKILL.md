@@ -29,9 +29,9 @@ An annotation does not duplicate the spec — it points at it. The spec text
 is the authoritative WHAT; the code is the authoritative HOW; the
 annotation records the correspondence.
 
-## Two scopes per UC: whole and per-element
+## Two scopes per Contract: whole and per-element
 
-Every implemented UC carries a **whole-contract** annotation on the main
+Every implemented Contract carries a **whole-contract** annotation on the main
 function/method that realizes it:
 
 ```go
@@ -39,7 +39,7 @@ function/method that realizes it:
 func ApplyOperation(...) { ... }
 ```
 
-That alone is enough for the UC to be `implemented`. Add a **per-element**
+That alone is enough for the Contract to be `implemented`. Add a **per-element**
 annotation when a specific invariant has its own home distinct from the
 whole-contract anchor:
 
@@ -64,7 +64,7 @@ the view cannot tell you which specific invariant needs a test.
 ## Tests prove a contract
 
 `//specue:test:<slug>` and `//specue:test:<slug>#<element-id>` go on
-test functions. A whole-contract test proves the whole UC; a per-element
+test functions. A whole-contract test proves the whole Contract; a per-element
 test proves that specific invariant. A binding reaches `proven` when both
 `req` and `test` are present at the same scope (whole or per-element).
 
@@ -96,7 +96,7 @@ its value.
 
 ## Workflow
 
-1. Pick the UC you are about to implement or prove. Read its spec — every
+1. Pick the Contract you are about to implement or prove. Read its spec — every
    invariant text — so you know what you are pointing at.
 2. Decide the whole-contract anchor: the function or method that
    realizes the contract end-to-end. Annotate it
@@ -120,10 +120,10 @@ its value.
 
 `produces`, `consumes`, `publishes`, `subscribes`, `serves`, `calls`,
 `reads`, `writes`, `grants` anchor an edge to a Port — they are not
-implementations of a UC, they prove an edge the UC declares. Use the verb
-that matches the role the UC's spec declared. An anchor whose verb does
+implementations of a Contract, they prove an edge the Contract declares. Use the verb
+that matches the role the Contract's spec declared. An anchor whose verb does
 not match a declared role is a diagnostic; if you want a new role on the
-UC, add it to the invariant first, then bind.
+Contract, add it to the invariant first, then bind.
 
 Infra anchors do not have a test counterpart. Their proof is the anchor
 itself: `bound` once the anchor exists, never `proven` (there is no

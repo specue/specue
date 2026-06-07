@@ -27,7 +27,7 @@ A Plan adds an **intent axis** to WHAT.
 - HOW — code lives on Plan branches too, so a code change can ride a
   spec change. The same `//specue:req:` rules apply on the branch.
 - WHY — a Plan record carries no rationale of its own; if a Plan changes a
-  UC's invariant, the new invariant carries its own `decided_by` to an
+  Contract's invariant, the new invariant carries its own `decided_by` to an
   ADR (existing or new). A migration Plan often opens a new ADR first.
 
 ## When a Plan is the right tool
@@ -44,7 +44,7 @@ Reach for a Plan when:
   and edges instead of a line-by-line patch.
 
 Reach for a direct commit when the change is additive on one module and
-nothing breaks (a new UC, a new ADR, a new annotation). Plans are
+nothing breaks (a new Contract, a new ADR, a new annotation). Plans are
 overhead — use them where the overhead pays for itself.
 
 ## The verbs
@@ -138,24 +138,24 @@ the right tool.
    record). The working tree did not switch; `register` only creates.
 2. **use** — `plan use render-doc` checked the plan branch out across
    both modules. Now editing on the Plan.
-3. **author** — added the UC to
+3. **author** — added the Contract to
    `spec.d/service/federation/federation.cue` and ADR-09 to
-   `spec.d/governance/adr.cue`. Six invariants, two of them with
+   `spec.d/governance/adr-09.cue`. Six invariants, two of them with
    `satisfies` to the federated FRs. `validate` stayed green on the
-   branch (49 nodes, the new UC `asserted` — honest: no code yet).
+   branch (49 nodes, the new Contract `asserted` — honest: no code yet).
 4. **describe** — `describe specue.io/service@v0:render-doc` showed
    the resolved node with `realizes` pointing at both federated stories,
    confirming the wiring landed as intended.
-5. **commit** — committed the UC + ADR on the plan branch.
+5. **commit** — committed the Contract + ADR on the plan branch.
 6. **diff** — `diff plan render-doc` returned the typed delta showing the
-   added UC and ADR, read through git from base and plan/<id> — the
+   added Contract and ADR, read through git from base and plan/<id> — the
    working tree did not need to move.
 7. **accept** — `plan accept render-doc` overlaid the plan, ran
    `validate` on the overlay (green), merged the branch into base, and
    flipped the Plan record to `accepted`.
 8. **result** — `as-federated-owner` moved uncovered → partial (fr-04 is
-   now satisfied by an asserted UC; the rest by proven attestation).
-   `as-federated-reader` stayed uncovered because both UCs that satisfy its
+   now satisfied by an asserted Contract; the rest by proven attestation).
+   `as-federated-reader` stayed uncovered because both Contracts that satisfy its
    FRs are still asserted — true to the GAP: contract agreed, code not
    yet written. That is the right state and the right next TODO.
 

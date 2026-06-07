@@ -83,7 +83,7 @@ func (g *ResolvedGraph) resolveInRequires(mod model.ModulePath, slug model.Slug)
 
 // bindOne records one fact on its node by verb. req marks implementation,
 // test (in a test file) marks proof, infra verbs record an edge proof. A mismatch
-// (infra anchor on a non-UC, or an edge the spec doesn't declare) is advisory.
+// (infra anchor on a non-Contract, or an edge the spec doesn't declare) is advisory.
 //
 //specue:req:validate-graph#unbindable-target
 func bindOne(n *ResolvedNode, f CodeFact) *Diagnostic {

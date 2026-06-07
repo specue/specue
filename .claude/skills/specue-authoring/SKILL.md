@@ -107,7 +107,6 @@ The same goes for any field whose default matches what most nodes carry:
 the schema concretizes it for you. Today that is:
 
 - `type` (every node) — set by the definition
-- `binding: "required"` (Contract) — the default
 - `confidence: "CONFIRMED"` — the default
 - `interaction: "sync"` (Contract) — the default
 
@@ -124,8 +123,8 @@ diffRefs: s.#Contract & {
 ```
 
 Write a field only when it overrides a default. Write `confidence` when
-it is not `CONFIRMED`, `binding` when it is not `required`, `interaction`
-when it is not `sync`. Less authored text means less drift and less to read.
+it is not `CONFIRMED`, `interaction` when it is not `sync`. Less authored
+text means less drift and less to read.
 
 ## The invariant shape
 
@@ -214,11 +213,11 @@ without being explicitly required by a Need.
 
 ## Asserted is honest
 
-A UC with `binding: required` but no code annotation is `asserted` — a
-declared contract waiting on code. A Need whose FRs are all satisfied by
-`asserted` UCs is `uncovered` until at least one of them turns `proven`. Do
-not chase the colours: an honest `asserted` UC is the right state when the
-contract has been agreed but not yet built (e.g. `attest-bindings` here).
+A Contract with no code annotation is `asserted` — a declared contract
+waiting on code. A Need whose FRs are all satisfied by `asserted` Contracts
+is `uncovered` until at least one of them turns `proven`. Do not chase the
+colours: an honest `asserted` Contract is the right state when the contract
+has been agreed but not yet built (e.g. `attest-bindings` here).
 
 ## Workflow
 
@@ -234,8 +233,8 @@ contract has been agreed but not yet built (e.g. `attest-bindings` here).
 
 ## A reference triple
 
-The smallest working unit is a domain Need + a service UC + a governance
-ADR, with `satisfies` from a UC invariant to the Need FR and `decided_by`
+The smallest working unit is a domain Need + a service Contract + a governance
+ADR, with `satisfies` from a Contract invariant to the Need FR and `decided_by`
 pointing at the ADR. `spec.d/domain/agent/agent.cue:as-agent-navigate` plus
 `spec.d/service/navigation/navigation.cue:queryGraph` plus
 `spec.d/governance/adr.cue:adr02SQLQuery` is the live example in this repo —

@@ -43,8 +43,8 @@ func TestGuardedElementNeedsScopedBinding(t *testing.T) {
 		}}},
 	}}
 	needID := model.NodeID{Module: "svc", Slug: "need"}
-	// uc's only satisfier of fr-01 is a guarded rejects invariant.
-	uc := model.PlacedNode{Module: "svc", Node: model.Node{
+	// The contract's only satisfier of fr-01 is a guarded rejects invariant.
+	c := model.PlacedNode{Module: "svc", Node: model.Node{
 		Slug: "uc", Type: model.TypeContract,
 		Body: &model.Body{Contract: &model.ContractBody{Elements: []model.Element{
 			{ID: "guard", Kind: model.KindRejects, When: "bad input", Text: "refused",
@@ -52,7 +52,7 @@ func TestGuardedElementNeedsScopedBinding(t *testing.T) {
 		}}},
 	}}
 	mods := []source.LoadedModule{
-		{Manifest: source.Manifest{Path: "svc"}, Nodes: []model.PlacedNode{need, uc}},
+		{Manifest: source.Manifest{Path: "svc"}, Nodes: []model.PlacedNode{need, c}},
 	}
 
 	// Whole-contract req+cover only: the guarded element is NOT auto-covered.
@@ -70,9 +70,9 @@ func TestGuardedElementNeedsScopedBinding(t *testing.T) {
 }
 
 func TestContractStatusTiers(t *testing.T) {
-	asserted := uc("svc", "asserted", model.Public)
-	implemented := uc("svc", "implemented", model.Public)
-	proven := uc("svc", "proven", model.Public)
+	asserted := contract("svc", "asserted", model.Public)
+	implemented := contract("svc", "implemented", model.Public)
+	proven := contract("svc", "proven", model.Public)
 
 	g, _ := New().Compile(Input{
 		Modules: []source.LoadedModule{loadedMod("svc", source.KindService,
@@ -163,7 +163,7 @@ func TestBlockedSatisfierDoesNotDeliver(t *testing.T) {
 				Deps:      []model.Dep{{To: model.NodeRef{Module: "svc", Slug: "gap"}}}},
 		}}},
 	}}
-	gap := uc("svc", "gap", model.Public)
+	gap := contract("svc", "gap", model.Public)
 
 	g, _ := New().Compile(Input{
 		Modules: []source.LoadedModule{

@@ -37,8 +37,8 @@ func (compiler) Compile(in Input) (*ResolvedGraph, []Diagnostic) {
 	deriveAll(g)
 	diags = append(diags, bindFacts(g, in.Facts)...)
 
-	// UC factual status from the fact collision, then the graph-global passes:
-	// cycles (needs only edges), blocked-propagation (reads UC readiness), and
+	// Contract factual status from the fact collision, then the graph-global passes:
+	// cycles (needs only edges), blocked-propagation (reads Contract readiness), and
 	// finally Need coverage (reads blocked, so it runs last).
 	assignContractStatus(g)
 	diags = append(diags, detectCycles(g)...)

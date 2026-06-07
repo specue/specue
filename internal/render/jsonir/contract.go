@@ -15,13 +15,13 @@ func (Contract) Type() model.NodeType { return model.TypeContract }
 func (Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.FileContent, error) {
 	f := fileContract{commonJSON: buildCommon(n, ctx.Revisions)}
 	if body := n.Node().Body; body != nil && body.Contract != nil {
-		uc := body.Contract
-		f.useCaseJSON = useCaseJSON{
-			Service:     refStr(uc.Service),
-			Interaction: string(uc.Interaction),
-			Trigger:     uc.Trigger,
-			Deprecated:  uc.Deprecated,
-			Invariants:  buildElements(uc.Elements),
+		c := body.Contract
+		f.contractJSON = contractJSON{
+			Service:     refStr(c.Service),
+			Interaction: string(c.Interaction),
+			Trigger:     c.Trigger,
+			Deprecated:  c.Deprecated,
+			Invariants:  buildElements(c.Elements),
 		}
 	}
 	f.Derived = buildDerived(n)

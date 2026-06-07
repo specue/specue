@@ -15,8 +15,8 @@ import (
 )
 
 // admonitionFixture builds a richer graph than the shared fixture: a Need
-// with two atoms — fr-01 satisfied by a proven UC, fr-02 unclaimed — plus
-// an accepted ADR. The UC is therefore proven, the Need is partial.
+// with two atoms — fr-01 satisfied by a proven Contract, fr-02 unclaimed — plus
+// an accepted ADR. The Contract is therefore proven, the Need is partial.
 func admonitionFixture(t *testing.T) (*compiler.ResolvedGraph, map[model.ModulePath]string) {
 	t.Helper()
 	svc := model.ModulePath("ex.test/gp/svc@v0")
@@ -99,11 +99,11 @@ func TestStatusAdmonitions_On(t *testing.T) {
 
 	// Contract: proven → success admonition + inline *Proven.* on the
 	// invariant.
-	uc := string(out["svc/do-thing.md"])
-	require.NotEmpty(t, uc)
-	assertAdmonitionAfterH1(t, uc, `!!! success "Proven"`)
-	assert.Contains(t, uc, "All invariants have an implementation and a test.")
-	assert.Contains(t, uc, "*Proven.*")
+	doc := string(out["svc/do-thing.md"])
+	require.NotEmpty(t, doc)
+	assertAdmonitionAfterH1(t, doc, `!!! success "Proven"`)
+	assert.Contains(t, doc, "All invariants have an implementation and a test.")
+	assert.Contains(t, doc, "*Proven.*")
 
 	// Need: partial → warning Partial — 1/2 covered. fr-01 covered, fr-02
 	// uncovered.

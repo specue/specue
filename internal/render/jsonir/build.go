@@ -147,11 +147,11 @@ func flattenInfra(n *compiler.ResolvedNode) []infraBindingJSON {
 // that matches the InfraKey's (Role, Element) and returns its target as
 // "module:slug". Empty when no match (binding without an authored anchor).
 func resolveInfraTarget(n *compiler.ResolvedNode, k compiler.InfraKey) string {
-	uc := n.Node().Body
-	if uc == nil || uc.Contract == nil {
+	body := n.Node().Body
+	if body == nil || body.Contract == nil {
 		return ""
 	}
-	for _, e := range uc.Contract.Elements {
+	for _, e := range body.Contract.Elements {
 		if e.ID != k.Element {
 			continue
 		}

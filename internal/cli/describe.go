@@ -268,7 +268,7 @@ func edgeList(w io.Writer, label string, ids []model.NodeID) error {
 type nodeJSON struct {
 	ID          string        `json:"id"`
 	Type        string        `json:"type"`
-	Status      string        `json:"status,omitempty"` // empty for Port/Container/Plan/ADR (status is UC/Need only)
+	Status      string        `json:"status,omitempty"` // empty for Port/Container/Plan/ADR (status is Contract/Need only)
 	Title       string        `json:"title,omitempty"`
 	Service     string        `json:"service,omitempty"`
 	Domain      string        `json:"domain,omitempty"`

@@ -54,7 +54,7 @@ type Binding struct {
 }
 
 // InfraKey addresses an infra-edge proof: a role on a specific element ("" =
-// whole-UC anchor).
+// whole-Contract anchor).
 type InfraKey struct {
 	Role    model.Role
 	Element model.ElementID

@@ -19,7 +19,7 @@ import (
 func statusAdmonition(n *compiler.ResolvedNode, ctx render.Context) string {
 	switch n.Node().Type {
 	case model.TypeContract:
-		return useCaseAdmonition(n)
+		return contractAdmonition(n)
 	case model.TypeNeed:
 		return needAdmonition(n, ctx)
 	case model.TypeADR, model.TypePlan:
@@ -28,13 +28,13 @@ func statusAdmonition(n *compiler.ResolvedNode, ctx render.Context) string {
 	return ""
 }
 
-func useCaseAdmonition(n *compiler.ResolvedNode) string {
+func contractAdmonition(n *compiler.ResolvedNode) string {
 	switch n.Status {
 	case compiler.StatusProven:
 		return admonition("success", "Proven",
 			"All invariants have an implementation and a test.")
 	case compiler.StatusImplemented:
-		total, proven := countUCInvariantsProven(n)
+		total, proven := countContractInvariantsProven(n)
 		title := "Implemented"
 		body := "Some invariants still lack a test."
 		if total > 0 {
@@ -59,16 +59,16 @@ func useCaseAdmonition(n *compiler.ResolvedNode) string {
 	return ""
 }
 
-// countUCInvariantsProven counts how many of the UC's unconditional invariants
+// countContractInvariantsProven counts how many of the Contract's unconditional invariants
 // are proven (req + cover both present, honouring whole-contract bindings).
 // Guarded invariants (conditional branches) are not counted — the body line
 // speaks only of the always-holds guarantees.
-func countUCInvariantsProven(n *compiler.ResolvedNode) (total, proven int) {
-	uc := n.Node().Body.Contract
-	if uc == nil {
+func countContractInvariantsProven(n *compiler.ResolvedNode) (total, proven int) {
+	c := n.Node().Body.Contract
+	if c == nil {
 		return 0, 0
 	}
-	for _, el := range uc.Elements {
+	for _, el := range c.Elements {
 		if el.When != "" {
 			continue
 		}
@@ -203,16 +203,16 @@ type atomSatisfierLookup struct {
 }
 
 type atomSatisfier struct {
-	uc      *compiler.ResolvedNode
+	node    *compiler.ResolvedNode
 	element model.ElementID
 }
 
 func (l atomSatisfierLookup) covered(atom model.AtomID) bool {
 	for _, s := range l.byAtom[atom] {
-		if s.uc.Blocked {
+		if s.node.Blocked {
 			continue
 		}
-		if elemHasReq(s.uc, s.element) {
+		if elemHasReq(s.node, s.element) {
 			return true
 		}
 	}
@@ -223,7 +223,7 @@ func (l atomSatisfierLookup) proven(atom model.AtomID) (atomSatisfier, int, bool
 	var first atomSatisfier
 	count := 0
 	for _, s := range l.byAtom[atom] {
-		if s.uc.Status == compiler.StatusProven {
+		if s.node.Status == compiler.StatusProven {
 			if count == 0 {
 				first = s
 			}
@@ -259,16 +259,16 @@ func buildAtomLookup(ctx render.Context, need model.NodeID) atomSatisfierLookup 
 		return out
 	}
 	for n := range ctx.Graph.Nodes() {
-		uc := n.Node().Body.Contract
-		if uc == nil {
+		c := n.Node().Body.Contract
+		if c == nil {
 			continue
 		}
-		for _, el := range uc.Elements {
+		for _, el := range c.Elements {
 			for _, s := range el.Satisfies {
 				if s.Need != need {
 					continue
 				}
-				out.byAtom[s.Atom] = append(out.byAtom[s.Atom], atomSatisfier{uc: n, element: el.ID})
+				out.byAtom[s.Atom] = append(out.byAtom[s.Atom], atomSatisfier{node: n, element: el.ID})
 			}
 		}
 	}
@@ -291,11 +291,11 @@ func atomInlineStatus(needID model.NodeID, atomID model.AtomID, lookup atomSatis
 }
 
 func inlineSatisfierLine(prefix string, s atomSatisfier, count int, from model.NodeID, layout render.Layout, suffix string) string {
-	label := string(s.uc.ID().Slug)
+	label := string(s.node.ID().Slug)
 	if s.element != "" {
 		label += "#" + string(s.element)
 	}
-	url := linkTo(from, s.uc.ID(), layout)
+	url := linkTo(from, s.node.ID(), layout)
 	if s.element != "" {
 		url += "#" + string(s.element)
 	}

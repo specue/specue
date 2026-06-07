@@ -2,18 +2,18 @@ package compiler
 
 import "github.com/specue/specue/internal/model"
 
-// deriveTopology aggregates each Port's L2 topology from the infra deps use cases
-// declare: an infra dep (Role set) on a UC points at a Port, and the role places
-// that UC in one of the Port's role lists. The topology is never authored — it is
-// the reverse index of the infra edges, the L3→L2 bridge.
+// deriveTopology aggregates each Port's L2 topology from the infra deps Contracts
+// declare: an infra dep (Role set) on a Contract points at a Port, and the role
+// places that Contract in one of the Port's role lists. The topology is never
+// authored — it is the reverse index of the infra edges, the L3→L2 bridge.
 func deriveTopology(g *ResolvedGraph) {
 	for n := range g.Nodes() {
-		uc := n.Node().Body.Contract
-		if uc == nil {
+		c := n.Node().Body.Contract
+		if c == nil {
 			continue
 		}
 		from := n.ID().Module
-		for _, el := range uc.Elements {
+		for _, el := range c.Elements {
 			for _, dep := range el.Deps {
 				if !dep.IsInfra() {
 					continue
@@ -24,8 +24,8 @@ func deriveTopology(g *ResolvedGraph) {
 	}
 }
 
-// attachToPort records a use case under the target Port's role list.
-func attachToPort(g *ResolvedGraph, from model.ModulePath, uc model.NodeID, dep model.Dep) {
+// attachToPort records a Contract under the target Port's role list.
+func attachToPort(g *ResolvedGraph, from model.ModulePath, contractID model.NodeID, dep model.Dep) {
 	port, ok := resolveTarget(g, from, dep.To)
 	if !ok {
 		return
@@ -34,21 +34,21 @@ func attachToPort(g *ResolvedGraph, from model.ModulePath, uc model.NodeID, dep 
 	if !ok || pn.Node().Type != model.TypePort {
 		return
 	}
-	pn.Topology.attach(dep.Role, uc)
+	pn.Topology.attach(dep.Role, contractID)
 }
 
-// attach files a use case under the role list its role maps to.
-func (t *TopologyRoles) attach(role model.Role, uc model.NodeID) {
+// attach files a Contract under the role list its role maps to.
+func (t *TopologyRoles) attach(role model.Role, contractID model.NodeID) {
 	switch role {
 	case model.RoleProduce, model.RolePublish:
-		t.ProducedBy = append(t.ProducedBy, uc)
+		t.ProducedBy = append(t.ProducedBy, contractID)
 	case model.RoleConsume, model.RoleSubscribe:
-		t.ConsumedBy = append(t.ConsumedBy, uc)
+		t.ConsumedBy = append(t.ConsumedBy, contractID)
 	case model.RoleServe:
-		t.ServedBy = append(t.ServedBy, uc)
+		t.ServedBy = append(t.ServedBy, contractID)
 	case model.RoleCall, model.RoleRead, model.RoleWrite:
-		t.CalledBy = append(t.CalledBy, uc)
+		t.CalledBy = append(t.CalledBy, contractID)
 	case model.RoleGrant:
-		t.GrantedBy = append(t.GrantedBy, uc)
+		t.GrantedBy = append(t.GrantedBy, contractID)
 	}
 }

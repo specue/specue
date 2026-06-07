@@ -181,8 +181,8 @@ func TestLoadInvariantKindWhenAndElementDep(t *testing.T) {
 import s "specue.io/schema@v0:spec"
 svc: s.#Container & {type:"Container", slug:"svc", title:"S", confidence:"CONFIRMED", kind:"service"}
 dep: s.#Contract & {type:"Contract", slug:"dep", title:"Dep", confidence:"CONFIRMED", service:svc, invariants:[{id:"g", text:"guarantee"}]}
-uc: s.#Contract & {
-	type:"Contract", slug:"uc", title:"UC", confidence:"CONFIRMED", service:svc
+contract: s.#Contract & {
+	type:"Contract", slug:"contract", title:"Contract", confidence:"CONFIRMED", service:svc
 	invariants:[
 		{id:"plain-inv", text:"always"},
 		{id:"ret", kind:"returns", text:"result"},
@@ -203,13 +203,13 @@ uc: s.#Contract & {
 	require.NoError(t, err)
 	require.Len(t, mods, 1)
 
-	var uc model.PlacedNode
+	var c model.PlacedNode
 	for _, n := range mods[0].Nodes {
-		if n.Node.Slug == "uc" {
-			uc = n
+		if n.Node.Slug == "contract" {
+			c = n
 		}
 	}
-	els := uc.Node.Body.Contract.Elements
+	els := c.Node.Body.Contract.Elements
 	require.Len(t, els, 3)
 
 	// element 0: plain, unguarded.
@@ -250,7 +250,7 @@ func TestLoadRejectsMisTypedEdge(t *testing.T) {
 	write(t, svcDir, "nodes.cue", `package svc
 import s "specue.io/schema@v0:spec"
 adr: s.#ADR & {type:"ADR", slug:"adr-x", title:"A", confidence:"CONFIRMED", status:"accepted"}
-uc: s.#Contract & {type:"Contract", slug:"uc", title:"UC", confidence:"CONFIRMED", service: adr, invariants:[{id:"g", text:"guarantee"}]}
+contract: s.#Contract & {type:"Contract", slug:"contract", title:"Contract", confidence:"CONFIRMED", service: adr, invariants:[{id:"g", text:"guarantee"}]}
 `)
 
 	parser, err := source.NewCUEParser()

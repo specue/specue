@@ -27,7 +27,7 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 
 	contract := model.PlacedNode{
 		Module: svc,
-		File:   "uc.cue",
+		File:   "contract.cue",
 		Node: model.Node{
 			Slug: "do-thing", Type: model.TypeContract, Title: "Do the thing",
 			Confidence: model.Confirmed,
@@ -89,10 +89,10 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 
 	// Shape: index.json + one file per authored node.
 	require.Contains(t, tree, jsonir.IndexPath, "index.json present")
-	ucPath := render.RelPath("ex.test-svc-v0/do-thing.json")
+	docPath := render.RelPath("ex.test-svc-v0/do-thing.json")
 	needPath := render.RelPath("ex.test-dom-v0/as-user.json")
 	domainPath := render.RelPath("ex.test-dom-v0/domain.json")
-	require.Contains(t, tree, ucPath)
+	require.Contains(t, tree, docPath)
 	require.Contains(t, tree, needPath)
 	require.Contains(t, tree, domainPath)
 	assert.Len(t, tree, 4, "index + 3 nodes")
@@ -111,13 +111,13 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 	nodes, _ := idx["nodes"].([]any)
 	assert.Len(t, nodes, 3)
 
-	uc := parse(ucPath)
-	assert.Equal(t, "ex.test/svc@v0:do-thing", uc["id"])
-	assert.Equal(t, "Contract", uc["type"])
-	assert.Equal(t, "ex.test/svc@v0:service", uc["service"])
-	assert.Equal(t, "sync", uc["interaction"])
-	assert.Equal(t, "caller asks", uc["trigger"])
-	invs, ok := uc["invariants"].([]any)
+	doc := parse(docPath)
+	assert.Equal(t, "ex.test/svc@v0:do-thing", doc["id"])
+	assert.Equal(t, "Contract", doc["type"])
+	assert.Equal(t, "ex.test/svc@v0:service", doc["service"])
+	assert.Equal(t, "sync", doc["interaction"])
+	assert.Equal(t, "caller asks", doc["trigger"])
+	invs, ok := doc["invariants"].([]any)
 	require.True(t, ok, "invariants array present")
 	require.Len(t, invs, 1)
 	inv0, _ := invs[0].(map[string]any)
@@ -131,13 +131,13 @@ func TestJSONIRRendersTreeAndIndex(t *testing.T) {
 	assert.Equal(t, "fr-01", sat0["atom"])
 
 	// derived.realizes points at the satisfied Need.
-	derived, _ := uc["derived"].(map[string]any)
+	derived, _ := doc["derived"].(map[string]any)
 	require.NotNil(t, derived, "derived present")
 	real, _ := derived["realizes"].([]any)
 	assert.Contains(t, real, "ex.test/dom@v0:as-user")
 
 	// bindings.req carries the whole-contract code binding (no `element`).
-	bindings, _ := uc["bindings"].(map[string]any)
+	bindings, _ := doc["bindings"].(map[string]any)
 	require.NotNil(t, bindings, "bindings present")
 	req, _ := bindings["req"].([]any)
 	require.Len(t, req, 1)

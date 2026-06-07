@@ -3,7 +3,7 @@ package jsonir
 // The JSON IR is split into one schema per node type so each type evolves on
 // its own. The common envelope (commonJSON) carries identity and the two
 // cross-cutting sections (derived / bindings) every node has; a per-type
-// payload (useCaseJSON, needJSON, …) carries the body-specific shape. The
+// payload (contractJSON, needJSON, …) carries the body-specific shape. The
 // renderer assembles a flat map[string]any for the file body — flat because
 // the wire schema is one JSON object per node, not a tagged union. Splitting
 // payloads in Go means adding a new node type touches only its file.
@@ -23,9 +23,9 @@ type commonJSON struct {
 	RenderedFrom string `json:"rendered_from,omitempty"`
 }
 
-// useCaseJSON is the Contract-specific payload: service, binding, interaction,
+// contractJSON is the Contract-specific payload: service, interaction,
 // trigger, deprecated, and the invariants.
-type useCaseJSON struct {
+type contractJSON struct {
 	Service     string     `json:"service,omitempty"`
 	Interaction string     `json:"interaction,omitempty"`
 	Trigger     string     `json:"trigger,omitempty"`

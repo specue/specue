@@ -16,9 +16,9 @@ import (
 func nodeHead(n model.Node) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "type=%s;title=%s;conf=%s;vis=%s", n.Type, n.Title, n.Confidence, n.Visibility)
-	if uc := n.Body.Contract; uc != nil {
+	if c := n.Body.Contract; c != nil {
 		fmt.Fprintf(&b, ";svc=%s;inter=%s;trig=%s;dep=%s",
-			uc.Service, uc.Interaction, uc.Trigger, uc.Deprecated)
+			c.Service, c.Interaction, c.Trigger, c.Deprecated)
 	}
 	if nd := n.Body.Need; nd != nil {
 		fmt.Fprintf(&b, ";dom=%s;cons=%s;desc=%s;atoms=%s", nd.Domain, nd.Consumer, nd.Description, atomsSig(nd.Atoms))

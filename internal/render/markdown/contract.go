@@ -18,12 +18,12 @@ func (Contract) Type() model.NodeType { return model.TypeContract }
 
 //specue:req:render-doc#cross-links-resolve-as-markdown
 func (u Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.FileContent, error) {
-	uc := n.Node().Body.Contract
+	c := n.Node().Body.Contract
 	fm := baseFrontmatter(n, ctx)
 	fm.Status = string(n.Status)
-	fm.Service = refStr(uc.Service)
-	fm.Satisfies = collectUCSatisfies(uc)
-	fm.DecidedBy = collectUCDecidedBy(uc)
+	fm.Service = refStr(c.Service)
+	fm.Satisfies = collectContractSatisfies(c)
+	fm.DecidedBy = collectContractDecidedBy(c)
 	fm.Realizes = idStrings(n.Realizes)
 
 	head, err := writeFrontmatter(fm, u.cfg)
@@ -38,12 +38,12 @@ func (u Contract) Render(n *compiler.ResolvedNode, ctx render.Context) (render.F
 		b.WriteString(statusAdmonition(n, ctx))
 	}
 	fmt.Fprintf(&b, "Service: %s  •  interaction: %s\n\n",
-		linkRef(n.ID(), uc.Service, ctx.Layout), uc.Interaction)
-	if uc.Trigger != "" {
-		fmt.Fprintf(&b, "**Trigger.** %s\n\n", uc.Trigger)
+		linkRef(n.ID(), c.Service, ctx.Layout), c.Interaction)
+	if c.Trigger != "" {
+		fmt.Fprintf(&b, "**Trigger.** %s\n\n", c.Trigger)
 	}
 
-	writeElements(&b, n, uc.Elements, "Invariants", ctx, u.cfg)
+	writeElements(&b, n, c.Elements, "Invariants", ctx, u.cfg)
 
 	if len(n.Realizes) > 0 {
 		b.WriteString("## Realizes\n\n")
@@ -119,13 +119,13 @@ func writeElement(b *strings.Builder, from model.NodeID, e model.Element, ctx re
 	}
 }
 
-// collectUCSatisfies flattens every element's satisfies into the node-level
+// collectContractSatisfies flattens every element's satisfies into the node-level
 // frontmatter list — a deduped, sorted view for tooling that wants the
 // node-level summary without walking elements.
-func collectUCSatisfies(uc *model.ContractBody) []string {
+func collectContractSatisfies(c *model.ContractBody) []string {
 	seen := map[string]struct{}{}
 	var out []string
-	for _, e := range uc.Elements {
+	for _, e := range c.Elements {
 		for _, s := range e.Satisfies {
 			key := s.String()
 			if _, ok := seen[key]; ok {
@@ -138,12 +138,12 @@ func collectUCSatisfies(uc *model.ContractBody) []string {
 	return strList(out)
 }
 
-// collectUCDecidedBy flattens every element's decided_by into the node-level
+// collectContractDecidedBy flattens every element's decided_by into the node-level
 // frontmatter list, deduped.
-func collectUCDecidedBy(uc *model.ContractBody) []string {
+func collectContractDecidedBy(c *model.ContractBody) []string {
 	seen := map[string]struct{}{}
 	var out []string
-	for _, e := range uc.Elements {
+	for _, e := range c.Elements {
 		for _, d := range e.DecidedBy {
 			key := d.String()
 			if _, ok := seen[key]; ok {

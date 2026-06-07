@@ -10,7 +10,7 @@ import (
 
 // The fixpoint pass computes the two graph-global properties that need traversal,
 // not just local facts: dependency cycles (a sync cycle is broken, an async one
-// is tolerated) and blocked-propagation (a ready UC whose core dependencies are
+// is tolerated) and blocked-propagation (a ready Contract whose core dependencies are
 // not ready is blocked). Both run after statuses are assigned (blocked reads
 // readiness) and over the derived edge sets.
 
@@ -74,15 +74,15 @@ func cycleDiagnostic(g *ResolvedGraph, comp []model.NodeID) Diagnostic {
 	return newDiag(AsyncCycle, comp[0], fmt.Sprintf("async dependency cycle (choreography): %v — allowed; confirm it is intended", names))
 }
 
-// isSync reports whether a node is a sync-interaction use case. A non-UC target
+// isSync reports whether a node is a sync-interaction Contract. A non-Contract target
 // (a Port) has no interaction and is treated as non-sync.
 func isSync(g *ResolvedGraph, id model.NodeID) bool {
 	n, ok := g.Node(id)
 	if !ok {
 		return false
 	}
-	uc := n.Node().Body.Contract
-	return uc != nil && uc.Interaction == model.InteractionSync
+	c := n.Node().Body.Contract
+	return c != nil && c.Interaction == model.InteractionSync
 }
 
 // propagateBlocked marks a ready Contract blocked when a core (non-branch)
@@ -149,7 +149,7 @@ func (e *blockEval) deliverable(id model.NodeID) bool {
 }
 
 // coreDepsDeliverable reports whether every Contract core dependency is
-// deliverable. Non-UC targets (Ports) and out-of-view targets don't block.
+// deliverable. Non-Contract targets (Ports) and out-of-view targets don't block.
 func (e *blockEval) coreDepsDeliverable(n *ResolvedNode) bool {
 	for _, dep := range n.CoreUses {
 		t, ok := e.g.Node(dep)

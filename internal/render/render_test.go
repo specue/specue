@@ -130,19 +130,19 @@ func TestRenderMachineReadableFrontmatter(t *testing.T) {
 	tree, err := markdown.Default().Render(render.Input{Graph: g, Revisions: revs})
 	require.NoError(t, err)
 
-	uc := string(tree["ex.test-svc-v0/do-thing.md"])
-	require.NotEmpty(t, uc, "UC file present")
+	doc := string(tree["ex.test-svc-v0/do-thing.md"])
+	require.NotEmpty(t, doc, "contract file present")
 
-	assert.True(t, strings.HasPrefix(uc, "---\n"), "frontmatter fence")
-	assert.Contains(t, uc, "id: ex.test/svc@v0:do-thing")
-	assert.Contains(t, uc, "type: Contract")
-	assert.Contains(t, uc, "module: ex.test/svc@v0")
-	assert.Contains(t, uc, "rendered_from: abc123def456")
-	assert.Contains(t, uc, "ex.test/dom@v0:as-user#fr-01", "satisfies flattened into frontmatter")
-	assert.Contains(t, uc, "ex.test/gov@v0:adr-01", "decided_by flattened into frontmatter")
+	assert.True(t, strings.HasPrefix(doc, "---\n"), "frontmatter fence")
+	assert.Contains(t, doc, "id: ex.test/svc@v0:do-thing")
+	assert.Contains(t, doc, "type: Contract")
+	assert.Contains(t, doc, "module: ex.test/svc@v0")
+	assert.Contains(t, doc, "rendered_from: abc123def456")
+	assert.Contains(t, doc, "ex.test/dom@v0:as-user#fr-01", "satisfies flattened into frontmatter")
+	assert.Contains(t, doc, "ex.test/gov@v0:adr-01", "decided_by flattened into frontmatter")
 
 	// Frontmatter is delimited by a second `---`; everything after is body.
-	assert.True(t, strings.Index(uc, "\n---\n") > 0, "closing fence present")
+	assert.True(t, strings.Index(doc, "\n---\n") > 0, "closing fence present")
 }
 
 // TestRenderCrossLinksResolveAsMarkdown asserts cross-references between nodes
@@ -156,17 +156,17 @@ func TestRenderCrossLinksResolveAsMarkdown(t *testing.T) {
 	tree, err := markdown.Default().Render(render.Input{Graph: g, Revisions: revs})
 	require.NoError(t, err)
 
-	uc := string(tree["ex.test-svc-v0/do-thing.md"])
-	require.NotEmpty(t, uc)
+	doc := string(tree["ex.test-svc-v0/do-thing.md"])
+	require.NotEmpty(t, doc)
 
 	// satisfies points cross-module with the atom anchor
-	assert.Contains(t, uc, "(../ex.test-dom-v0/as-user.md#fr-01)",
+	assert.Contains(t, doc, "(../ex.test-dom-v0/as-user.md#fr-01)",
 		"satisfies link is relative + anchored on the atom")
 	// decided_by points cross-module to the ADR file (no anchor — whole-node)
-	assert.Contains(t, uc, "(../ex.test-gov-v0/adr-01.md)",
+	assert.Contains(t, doc, "(../ex.test-gov-v0/adr-01.md)",
 		"decided_by link is relative to the ADR file")
 	// same-module service link is just <slug>.md
-	assert.Contains(t, uc, "(service.md)", "same-module link is a bare filename")
+	assert.Contains(t, doc, "(service.md)", "same-module link is a bare filename")
 
 	story := string(tree["ex.test-dom-v0/as-user.md"])
 	assert.Contains(t, story, "<a id=\"fr-01\"></a>", "story carries the anchor satisfies links land on")

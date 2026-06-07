@@ -18,9 +18,9 @@ graph or planning a change, reach for the other skills first
 
 You are touching the **HOW** layer. The tool's **WHAT** lives in
 `spec.d/service/` — every verb, every gate, every behaviour is a Contract
-with named invariants. Read the relevant UC before you write the code:
+with named invariants. Read the relevant Contract before you write the code:
 `describe specue.io/service@v0:<slug>`. The shape you implement is the
-shape the UC declares.
+shape the Contract declares.
 
 Your changes carry annotations back (the **HOW→WHAT** link): each
 function gets a `//specue:req:<slug>` or
@@ -45,7 +45,7 @@ do I change X" and "where does Y of the contract live".
 | `internal/query/` | `query-graph` | Builds the SQLite projection from the resolved graph; FTS5 over `nodes_fts`; schema doc in `tables.go`. |
 | `internal/diff/` | `diff-refs` core | Pure transform; the CLI snapshots refs and feeds them in. |
 | `internal/plan/` | `register-plan`, `use-plan`, `return-to-base`, `drop-plan`, `pending-overlay`, `detect-conflict`, `accept-plan` | Wraps git operations + governance record. |
-| `internal/context/` | the six context UCs + `init-module` storage | Domain layer is pure; persistence sits behind `Repository`. |
+| `internal/context/` | the six context Contracts + `init-module` storage | Domain layer is pure; persistence sits behind `Repository`. |
 | `internal/warm/` | `warm-schema` | `EnsureWarm` (schema only) + `EnsureClosureWarm` (whole landscape). Reads through `ResolveFunc` / `ClosureResolveFunc` so tests stub `cue`. |
 
 ## Build, run, test
@@ -87,15 +87,15 @@ hermetic — keep this for any new CLI test that exercises a graph build.
 
 | You are adding... | Probably touches |
 |---|---|
-| a new verb | `cli/<verb>.go` (run + renderer) + `cli/<verb>_test.go` + register in `root.go` + constant in `commands.go` + matching UC in `spec.d/service/<phase>/` |
+| a new verb | `cli/<verb>.go` (run + renderer) + `cli/<verb>_test.go` + register in `root.go` + constant in `commands.go` + matching Contract in `spec.d/service/<phase>/` |
 | a new gate | `compiler/<gate>.go` (the check) + a `Diagnostic` code in `diagnostic.go` + a new invariant on `validate-graph` + a test |
 | a new graph projection column | `query/build.go` (insert into SQLite) + `query/tables.go` (doc the column) + update the recipes |
 | a new infra verb | `compiler/fact.go` (the verb constant) + `codescan/kind.go` if it has a unique role mapping + binding tests |
-| a new module kind | `source/manifest.go` (`ModuleKind`) + `source/schema/module.cue` (`#kind`) + `compiler/rolegate.go` (`kindAllows`) + a UC in `spec.d/service/` |
+| a new module kind | `source/manifest.go` (`ModuleKind`) + `source/schema/module.cue` (`#kind`) + `compiler/rolegate.go` (`kindAllows`) + a Contract in `spec.d/service/` |
 | a new spec node type | `source/schema/spec.cue` (`#NewType`) + `internal/model/` (Go type) + `source/load*.go` + `internal/compiler/`-side wiring + `query/build.go` projection columns |
 
 The dogfood is your check at the end: rebuild, `validate`, then `bindings`
-and `describe` against the UC you just touched — the new feature should
+and `describe` against the Contract you just touched — the new feature should
 show up `proven` once it is built and tested.
 
 ## Cache troubleshooting

@@ -10,11 +10,11 @@ import (
 	"github.com/specue/specue/internal/source"
 )
 
-// codeModWithReqs assembles a service module holding one UC and a code module that
+// codeModWithReqs assembles a service module holding one Contract and a code module that
 // requires it, plus the given facts, and returns the resolved graph + diags.
 func codeModWithReqs(t *testing.T, facts ...CodeFact) (*ResolvedGraph, []Diagnostic) {
 	t.Helper()
-	svc := uc("x.test/example@v0", "validate-graph", model.Public)
+	svc := contract("x.test/example@v0", "validate-graph", model.Public)
 	codeMod := source.LoadedModule{
 		Manifest: source.Manifest{
 			Path: "x.test/wallet-code@v0", Kind: source.KindCode,
@@ -102,8 +102,8 @@ func kindStateOf(v BindingsView, target model.NodeID, kind BindKind) BindState {
 // and never proven (a fact needs no test, unlike a req).
 func TestBindingsInfraFactAxis(t *testing.T) {
 	target := model.NodeID{Module: "x.test/example@v0", Slug: "validate-graph"}
-	// A UC that declares a produce edge.
-	svc := uc("x.test/example@v0", "validate-graph", model.Public,
+	// A Contract that declares a produce edge.
+	svc := contract("x.test/example@v0", "validate-graph", model.Public,
 		model.Dep{To: model.NodeRef{Module: "x.test/topo@v0", Slug: "report-channel"}, Role: model.RoleProduce})
 	codeMod := source.LoadedModule{Manifest: source.Manifest{
 		Path: "x.test/wallet-code@v0", Kind: source.KindCode,

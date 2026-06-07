@@ -135,7 +135,7 @@ func TestOrphansProjected(t *testing.T) {
 
 // TestPreJoinedViews covers query-graph#pre-joined-views: node_describe yields
 // one row per element of a Contract, and fr_coverage yields one row per
-// satisfying UC for a given story atom (with its status), so the common reads
+// satisfying Contract for a given story atom (with its status), so the common reads
 // are one statement instead of a chain of joins.
 //
 //specue:test:query-graph#pre-joined-views
@@ -149,7 +149,7 @@ func TestPreJoinedViews(t *testing.T) {
 	rows, err := db.Query(`SELECT element, element_kind FROM node_describe
 		WHERE id = 'example:validate-graph' AND element != ''`)
 	require.NoError(t, err)
-	require.NotEmpty(t, rows, "node_describe lists the UC's elements")
+	require.NotEmpty(t, rows, "node_describe lists the Contract's elements")
 	found := false
 	for _, r := range rows {
 		if r["element"] == "single-verdict" {
@@ -163,7 +163,7 @@ func TestPreJoinedViews(t *testing.T) {
 	rows, err = db.Query(`SELECT uc_id, uc_status FROM fr_coverage
 		WHERE need_id = 'prod:describe-node' AND atom = 'fr-01'`)
 	require.NoError(t, err)
-	require.NotEmpty(t, rows, "an atom satisfied by a UC has a coverage row")
+	require.NotEmpty(t, rows, "an atom satisfied by a Contract has a coverage row")
 	assert.Equal(t, "example:validate-graph", rows[0]["uc_id"])
 }
 

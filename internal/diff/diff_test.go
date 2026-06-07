@@ -12,7 +12,7 @@ import (
 
 const mod = model.ModulePath("svc")
 
-func uc(slug model.Slug, title string, els ...model.Element) model.PlacedNode {
+func contract(slug model.Slug, title string, els ...model.Element) model.PlacedNode {
 	return model.PlacedNode{Module: mod, Node: model.Node{
 		Slug: slug, Type: model.TypeContract, Title: title,
 		Body: &model.Body{Contract: &model.ContractBody{Elements: els}},
@@ -41,8 +41,8 @@ func nodeOf(t *testing.T, d diff.Delta, slug model.Slug) diff.NodeDelta {
 //specue:test:diff-refs#typed-over-the-spec-graph
 //specue:test:diff-refs#every-change-named
 func TestAddedRemovedNodes(t *testing.T) {
-	a := []model.PlacedNode{uc("keep", "Keep"), uc("gone", "Gone")}
-	b := []model.PlacedNode{uc("keep", "Keep"), uc("fresh", "Fresh")}
+	a := []model.PlacedNode{contract("keep", "Keep"), contract("gone", "Gone")}
+	b := []model.PlacedNode{contract("keep", "Keep"), contract("fresh", "Fresh")}
 
 	d := diff.Compute(a, b)
 	require.Len(t, d.Nodes, 2)
@@ -51,14 +51,14 @@ func TestAddedRemovedNodes(t *testing.T) {
 }
 
 func TestIdenticalIsEmpty(t *testing.T) {
-	a := []model.PlacedNode{uc("x", "X", inv("i1", "holds"))}
-	b := []model.PlacedNode{uc("x", "X", inv("i1", "holds"))}
+	a := []model.PlacedNode{contract("x", "X", inv("i1", "holds"))}
+	b := []model.PlacedNode{contract("x", "X", inv("i1", "holds"))}
 	assert.True(t, diff.Compute(a, b).Empty(), "identical snapshots → no delta")
 }
 
 func TestModifiedTitle(t *testing.T) {
-	a := []model.PlacedNode{uc("x", "Old title")}
-	b := []model.PlacedNode{uc("x", "New title")}
+	a := []model.PlacedNode{contract("x", "Old title")}
+	b := []model.PlacedNode{contract("x", "New title")}
 	nd := nodeOf(t, diff.Compute(a, b), "x")
 	assert.Equal(t, diff.Modified, nd.Change)
 	assert.Empty(t, nd.Elements)
@@ -66,8 +66,8 @@ func TestModifiedTitle(t *testing.T) {
 }
 
 func TestElementAddedRemovedModified(t *testing.T) {
-	a := []model.PlacedNode{uc("x", "X", inv("keep", "k"), inv("drop", "d"), inv("edit", "before"))}
-	b := []model.PlacedNode{uc("x", "X", inv("keep", "k"), inv("edit", "after"), inv("new", "n"))}
+	a := []model.PlacedNode{contract("x", "X", inv("keep", "k"), inv("drop", "d"), inv("edit", "before"))}
+	b := []model.PlacedNode{contract("x", "X", inv("keep", "k"), inv("edit", "after"), inv("new", "n"))}
 
 	nd := nodeOf(t, diff.Compute(a, b), "x")
 	require.Equal(t, diff.Modified, nd.Change)
@@ -88,8 +88,8 @@ func TestElementKindOrWhenChangeIsModified(t *testing.T) {
 	plain := model.Element{ID: "i", Text: "t"}
 	typed := model.Element{ID: "i", Text: "t", Kind: model.KindRejects, When: "bad input"}
 
-	a := []model.PlacedNode{uc("x", "X", plain)}
-	b := []model.PlacedNode{uc("x", "X", typed)}
+	a := []model.PlacedNode{contract("x", "X", plain)}
+	b := []model.PlacedNode{contract("x", "X", typed)}
 
 	nd := nodeOf(t, diff.Compute(a, b), "x")
 	require.Equal(t, diff.Modified, nd.Change)
@@ -100,8 +100,8 @@ func TestElementKindOrWhenChangeIsModified(t *testing.T) {
 }
 
 func TestEdgeRewire(t *testing.T) {
-	a := []model.PlacedNode{uc("x", "X", inv("i", "t", dep("old", "call")))}
-	b := []model.PlacedNode{uc("x", "X", inv("i", "t", dep("new", "call")))}
+	a := []model.PlacedNode{contract("x", "X", inv("i", "t", dep("old", "call")))}
+	b := []model.PlacedNode{contract("x", "X", inv("i", "t", dep("new", "call")))}
 
 	nd := nodeOf(t, diff.Compute(a, b), "x")
 	require.Equal(t, diff.Modified, nd.Change)

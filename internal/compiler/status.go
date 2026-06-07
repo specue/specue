@@ -12,11 +12,11 @@ func assignContractStatus(g *ResolvedGraph) {
 		if n.Node().Type != model.TypeContract || n.broken() {
 			continue
 		}
-		n.Status = useCaseStatus(n)
+		n.Status = contractStatus(n)
 	}
 }
 
-func useCaseStatus(n *ResolvedNode) ResolvedNodeStatus {
+func contractStatus(n *ResolvedNode) ResolvedNodeStatus {
 	if !hasReq(n) {
 		return StatusAsserted
 	}
@@ -46,7 +46,7 @@ func elemImplemented(n *ResolvedNode, id model.ElementID) bool {
 	return len(n.ReqElems[""]) > 0
 }
 
-// elemProven is the same for proving (test) bindings: a whole-UC covers does not
+// elemProven is the same for proving (test) bindings: a whole-Contract covers does not
 // auto-prove a guarded branch.
 func elemProven(n *ResolvedNode, id model.ElementID) bool {
 	if len(n.CoverElems[id]) > 0 {
@@ -62,11 +62,11 @@ func elemProven(n *ResolvedNode, id model.ElementID) bool {
 // node. A guarded invariant is a conditional branch, so a whole-contract binding
 // does not auto-cover it.
 func isGuarded(n *ResolvedNode, id model.ElementID) bool {
-	uc := n.Node().Body.Contract
-	if uc == nil {
+	c := n.Node().Body.Contract
+	if c == nil {
 		return false
 	}
-	for _, el := range uc.Elements {
+	for _, el := range c.Elements {
 		if el.When != "" && el.ID == id {
 			return true
 		}

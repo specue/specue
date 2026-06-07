@@ -7,7 +7,7 @@ package jsonir
 
 type fileContract struct {
 	commonJSON
-	useCaseJSON
+	contractJSON
 	Derived  *derivedJSON  `json:"derived,omitempty"`
 	Bindings *bindingsJSON `json:"bindings,omitempty"`
 }

@@ -54,11 +54,11 @@ deps: "specue.io/schema@v0": v: "v0.0.1"
 
 	write("nodes.cue", svcNodes(svc+"\n"+one))
 	run("add", "-A")
-	run("commit", "-m", "one uc")
+	run("commit", "-m", "one contract")
 
 	write("nodes.cue", svcNodes(svc+"\n"+one+"\n"+two))
 	run("add", "-A")
-	run("commit", "-m", "add second uc")
+	run("commit", "-m", "add second contract")
 
 	return dir, bin
 }

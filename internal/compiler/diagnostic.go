@@ -37,7 +37,7 @@ const (
 	RoleGateViolation DiagnosticCode = "role-gate-violation" // node type not allowed by the module's kind
 	OrphanBinding     DiagnosticCode = "orphan-binding"      // a code annotation points at no node
 	UnbindableTarget  DiagnosticCode = "unbindable-target"   // a req/test annotation on a node type that holds no code (e.g. a Need)
-	Unreachable       DiagnosticCode = "unreachable"         // a UC nothing triggers, satisfies, or invokes
+	Unreachable       DiagnosticCode = "unreachable"         // a Contract nothing triggers, satisfies, or invokes
 	SyncCycle         DiagnosticCode = "sync-cycle"          // a dependency cycle through a sync contract
 	OverlayInvalid    DiagnosticCode = "overlay-invalid"     // an overlaid plan set fails to load/resolve (CUE rejects it)
 	// DanglingRef is an edge whose target is empty or names no node in a loaded

@@ -9,14 +9,14 @@ import "github.com/specue/specue/internal/model"
 // pass, so derive sees only in-view targets (cross-unloaded refs are skipped).
 func deriveAll(g *ResolvedGraph) {
 	for n := range g.Nodes() {
-		uc := n.Node().Body.Contract
-		if uc == nil {
+		c := n.Node().Body.Contract
+		if c == nil {
 			continue
 		}
 		from := n.ID().Module
-		n.Uses = deriveUses(g, from, uc.Elements)
-		n.CoreUses = deriveCoreUses(g, from, uc.Elements)
-		n.Satisfies = deriveSatisfies(g, from, uc.Elements)
+		n.Uses = deriveUses(g, from, c.Elements)
+		n.CoreUses = deriveCoreUses(g, from, c.Elements)
+		n.Satisfies = deriveSatisfies(g, from, c.Elements)
 	}
 	// Realizes and Topology depend on every node's Satisfies/deps being known, so
 	// they run in a second sweep.
@@ -65,7 +65,7 @@ func deriveCoreUses(g *ResolvedGraph, from model.ModulePath, els []model.Element
 	return out
 }
 
-// deriveSatisfies collects the atoms this UC's elements discharge, resolved to
+// deriveSatisfies collects the atoms this Contract's elements discharge, resolved to
 // full addresses (Need NodeID + atom id).
 func deriveSatisfies(g *ResolvedGraph, from model.ModulePath, els []model.Element) []AtomAddr {
 	var out []AtomAddr
@@ -87,7 +87,7 @@ func deriveSatisfies(g *ResolvedGraph, from model.ModulePath, els []model.Elemen
 }
 
 // deriveRealizes is the intent seam, computed not authored: the Needs whose
-// atoms this UC satisfies. A UC cannot claim a Need it covers no atom of.
+// atoms this Contract satisfies. A Contract cannot claim a Need it covers no atom of.
 func deriveRealizes(g *ResolvedGraph, n *ResolvedNode) []model.NodeID {
 	var out []model.NodeID
 	seen := map[model.NodeID]bool{}
