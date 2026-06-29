@@ -306,26 +306,26 @@ question.
 the `specue/` graph (prose = non-blank lines inside `<dec-body>`; CUE =
 `spec.cue`):
 
-| Scope | Decisions | CUE (`spec.cue`) | Prose | Go |
-|---|---:|---:|---:|---:|
-| Whole `specue/` graph | 51 | 2187 | 533 | — |
-| Of which: backed by code | 17 | 827 | 145 | — |
-| `specue add` implementation | — | — | — | 588 |
+| Scope                       | Decisions | CUE (`spec.cue`) | Prose (`README.md`) |   Go |
+| --------------------------- | --------: | ---------------: | ------------------: | ---: |
+| Whole `specue/` graph       |        51 |             2187 |                 533 |    — |
+| Of which: backed by code    |        17 |              827 |                 145 |    — |
+| `specue add` implementation |         — |                — |                   — |  588 |
 
 Of the 51 decisions, 17 map to code; the other 34 are the method itself (what a
 decision is, how one relies on another, file layout, module versioning), written
 once and imported thereafter. The 17 code-backed decisions against the 588 lines
 of Go, by how much is counted:
 
-| Spec vs code, on the 17 code-backed decisions | Ratio |
-|---|---:|
-| Whole graph / Go | 4.6× |
-| Raw: (CUE + prose) / Go | 1.65× |
-| Go comments counted, both sides full | 1.48× |
-| Same, `// decision:` tags excluded | 1.71× |
+| Spec vs code, on the 17 code-backed decisions                 | Ratio |
+| ------------------------------------------------------------- | ----: |
+| Whole graph / Go                                              |  4.6× |
+| Raw: (CUE + prose) / Go                                       | 1.65× |
+| Go comments counted, both sides full                          | 1.48× |
+| Same, `// decision:` tags excluded                            | 1.71× |
 | Spec logic + prose / Go logic *(imports & comments stripped)* | 1.82× |
-| Logic only: CUE fields & supports / Go statements | 1.35× |
-| Prose only: decision bodies + CUE comments / Go comments | 2.75× |
+| Logic only: CUE fields & supports / Go statements             | 1.35× |
+| Prose only: decision bodies + CUE comments / Go comments      | 2.75× |
 
 The marginal cost of a feature lands at ~1.3–1.8× lines; the 4.6× is the
 un-amortized foundation. Most of the spec is structure — CUE fields and supports,
