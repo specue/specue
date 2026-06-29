@@ -1,0 +1,18 @@
+# Scenario: `specue add` without the required <path> argument.
+# Команда НЕ падает молча: отсутствие обязательного аргумента — ошибка
+#
+# decision: cli/commands/add/command
+# decision: internal/foundation/applying-cli-guideline
+# decision: cli/commands/add/output
+
+# human-readable: ненулевой exit и непустой stderr 
+! specue add
+stderr '.'
+
+# machine-readable: та же форма ошибки {ok:false, error:{code, message}},
+# код по умолчанию — unknown (нет своего доменного кода у usage-ошибки)
+! specue add --format json
+cp stderr err.json
+exec jq -e '.ok == false' err.json
+exec jq -e '.error.code == "unknown"' err.json
+exec jq -e '.error.message | type == "string" and (length > 0)' err.json

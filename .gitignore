@@ -1,0 +1,12 @@
+# Built binary — goes to /bin (root name would clash with the specue/ graph dir)
+/bin/
+*.test
+
+# Local workspace (IDE convenience; not part of the module)
+go.work
+go.work.sum
+
+# Editor / OS
+.DS_Store
+specue-v2
+decisioning-v2

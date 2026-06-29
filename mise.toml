@@ -1,0 +1,61 @@
+# mise — pinned toolchain + dev tasks for Specue v5.
+# https://mise.jdx.dev   Run `mise install` to get the tools, `mise tasks` to list.
+
+[tools]
+go  = "1.26.0"           # build/test
+cue = "0.17.0-alpha.3"   # cue CLI; modules pin language version v0.17.0
+                         # (local-module replace needs >= v0.17.0 — see the
+                         # decision contract/decision-authoring/cue-language-version).
+                         # 0.17.0 stable not yet released.
+jq  = "latest"           # conformance tests assert the JSON output contract by structure
+
+[env]
+# Local OCI registry holds specue.io/schema + profiles (published via cue mod
+# publish). LSP resolves imports from it — no local-module replace needed.
+# Bring it up with `mise run registry` before publishing/resolving.
+CUE_REGISTRY = "localhost:9999+insecure"
+# A go.work further up does not include this repo; opt every Go command out.
+GOWORK = "off"
+
+[tasks.registry]
+description = "Start the local OCI registry for CUE module publishing"
+run = "docker start cue-registry 2>/dev/null || docker run -d --name cue-registry -p 9999:5000 registry:2"
+
+[tasks.publish]
+description = "Publish schema + profiles to the local registry"
+run = """
+set -euo pipefail
+( cd cue/schema   && cue mod publish "$(git describe --tags --always)" ) || true
+"""
+
+[tasks.vet]
+description = "cue vet every decision-graph module (CUE validates the graph)"
+run = """
+set -euo pipefail
+for m in cue/schema cue/profiles specue models/decisioning models/cli-guideline models/cli-contracts; do
+  echo "vet $m"
+  # -c=false: разрешить инварианты (int & !=0, перечисления, диапазоны)
+  # как форму контракта; конфликты типов и опоры на исчезнувшие поля
+  # (undefined field) всё равно ловятся.
+  ( cd "$m" && cue vet ./... -c=false )
+done
+"""
+
+[tasks.build]
+description = "Build the specue binary into ./bin (root name clashes with specue/ dir)"
+run = "go build -o ./bin/specue ."
+
+[tasks.conformance]
+description = "Run conformance tests (decisions -> tests) against the impl"
+run = """
+set -euo pipefail
+BIN="$(mktemp -d)/specue"
+go build -o "$BIN" .
+cd conformance
+SPECUE_BIN="$BIN" SCHEMA_DIR="$(cd ../cue/schema && pwd)" go test ./...
+"""
+
+[tasks.test]
+description = "Run all Go tests + conformance"
+depends = ["conformance"]
+run = "go test ./..."

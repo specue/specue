@@ -1,0 +1,27 @@
+# Scenario: the target directory is already occupied.
+# decision: internal/usecase/creating-decision-package
+# decision: cli/commands/add/output
+
+link-schema
+
+# first time -> success
+specue add contract/cli/add
+exists contract/cli/add/spec.cue
+
+# again at the same path -> dir_not_empty failure, non-zero exit
+! specue add contract/cli/add --format json
+cp stderr err.json
+exec jq -e '.ok == false' err.json
+exec jq -e '.error.code == "dir_not_empty"' err.json
+exec jq -e '.error.message | type == "string" and (length > 0)' err.json
+
+-- cue.mod/module.cue --
+module: "specue.io/demo@v0"
+language: {
+	version: "v0.17.0"
+}
+deps: {
+	"specue.io/schema@v0": {
+		v: "v0.0.4"
+	}
+}

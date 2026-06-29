@@ -1,0 +1,14 @@
+# Scenario: cue.mod exists but module.cue is invalid (CUE fails to load).
+# decision: internal/usecase/loading-module
+# decision: cli/commands/add/output
+
+! specue add foo/bar --format json
+cp stderr err.json
+exec jq -e '.ok == false' err.json
+exec jq -e '.error.code == "invalid_module"' err.json
+exec jq -e '.error.message | type == "string" and (length > 0)' err.json
+
+! exists foo/bar/spec.cue
+
+-- cue.mod/module.cue --
+this is { broken cue syntax

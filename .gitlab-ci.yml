@@ -1,0 +1,28 @@
+stages:
+  - test
+
+# Toolchain (go, cue, jq) is pinned in mise.toml; CI installs it via mise so the
+# pipeline matches local `mise run …`.
+default:
+  image: jdxcode/mise:latest
+  before_script:
+    - mise trust
+    - mise install
+
+# CUE validates the decision graph (broken links, cycles, schema rules).
+graph:vet:
+  stage: test
+  script:
+    - mise run vet
+
+# Build the specue implementation.
+build:
+  stage: test
+  script:
+    - mise run build
+
+# Conformance tests derived from the decisions, run against the built binary.
+conformance:
+  stage: test
+  script:
+    - mise run conformance

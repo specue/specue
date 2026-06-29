@@ -1,0 +1,64 @@
+# Scenario: successfully add a decision to a valid module.
+# decision: cli/commands/add/command
+# decision: cli/commands/add/output
+# decision: internal/usecase/adding-decision
+# decision: internal/usecase/creating-decision-package
+# decision: contract/decision-authoring/layout/decision-file-layout
+# decision: contract/decision-authoring/layout/structure/cue/schema/decision-entrypoint
+# decision: contract/decision-authoring/layout/structure/cue/schema/schema-package
+# decision: contract/decision-authoring/layout/body/body-format
+
+# link the local schema (replace to an absolute path)
+link-schema
+
+# human-readable output: success on stdout, exit 0
+specue add contract/cli/add
+stdout 'created decision contract/cli/add'
+
+# both files created (decision-file-layout)
+exists contract/cli/add/spec.cue
+exists contract/cli/add/README.md
+
+# the generated spec.cue is VALID against the real specue schema.
+# cue vet has teeth: a malformed decision (e.g. a bad status) fails it — so
+# this asserts the implementation emits a schema-correct skeleton, not just
+# that a file exists.
+exec cue vet ./contract/cli/add
+
+# skeleton FORM (creating-decision-package): package from folder name,
+# schema import, the `decision` entrypoint by #Decision.
+grep '^package add$' contract/cli/add/spec.cue
+grep 'specue.io/schema' contract/cli/add/spec.cue
+grep 'decision:' contract/cli/add/spec.cue
+
+# skeleton is pretty-printed (multi-line), not crammed on one line:
+# the `problem` field sits on its OWN line, not inline with `decision:`.
+! grep 'decision:.*problem' contract/cli/add/spec.cue
+grep '^\s+problem:' contract/cli/add/spec.cue
+
+# body FORM (body-format): empty body wrapped in <dec-body>.
+grep '<dec-body>' contract/cli/add/README.md
+grep '</dec-body>' contract/cli/add/README.md
+
+# machine output contract (cli/commands/add/output): assert the STRUCTURE of
+# the JSON, not substrings. jq -e fails (non-zero) if any field is missing or
+# has the wrong shape/value, so the contract is checked, not matched.
+specue add domain/foo --format json
+cp stdout out.json
+exec jq -e '.ok == true' out.json
+exec jq -e '.module.id == "specue.io/demo@v0"' out.json
+exec jq -e '.module.root | type == "string" and (length > 0)' out.json
+exec jq -e '.decision.dir == "domain/foo"' out.json
+exec jq -e '.decision.structureFile == "domain/foo/spec.cue"' out.json
+exec jq -e '.decision.bodyFile == "domain/foo/README.md"' out.json
+
+-- cue.mod/module.cue --
+module: "specue.io/demo@v0"
+language: {
+	version: "v0.17.0"
+}
+deps: {
+	"specue.io/schema@v0": {
+		v: "v0.0.4"
+	}
+}

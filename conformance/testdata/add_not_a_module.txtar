@@ -1,0 +1,14 @@
+# Scenario: path outside any CUE module (no cue.mod up the tree).
+# decision: internal/usecase/resolving-module
+# decision: cli/commands/add/output
+
+# no cue.mod -> not_a_module failure, non-zero exit
+! specue add foo/bar --format json
+cp stderr err.json
+# assert the error CONTRACT structure, not a substring
+exec jq -e '.ok == false' err.json
+exec jq -e '.error.code == "not_a_module"' err.json
+exec jq -e '.error.message | type == "string" and (length > 0)' err.json
+
+# nothing created
+! exists foo/bar/spec.cue

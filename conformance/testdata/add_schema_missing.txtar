@@ -1,0 +1,21 @@
+# Scenario: valid module, but no dependency on specue.io/schema.
+# decision: internal/usecase/loading-module
+# decision: cli/commands/add/output
+
+! specue add foo/bar --format json
+cp stderr err.json
+exec jq -e '.ok == false' err.json
+exec jq -e '.error.code == "schema_missing"' err.json
+exec jq -e '.error.message | type == "string" and (length > 0)' err.json
+
+! exists foo/bar/spec.cue
+
+-- cue.mod/module.cue --
+module: "specue.io/nodep@v0"
+language: {
+	version: "v0.17.0"
+}
+-- root.cue --
+package nodep
+
+x: 1
