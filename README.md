@@ -340,6 +340,18 @@ at scale rather than volume — which a 17-decision tool does not yet exhibit.
 Logic = non-blank, non-comment, non-import lines; ratios measured from this repo.
 The spec is what you write and own; the code is generated to satisfy it.
 
+**On the line count itself.** Across all 51 `spec.cue` files, only ~21% of lines
+carry content (fields, supports, values); ~45% is CUE ceremony — imports (17%),
+the fixed `decision: #Decision & {` / `contract: close({` wrappers, and closing
+braces (28% together) — with the rest comments and blanks. A thin DSL could erase
+most of the ceremony: imports are redundant with the supports that reference them
+(`_resolve: rm.decision.contract.resolving.module` already names the target), and
+the wrappers are identical in every file. It would roughly halve `spec.cue`. It
+is left as plain CUE on purpose: a support is a real CUE import, so go-to
+definition, find-references, and `cue vet` work in a normal editor with no
+specue-specific tooling — integrity lives in the schema, not in a compiler we'd
+have to write. The verbosity is the price of that, not an oversight.
+
 ## How it got here, and where it's going
 
 specue is on its *n*-th redesign, and the path matters more than the destination.
