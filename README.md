@@ -302,11 +302,43 @@ and writing the CLI specification took ~2 more. Then the implementation took und
 a minute once the whole thing was handed over "as a prompt." Is it worth it? Open
 question.
 
-**Another data point.** The weight is in the spec, not the code: the `specue/`
-decision graph is ~2200 lines of contracts (`spec.cue`) and ~3000 with the prose
-bodies, against ~590 lines of Go that implement `specue add` — roughly 5× more
-specification than code. The spec is what you write and own; the code is
-generated to satisfy it.
+**Another data point.** The weight is in the spec, not the code. Line counts for
+the `specue/` graph (prose = non-blank lines inside `<dec-body>`; CUE =
+`spec.cue`):
+
+| Scope | Decisions | CUE (`spec.cue`) | Prose | Go |
+|---|---:|---:|---:|---:|
+| Whole `specue/` graph | 51 | 2187 | 533 | — |
+| Of which: backed by code | 17 | 827 | 145 | — |
+| `specue add` implementation | — | — | — | 588 |
+
+Of the 51 decisions, 17 map to code; the other 34 are the method itself (what a
+decision is, how one relies on another, file layout, module versioning), written
+once and imported thereafter. The 17 code-backed decisions against the 588 lines
+of Go, by how much is counted:
+
+| Spec vs code, on the 17 code-backed decisions | Ratio |
+|---|---:|
+| Whole graph / Go | 4.6× |
+| Raw: (CUE + prose) / Go | 1.65× |
+| Go comments counted, both sides full | 1.48× |
+| Same, `// decision:` tags excluded | 1.71× |
+| Spec logic + prose / Go logic *(imports & comments stripped)* | 1.82× |
+| Logic only: CUE fields & supports / Go statements | 1.35× |
+| Prose only: decision bodies + CUE comments / Go comments | 2.75× |
+
+The marginal cost of a feature lands at ~1.3–1.8× lines; the 4.6× is the
+un-amortized foundation. Most of the spec is structure — CUE fields and supports,
+machine-checked (1.35× on their own). The prose figure is the highest (2.75×):
+the "why" lives in the decision bodies rather than in code comments. The
+`models/decisioning` foundation adds another 31 decisions / ~950 lines of CUE,
+reusable across projects.
+
+Whether ~1.5× pays off is the open question above: it does when the code is
+generated (so the spec replaces nothing you'd skip) and the cost is consistency
+at scale rather than volume — which a 17-decision tool does not yet exhibit.
+Logic = non-blank, non-comment, non-import lines; ratios measured from this repo.
+The spec is what you write and own; the code is generated to satisfy it.
 
 ## How it got here, and where it's going
 
